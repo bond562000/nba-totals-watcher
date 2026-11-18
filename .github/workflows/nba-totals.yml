@@ -1,0 +1,149 @@
+# NBA totals watcher.
+#
+# GitHub cron is UTC, best-effort, and often late. Each job is killed at 6 hours.
+# Three slots cover the slate, each scheduled at both the EDT and EST offsets.
+# watcher.py exits immediately when the America/New_York clock is outside that
+# slot's window, so the off-by-one-hour cron does not poll or spend an Odds API credit.
+#
+# A second cron later in the same ET hour is a safety net when the first fire is
+# dropped. Concurrency keeps a single watcher running; a newer waiting run
+# replaces an older waiting run, and the in-progress run is left alone.
+#
+# There is no `push` trigger. Commits to the `state` branch do not start a run.
+# (GITHUB_TOKEN pushes do not start workflows either.)
+
+name: NBA totals watcher
+
+on:
+  schedule:
+    # Slate — 12:05 PM and 12:30 PM ET.
+    - cron: '5 16 * * *'    # 12:05 PM EDT
+    - cron: '30 16 * * *'   # 12:30 PM EDT
+    - cron: '5 17 * * *'    # 12:05 PM EST
+    - cron: '30 17 * * *'   # 12:30 PM EST
+    # Evening — 5:45 PM and 6:20 PM ET. Queues behind the slate job, which
+    # exits at 5:55 PM, then polls until 11:30 PM (under the 6-hour cap).
+    - cron: '45 21 * * *'   # 5:45 PM EDT
+    - cron: '20 22 * * *'   # 6:20 PM EDT
+    - cron: '45 22 * * *'   # 5:45 PM EST
+    - cron: '20 23 * * *'   # 6:20 PM EST
+    # Late — 11:20 PM and 11:45 PM ET. Queues behind the evening job, which
+    # exits at 11:30 PM, then polls until every game is final or 3:00 AM ET.
+    - cron: '20 3 * * *'    # 11:20 PM EDT
+    - cron: '45 3 * * *'    # 11:45 PM EDT
+    - cron: '20 4 * * *'    # 11:20 PM EST
+    - cron: '45 4 * * *'    # 11:45 PM EST
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run prints Telegram cards and does not post. live posts. check is one scoreboard poll. simulate is offline.'
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - check
+          - simulate
+          - live
+      follow:
+        description: 'Keep polling until the slate ends. Off runs a single pass so a manual dry run does not block the night.'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-totals-watcher
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so the state-branch push is a normal fast-forward,
+          # not a shallow update.
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Resolve slot and mode
+        id: slot
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          INPUT_MODE: ${{ inputs.mode }}
+          INPUT_FOLLOW: ${{ inputs.follow }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "slot=manual" >> "$GITHUB_OUTPUT"
+            echo "mode=${INPUT_MODE}" >> "$GITHUB_OUTPUT"
+            if [ "$INPUT_FOLLOW" = "true" ]; then
+              echo "max_polls=" >> "$GITHUB_OUTPUT"
+            else
+              echo "max_polls=1" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+          case "$EVENT_SCHEDULE" in
+            "5 16 * * *"|"30 16 * * *"|"5 17 * * *"|"30 17 * * *")
+              slot=slate ;;
+            "45 21 * * *"|"20 22 * * *"|"45 22 * * *"|"20 23 * * *")
+              slot=evening ;;
+            "20 3 * * *"|"45 3 * * *"|"20 4 * * *"|"45 4 * * *"|\
+            "20 03 * * *"|"45 03 * * *"|"20 04 * * *"|"45 04 * * *")
+              slot=late ;;
+            *)
+              echo "Unrecognized schedule [$EVENT_SCHEDULE] -- watcher will no-op" >&2
+              slot=unknown ;;
+          esac
+          echo "slot=$slot" >> "$GITHUB_OUTPUT"
+          echo "mode=live" >> "$GITHUB_OUTPUT"
+          echo "max_polls=" >> "$GITHUB_OUTPUT"
+
+      - name: Run watcher
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          NBA_STATE_DIR: ${{ runner.temp }}/nba-state
+          NBA_SLOT: ${{ steps.slot.outputs.slot }}
+          NBA_MAX_RUNTIME_S: "21000"
+          NBA_MAX_POLLS: ${{ steps.slot.outputs.max_polls }}
+          WATCH_MODE: ${{ steps.slot.outputs.mode }}
+        run: |
+          set -euo pipefail
+          bash scripts/restore_state.sh
+          bash scripts/state_sync_loop.sh &
+          sync_pid=$!
+          stop_sync() {
+            kill "$sync_pid" 2>/dev/null || true
+            wait "$sync_pid" 2>/dev/null || true
+          }
+          trap stop_sync EXIT
+          args=()
+          case "$WATCH_MODE" in
+            dry-run) args+=(--dry-run) ;;
+            check) args+=(--check) ;;
+            simulate) args+=(--simulate) ;;
+            live) ;;
+            *) echo "unknown mode: $WATCH_MODE" >&2; exit 2 ;;
+          esac
+          set +e
+          python -u watcher.py "${args[@]}"
+          code=$?
+          set -e
+          stop_sync
+          trap - EXIT
+          bash scripts/persist_state.sh
+          exit "$code"
