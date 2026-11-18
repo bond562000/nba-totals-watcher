@@ -112,11 +112,33 @@ When the box score is missing, Yen uses the old scoring-rate fallback: `0.6 × l
 
 Replay the PPP fit with `python3 scripts/fit_league_baseline.py path/to/team_box_2024.csv`. The watcher does not download that file during a game.
 
-### Data the free feeds do not have
+### Live box scores from ESPN
 
-BALLDONTLIE's free tier serves games (score, period, clock) and returns 401 on box scores, play-by-play, and lineups. The watcher tries `/v1/box_scores` once. On 401 it stops for the night and logs the missing inputs: team FGA/OREB/TOV/FTA, play-by-play, recent-window efficiency, quarter splits, the on-court lineup, substitutions, bonus, the possession arrow, timeouts, intentional fouls, and season team ratings. Those are not hard-coded from the margin.
+BALLDONTLIE's free tier is the scoreboard only. Team possessions come from ESPN's public, unauthenticated site API (no key):
 
-The Odds API is not called for a checkpoint. A night is 1 pregame credit plus one live credit per poll in which a game inside 8:00–5:00 is due for an evaluation (one call covers every due game). Cap 15, and no call under 25 credits remaining. A typical night is a handful of live calls, not one per checkpoint.
+- `site.api.espn.com/.../nba/scoreboard?dates=YYYYMMDD` once per slate date per poll, plus the next calendar date only if a game did not match
+- `.../nba/summary?event=ID` once per live game, reused for 50 seconds
+
+The team line supplies FGA, offensive rebounds, total turnovers (player plus team), and FTA. Quarter linescores come from the same summary. Play-by-play supplies a 3-minute game-clock window, timeout and intentional-foul counts, a foul-based bonus estimate, and substitution events. One competitor can carry a possession flag. ESPN's `active` athletes are stored, and treated as the on-court five only when the game is in progress and each side has exactly five.
+
+ESPN is unofficial. The stats are used only when the score matches BALLDONTLIE and, while the game is live, the period and clock are within 90 seconds. A mismatch, an empty box, a timeout, or an HTTP 429 keeps the pace fallback and logs the reason. A 429 backs off (two minutes, then longer) instead of hammering the host. No ESPN call is made for a slate that is already final.
+
+On 18 final games from 2026-11-14 through 2026-11-17, replaying the play-by-play to each checkpoint (no betting line; possessions reconstructed from plays) gave:
+
+| Checkpoint | n | MAE | Bias (proj − final) | 80% coverage |
+| --- | --- | --- | --- | --- |
+| Halftime | 18 | 13.3 | −4.8 | 61% |
+| End of Q3 | 18 | 6.9 | −0.4 | 89% |
+| Q4 8:00 | 18 | 4.9 | −1.2 | 78% |
+| Q4 6:30 | 18 | 4.3 | −1.1 | 89% |
+| Q4 5:00 | 18 | 4.3 | −1.7 | 78% |
+| Q4 2:00 | 18 | 3.7 | −1.6 | 83% |
+
+Two of those games reached OT (mean 5.5 extra points). Blending the recent window into efficiency raised MAE at every mark except Q4 2:00, so the window is logged and not applied. The interval, the 40-possession shrinkage, and the OT add-on were not refit. They stay **UNCALIBRATED**. Re-run with `python3 scripts/calibrate_from_espn.py 4 18`.
+
+Still missing after a good ESPN read: season team ratings, official timeouts remaining, and a confirmed on-court lineup when ESPN does not flag exactly five active players per side. Bonus is estimated from foul plays, not an ESPN bonus flag.
+
+The Odds API is not called for a checkpoint. A night is 1 pregame credit plus one live credit per poll in which a game inside 8:00–5:00 is due for an evaluation (one call covers every due game). Cap 15, and no call under 25 credits remaining. A typical night is a handful of live calls, not one per checkpoint. ESPN requests do not spend Odds API credits.
 
 ### Checkpoints and the line Richie confirmed
 

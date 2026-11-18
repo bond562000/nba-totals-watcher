@@ -40,10 +40,34 @@ LEAGUE_SAMPLE_GAMES = 1232
 LEAGUE_SAMPLE_TEAM_ROWS = 2464
 LEAGUE_SEASON = "2023-24 regular season (ESPN team box scores via sportsdataverse)"
 
+# Play-by-play replay of 18 final games, 2026-11-14 through 2026-11-17.
+# Boxes are reconstructed from ESPN plays (not the official team line), with no
+# betting line. Coverage is not ~80% at every mark and the sample is short,
+# so the interval and the OT add-on stay UNCALIBRATED and were not refit.
+ESPN_REPLAY = {
+    "label": "UNCALIBRATED",
+    "games": 18,
+    "dates": "2026-11-14 through 2026-11-17",
+    "ot_games": 2,
+    "mean_ot_points_when_reached": 5.5,
+    "checkpoints": {
+        "halftime": {"n": 18, "mae": 13.32, "bias": -4.75, "cover80": 0.61},
+        "end_q3": {"n": 18, "mae": 6.85, "bias": -0.43, "cover80": 0.89},
+        "q4_8:00": {"n": 18, "mae": 4.91, "bias": -1.24, "cover80": 0.78},
+        "q4_6:30": {"n": 18, "mae": 4.28, "bias": -1.10, "cover80": 0.89},
+        "q4_5:00": {"n": 18, "mae": 4.27, "bias": -1.66, "cover80": 0.78},
+        "q4_2:00": {"n": 18, "mae": 3.74, "bias": -1.61, "cover80": 0.83},
+    },
+}
+
 # Shrinkage prior strength in possessions. Not fit on checkpoint data.
 # 40 possessions (~half of a half) is the point where observed PPP gets half the weight.
 PPP_PRIOR_POSSESSIONS = 40
 PACE_PRIOR_MINUTES = 12.0
+# Recent game-clock window is shrunk toward the full-game rate. 12 possessions
+# is about two minutes of action. Not a fitted weight.
+RECENT_PRIOR_POSSESSIONS = 12
+RECENT_WINDOW_SEC = 180
 
 # Inferred possession-level points SD. See module docstring.
 POINT_SD = LEAGUE_PPP_SD * math.sqrt(LEAGUE_POSS_PER_TEAM)
@@ -203,12 +227,25 @@ def project_game(g, pregame_total=None):
     in_ot = bool(g.get("in_ot"))
     away_box = _box_side(g.get("box"), "away")
     home_box = _box_side(g.get("box"), "home")
-    missing = list(MISSING_WITH_BOX if (away_box and home_box) else MISSING_WITHOUT_BOX)
+    if g.get("missing_inputs") is not None:
+        missing = list(g["missing_inputs"])
+    else:
+        missing = list(MISSING_WITH_BOX if (away_box and home_box) else MISSING_WITHOUT_BOX)
     notes = []
 
     if away_box and home_box and elapsed and elapsed > 0 and remaining is not None:
         eppp_a, w_a = blend_rate(away_box["ppp"], away_box["poss"], LEAGUE_PPP, PPP_PRIOR_POSSESSIONS)
         eppp_b, w_b = blend_rate(home_box["ppp"], home_box["poss"], LEAGUE_PPP, PPP_PRIOR_POSSESSIONS)
+        recent_a = _box_side(g.get("recent_box"), "away")
+        recent_b = _box_side(g.get("recent_box"), "home")
+        # Logged only. An 18-game ESPN replay (2026-11-14 to 2026-11-17) raised
+        # MAE at every checkpoint except q4_2:00 when this window was blended in.
+        w_ra = w_rb = 0.0
+        if recent_a and recent_b and recent_a["ppp"] is not None and recent_b["ppp"] is not None:
+            notes.append(
+                f"last {RECENT_WINDOW_SEC // 60} min of game clock logged "
+                f"(away {recent_a['ppp']:.2f} PPP on {recent_a['poss']:.1f} poss, "
+                f"home {recent_b['ppp']:.2f} on {recent_b['poss']:.1f}); not blended")
         if pregame_total:
             exp_full = float(pregame_total) / (2.0 * LEAGUE_PPP)
         else:
@@ -232,6 +269,7 @@ def project_game(g, pregame_total=None):
             "ppp_weight_away": w_a, "ppp_weight_home": w_b,
             "poss_away_est": away_box["poss"], "poss_home_est": home_box["poss"],
             "rem_poss_per_team": rem, "pace_weight": pace_w,
+            "recent_weight_away": w_ra, "recent_weight_home": w_rb,
         }
     else:
         if elapsed is None or remaining is None:

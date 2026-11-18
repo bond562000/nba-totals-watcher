@@ -24,6 +24,7 @@ import argparse, csv, html, json, os, re, socket, sys, time, urllib.parse, urlli
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+import espn_box
 import model
 
 ET = ZoneInfo("America/New_York")
@@ -961,57 +962,15 @@ def grade_slate(games, sd, st):
 
 
 def maybe_attach_box_scores(games, bdl_key, st, sd):
-    """One box-score pull when a live game needs possessions. Free tier returns 401; we stop trying."""
+    """ESPN public box scores for live possessions. BALLDONTLIE's free tier has no box."""
+    del bdl_key  # scoreboard still uses the BALLDONTLIE key; box stats do not
     if os.environ.get("NBA_SKIP_BOX_SCORES") == "1":
         return
-    if st.get("box_scores_disabled"):
-        log_once("box-disabled",
-                 "[Rusty Ryan] box scores unavailable on this key; possession model will use the pace fallback. "
-                 "Missing: " + ", ".join(model.MISSING_WITHOUT_BOX))
-        return
-    need = [g for g in games if g.get("state") == "in_progress" and not g.get("box")]
-    if not need:
-        return
-    url = f"https://api.balldontlie.io/v1/box_scores?date={sd.isoformat()}"
-    try:
-        data, _ = http_get(url, {"Authorization": bdl_key})
-    except urllib.error.HTTPError as e:
-        if e.code in (401, 403):
-            st["box_scores_disabled"] = True
-            save_state(st)
-            log("[Rusty Ryan] BALLDONTLIE box scores HTTP "
-                f"{e.code} (free tier has games only). Possession inputs missing for the night: "
-                + ", ".join(model.MISSING_WITHOUT_BOX))
-        else:
-            log(f"[Rusty Ryan] BALLDONTLIE box scores HTTP {e.code}")
-        return
-    except Exception as e:
-        log(f"[Rusty Ryan] box scores error: {redact(e)}")
-        return
-    by_id = {}
-    for row in data.get("data") or []:
-        gid = row.get("id") or row.get("game_id")
-        if gid is not None:
-            by_id[str(gid)] = row
-    matched = 0
-    for g in need:
-        row = by_id.get(g["id"])
-        if row is None:
-            continue
-        away = _sum_box_players((row.get("visitor_team") or {}).get("players") or [])
-        home = _sum_box_players((row.get("home_team") or {}).get("players") or [])
-        if away and home:
-            g["box"] = {"away": away, "home": home}
-            matched += 1
-    log(f"[Rusty Ryan] box scores matched {matched}/{len(need)} live games (possession estimate)")
-
-
-def _sum_box_players(players):
-    if not players:
-        return None
-    def s(key):
-        return sum((p.get(key) or 0) for p in players)
-    return {"fga": s("fga"), "fta": s("fta"), "oreb": s("oreb"), "tov": s("turnover"), "pts": s("pts")}
+    before = json.dumps(st.get("espn") or {}, sort_keys=True)
+    for line in espn_box.attach_espn_boxes(games, st, sd):
+        log(line)
+    if json.dumps(st.get("espn") or {}, sort_keys=True) != before:
+        save_state(st)
 
 
 def tip_et(iso):
