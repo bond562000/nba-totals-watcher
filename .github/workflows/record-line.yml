@@ -1,0 +1,92 @@
+# Record the total Richie actually confirmed or bet.
+# Dispatch-only. It does not share the live watcher's concurrency group, so it
+# cannot block a scheduled poll, and it does not call The Odds API.
+
+name: Record confirmed line
+
+on:
+  workflow_dispatch:
+    inputs:
+      slate:
+        description: 'NBA slate date YYYY-MM-DD'
+        required: true
+        type: string
+      game_id:
+        description: 'BALLDONTLIE game id'
+        required: true
+        type: string
+      away:
+        description: 'Away team full name'
+        required: true
+        type: string
+      home:
+        description: 'Home team full name'
+        required: true
+        type: string
+      checkpoint:
+        description: 'Checkpoint the line belongs to'
+        required: true
+        type: choice
+        options:
+          - halftime
+          - end_q3
+          - q4_8:00
+          - q4_6:30
+          - q4_5:00
+          - q4_2:00
+      confirmed_total:
+        description: 'Total Richie confirmed (e.g. 209.5)'
+        required: true
+        type: string
+      confirmed_side:
+        description: 'OVER or UNDER'
+        required: true
+        type: choice
+        options:
+          - OVER
+          - UNDER
+      confirmed_price:
+        description: 'American price, optional (e.g. -110)'
+        required: false
+        type: string
+        default: ''
+      note:
+        description: 'Optional note. Do not paste API keys.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-totals-records
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Append confirmed line to the state branch
+        env:
+          NBA_STATE_DIR: ${{ runner.temp }}/nba-state
+          CONFIRMED_SLATE: ${{ inputs.slate }}
+          CONFIRMED_GAME_ID: ${{ inputs.game_id }}
+          CONFIRMED_AWAY: ${{ inputs.away }}
+          CONFIRMED_HOME: ${{ inputs.home }}
+          CONFIRMED_CHECKPOINT: ${{ inputs.checkpoint }}
+          CONFIRMED_TOTAL: ${{ inputs.confirmed_total }}
+          CONFIRMED_SIDE: ${{ inputs.confirmed_side }}
+          CONFIRMED_PRICE: ${{ inputs.confirmed_price }}
+          CONFIRMED_NOTE: ${{ inputs.note }}
+        run: |
+          set -euo pipefail
+          bash scripts/restore_state.sh
+          python3 scripts/append_confirmed_line.py
+          bash scripts/persist_state.sh

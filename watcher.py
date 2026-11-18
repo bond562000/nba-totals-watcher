@@ -20,9 +20,12 @@ exits immediately when the current America/New_York hour is not that slot's hour
 (UTC cron fires twice, once per DST offset). State is read and written under
 NBA_STATE_DIR so a later job on the same slate can resume.
 """
-import argparse, html, json, os, re, socket, sys, time, urllib.parse, urllib.request, urllib.error
-from datetime import date, datetime, timedelta
+import argparse, csv, html, json, os, re, socket, sys, time, urllib.parse, urllib.request, urllib.error
+from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
+
+import espn_box
+import model
 
 ET = ZoneInfo("America/New_York")
 BDL_URL = "https://api.balldontlie.io/v1/games"
@@ -35,11 +38,22 @@ BASELINE_PPM = 4.75       # combined pts/min (~228 / 48)
 PACE_WEIGHT = 0.6         # blended = 0.6*pace + 0.4*baseline
 MIN_EDGE = 3.5
 BLOWOUT_MARGIN = 20
-BLOWOUT_RATE_MULT = 0.93
 CLOSE_MARGIN = 6
-CLOSE_FOUL_BUMP = 3.0
-Q3_TRIGGER_SECS = 8 * 60  # Q3 with <= 8:00 left
-Q4_MIN_SECS = 9 * 60      # or Q4 with >= 9:00 left
+# The projection no longer applies a blowout pace trim or a close-game foul bump.
+# Frank still passes OVER in a blowout and UNDER in a close game. Those used to
+# move the number (0.93x and +3). They are a veto only now.
+# Live alert window while the possession model is still a hypothesis:
+# 4th quarter, 8:00 through 5:00 remaining. The last 2:00 is logged separately
+# and is not an alert trigger (fouls, timeouts, and OT distort that stretch).
+Q4_WINDOW_MAX = 8 * 60
+Q4_WINDOW_MIN = 5 * 60
+CHECKPOINT_CLOCK = (
+    ("q4_8:00", 8 * 60),
+    ("q4_6:30", int(6.5 * 60)),
+    ("q4_5:00", 5 * 60),
+    ("q4_2:00", 2 * 60),
+)
+LINE_STALE_S = 15 * 60
 MAX_EVALS_PER_GAME = 2
 REEVAL_GAP_S = 6 * 60
 MAX_ODDS_CALLS_PER_NIGHT = 15
@@ -306,19 +320,45 @@ def scout(g):
     if sp and not period:
         period = sp
     clock = parse_clock(t)
+    status_l = (g.get("status") or "").strip().lower()
+    time_l = (t or "").strip().lower() if isinstance(t, str) else ""
     s = {"id": str(g["id"]), "away": away, "home": home,
          "away_nick": g["visitor_team"].get("name") or away.split()[-1],
          "home_nick": g["home_team"].get("name") or home.split()[-1], "away_score": a, "home_score": h,
          "total": a + h, "margin": abs(a - h), "period": period, "clock_secs": clock,
          "raw_time": t, "status": g.get("status"), "state": state,
-         "tip": g.get("datetime"), "in_window": False}
-    if state == "in_progress" and clock is not None and period in (1, 2, 3, 4):
+         "tip": g.get("datetime"), "in_window": False, "at_halftime": False,
+         "at_end_q3": False, "in_ot": False}
+    box = {}
+    if g.get("visitor_box"):
+        box["away"] = g["visitor_box"]
+    if g.get("home_box"):
+        box["home"] = g["home_box"]
+    if box:
+        s["box"] = box
+    if "halftime" in status_l or "halftime" in time_l:
+        s["at_halftime"] = True
+        s["elapsed_min"] = 24.0
+        s["remaining_min"] = 24.0
+        s["pace_ppm"] = s["total"] / 24.0 if s["total"] else 0.0
+    elif "end of 3" in status_l or "end of 3" in time_l:
+        s["at_end_q3"] = True
+        s["elapsed_min"] = 36.0
+        s["remaining_min"] = 12.0
+        s["pace_ppm"] = s["total"] / 36.0 if s["total"] else 0.0
+    elif state == "in_progress" and period in (1, 2, 3, 4) and clock is not None:
         elapsed = (period - 1) * 12 + (12 - clock / 60.0)
         s["elapsed_min"] = elapsed
         s["remaining_min"] = max(0.0, 48 - elapsed)
         s["pace_ppm"] = s["total"] / elapsed if elapsed > 0 else 0.0
-        s["in_window"] = (period == 3 and clock <= Q3_TRIGGER_SECS) or \
-                         (period == 4 and clock >= Q4_MIN_SECS)
+        s["in_window"] = period == 4 and Q4_WINDOW_MIN <= clock <= Q4_WINDOW_MAX
+        if period == 3 and clock <= 20:
+            s["at_end_q3"] = True
+    elif state == "in_progress" and period and period > 4:
+        s["in_ot"] = True
+        s["elapsed_min"] = 48.0
+        s["remaining_min"] = 0.0
+        s["pace_ppm"] = s["total"] / 48.0 if s["total"] else 0.0
     return s
 
 
@@ -385,7 +425,6 @@ def reuben_fetch(st, odds_key, why):
         pass
     log(f"[Reuben Tishkoff] QUOTA: Odds API call #{st['odds_calls']} tonight ({why}); "
         f"x-requests-remaining={hl.get('x-requests-remaining')} used={hl.get('x-requests-used')}")
-    save_state(st)
     lines = {}
     for ev in data:
         for bk in ev.get("bookmakers", []):
@@ -403,6 +442,9 @@ def reuben_fetch(st, odds_key, why):
                         ln.setdefault("total", o.get("point"))
                 if ln.get("total") is not None:
                     lines[game_key(ev["away_team"], ev["home_team"])] = ln
+    if lines:
+        st.setdefault("last_lines", {}).update(lines)
+    save_state(st)
     return lines
 
 
@@ -436,19 +478,20 @@ def reuben_pregame(st, odds_key, games):
 # =============================================================================
 # AGENT 3 -- YEN: live totals quant;  AGENT 4 -- FRANK CATTON: risk + verdict
 # =============================================================================
-def yen_and_frank(g, line):
-    pace = g["pace_ppm"]
-    rate = PACE_WEIGHT * pace + (1 - PACE_WEIGHT) * BASELINE_PPM
-    rem = g["remaining_min"]
-    raw_proj = g["total"] + rem * rate
-    # Frank's inside angle
-    blowout = g["margin"] >= BLOWOUT_MARGIN
-    close = g["margin"] <= CLOSE_MARGIN
-    adj_rate = rate * (BLOWOUT_RATE_MULT if blowout else 1.0)
-    proj = g["total"] + rem * adj_rate + (CLOSE_FOUL_BUMP if close else 0.0)
+def yen_and_frank(g, line, pregame_total=None):
+    """Project the full-game total, then apply Frank's vetoes.
+
+    The projection does not slow a blowout or add points for a close game.
+    Frank still passes an OVER when the margin is 20+ and an UNDER when the
+    margin is 6 or less. Edge still has to clear 3.5.
+    """
+    pack = model.project_game(g, pregame_total)
+    proj = pack["proj"]
     edge = proj - line["total"]
     side = "OVER" if edge > 0 else "UNDER"
-    leader = g["home"] if g["home_score"] > g["away_score"] else g["away"]
+    p_over, p_under, p_push = model.ou_probabilities(proj, line["total"], pack["sd"])
+    blowout = g["margin"] >= BLOWOUT_MARGIN
+    close = g["margin"] <= CLOSE_MARGIN
     verdict, reason = side, ""
     if abs(edge) < MIN_EDGE:
         verdict, reason = "PASS / NO PLAY", f"edge {edge:+.1f} < {MIN_EDGE}"
@@ -456,18 +499,38 @@ def yen_and_frank(g, line):
         verdict, reason = "PASS / NO PLAY", "blowout contradicts OVER"
     elif close and side == "UNDER":
         verdict, reason = "PASS / NO PLAY", "close-game fouling contradicts UNDER"
-    if blowout:
-        note = (f"{leader} up {g['margin']} late — expect benches to empty in the 4th, "
-                f"so we trimmed the rest-of-game scoring rate {int(round((1-BLOWOUT_RATE_MULT)*100))}%.")
-    elif close:
-        note = (f"Only a {g['margin']}-point game — a tight finish brings intentional fouls and free throws, "
-                f"so we added ~{CLOSE_FOUL_BUMP:.0f} points to the projection.")
+    if verdict == "PASS / NO PLAY" and blowout and side == "OVER":
+        note = (f"{g['margin']}-point margin. Frank passes OVER in a blowout of {BLOWOUT_MARGIN}+. "
+                f"The projection itself is not slowed down for the blowout.")
+    elif verdict == "PASS / NO PLAY" and close and side == "UNDER":
+        note = (f"{g['margin']}-point game. Frank passes UNDER within {CLOSE_MARGIN}. "
+                f"The projection does not add a hard-coded foul bump.")
+    elif pack["model"] == "possession_estimate":
+        note = (f"{g['margin']}-point game. Possession estimate "
+                f"(FGA−OREB+TOV+0.44·FTA), shrunk toward the league baseline. "
+                f"No Frank veto.")
     else:
-        note = (f"{g['margin']}-point margin with no blowout or foul-up risk — "
-                f"pace of {pace:.2f} pts/min should hold into the 4th.")
-    return {"pace": pace, "rate": rate, "adj_rate": adj_rate, "raw_proj": raw_proj,
-            "proj": proj, "edge": edge, "blowout": blowout, "close": close,
-            "verdict": verdict, "reason": reason, "note": note}
+        note = (f"{g['margin']}-point game. Pace fallback (no live possession totals). "
+                f"No Frank veto.")
+    out = {
+        "pace": pack.get("pace") or 0.0,
+        "rate": (pack.get("detail") or {}).get("fallback_rate_ppm") or pack.get("pace") or 0.0,
+        "adj_rate": (pack.get("detail") or {}).get("fallback_rate_ppm") or pack.get("pace") or 0.0,
+        "raw_proj": pack["proj_regulation"],
+        "proj": proj,
+        "edge": edge,
+        "blowout": blowout,
+        "close": close,
+        "verdict": verdict,
+        "reason": reason,
+        "note": note,
+        "p_over": p_over,
+        "p_under": p_under,
+        "p_push": p_push,
+    }
+    out.update(pack)
+    out["proj"] = proj
+    return out
 
 
 # =============================================================================
@@ -484,6 +547,16 @@ def fmt_num(x):
     return f"{x:g}" if isinstance(x, (int, float)) else str(x)
 
 
+def fmt_prob(p):
+    if p is None:
+        return "n/a"
+    if p >= 0.99:
+        return ">99%"
+    if p <= 0.01:
+        return "<1%"
+    return f"{p:.0%}"
+
+
 def dell_format(g, line, res, pregame_total=None):
     e = html.escape
     qtxt = f"Q{g['period']} - {fmt_clock(g['clock_secs'])} left"
@@ -492,11 +565,37 @@ def dell_format(g, line, res, pregame_total=None):
         d = line["total"] - pregame_total
         move = f" (opened {fmt_num(pregame_total)}, {d:+g})"
     odds = line["over"] if res["verdict"] == "OVER" else line["under"]
+    call = res["verdict"]
+    if call in ("OVER", "UNDER"):
+        call = f"{call} {fmt_num(line['total'])}"
+    side_p = res.get("p_over") if res["verdict"] == "OVER" else res.get("p_under")
+    extra = ""
+    if res.get("lo_80") is not None and res["verdict"] in ("OVER", "UNDER") and side_p is not None:
+        kind = "possession estimate" if res.get("model") == "possession_estimate" else "pace fallback"
+        extra = (f"📐 UNCALIBRATED 80% {res['lo_80']:.0f}–{res['hi_80']:.0f}"
+                 f" · P({res['verdict']}) {fmt_prob(side_p)} · full-game incl. OT · {kind}\n")
     return (f"🏀 {e(g['away'])} @ {e(g['home'])} | {qtxt} | Score: {g['away_score']}-{g['home_score']}\n"
-            f"📊 FanDuel Live Line: Total {fmt_num(line['total'])} (Over {am(line['over'])} / Under {am(line['under'])}){move}\n"
-            f"🤖 Yen's Projected Total: {res['proj']:.1f}\n"
-            f"✅ FINAL CALL: <b>{res['verdict']}</b> ({am(odds)})\n"
+            f"📊 FanDuel Live Line: Total <b>{fmt_num(line['total'])}</b> "
+            f"(Over {am(line['over'])} / Under {am(line['under'])}){move}\n"
+            f"🤖 Yen's Projected Total: <b>{res['proj']:.1f}</b>\n"
+            f"✅ FINAL CALL: <b>{call}</b> ({am(odds)})\n"
+            f"{extra}"
             f"📝 Frank's Inside Note: {e(res['note'])}")
+
+
+def dell_buyout(g, gs, proj, p_side):
+    e = html.escape
+    if g.get("clock_secs") is not None:
+        clock = f"{fmt_clock(g['clock_secs'])} left"
+    else:
+        clock = g.get("raw_time") or "—"
+    return (f"⚠️ TAKE THE BUYOUT\n"
+            f"🏀 {e(g['away'])} @ {e(g['home'])} | Q{g['period']} - {clock} | "
+            f"Score: {g['away_score']}-{g['home_score']}\n"
+            f"Original call: <b>{gs['posted_side']} {fmt_num(gs['posted_line'])}</b>\n"
+            f"Updated projection: <b>{proj:.1f}</b> vs <b>{fmt_num(gs['posted_line'])}</b> "
+            f"(UNCALIBRATED P({gs['posted_side']}) {fmt_prob(p_side)})\n"
+            f"Advisory only. FanDuel cash-out prices are not in the API.")
 
 
 def dell_slate_text(games, pregame, sd):
@@ -511,7 +610,7 @@ def dell_slate_text(games, pregame, sd):
         ou = f" (O/U {fmt_num(tot)})" if tot is not None else ""
         rows.append(f"{t} – {html.escape(g['away_nick'])} @ {html.escape(g['home_nick'])}{ou}")
     return (f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
-            "\n\nLive Over/Under picks drop here once games hit the 3rd quarter 👀")
+            "\n\nLive Over/Under picks drop here in the 4th quarter, from 8:00 to 5:00 👀")
 
 
 def dell_post_slate(st, games, sd, tg_token, channel):
@@ -573,26 +672,305 @@ def evaluate(g, line, st, tg_token, channel):
         log(f"[Frank Catton] PASS / NO PLAY | {tag} | no FanDuel live total available (eval {gs['evals']})")
         save_state(st)
         return
-    res = yen_and_frank(g, line)
     pre = st["pregame"].get(game_key(g["away"], g["home"]))
-    mv = f" move {line['total'] - pre:+g} (pregame {pre})" if pre is not None else " move n/a"
-    log(f"[Yen] {tag} | pace {res['pace']:.2f} ppm, blended {res['rate']:.2f}, adj {res['adj_rate']:.2f}, "
-        f"{g['remaining_min']:.1f} min left -> proj {res['proj']:.1f} vs FanDuel {line['total']} "
-        f"(O {am(line['over'])}/U {am(line['under'])}){mv} edge {res['edge']:+.1f}")
+    res = yen_and_frank(g, line, pre)
+    _log_projection(g, res, line, pre, tag)
     log(f"[Frank Catton] {res['verdict']} | {tag} | blowout={res['blowout']} close={res['close']} "
-        f"{res['reason']} | eval {gs['evals']}/{MAX_EVALS_PER_GAME}")
+        f"{res['reason']} | model={res['model']} | eval {gs['evals']}/{MAX_EVALS_PER_GAME}")
     gs.setdefault("decisions", []).append({"at": now_et().isoformat(), "verdict": res["verdict"],
                                            "proj": round(res["proj"], 1), "line": line["total"],
-                                           "edge": round(res["edge"], 1)})
+                                           "edge": round(res["edge"], 1), "model": res["model"]})
     if res["verdict"] in ("OVER", "UNDER"):
         msg = dell_format(g, line, res, pre)
         if dell_post(msg, tg_token, channel):
             gs["posted"] = True
-            log(f"[Livingston Dell] posted {res['verdict']} for {g['away']} @ {g['home']}"
+            gs["posted_side"] = res["verdict"]
+            gs["posted_line"] = line["total"]
+            gs["posted_price"] = line["over"] if res["verdict"] == "OVER" else line["under"]
+            log(f"[Livingston Dell] posted {res['verdict']} {fmt_num(line['total'])} for {g['away']} @ {g['home']}"
                 f"{' (dry run)' if DRY_RUN else ''}")
         else:
             log(f"[Livingston Dell] FAILED to post {res['verdict']} for {g['away']} @ {g['home']}")
     save_state(st)
+
+
+def _log_projection(g, res, line, pre, tag):
+    mv = f" move {line['total'] - pre:+g} (pregame {pre})" if pre is not None else " move n/a"
+    miss = ",".join(res.get("missing_inputs") or [])
+    log(f"[Yen] {tag} | model={res['model']} {res['calibration']} | "
+        f"reg {res['proj_regulation']:.1f} + OT {res['expected_ot_points']:.1f} "
+        f"-> full {res['proj']:.1f} (80% {res['lo_80']:.1f}–{res['hi_80']:.1f}) "
+        f"vs FanDuel {line['total']} (O {am(line.get('over'))}/U {am(line.get('under'))}){mv} "
+        f"edge {res['edge']:+.1f} P(OVER)={res['p_over']:.2f} P(UNDER)={res['p_under']:.2f} "
+        f"P(push)={res['p_push']:.2f} | missing: {miss}")
+    for note in res.get("notes") or []:
+        log(f"[Yen] {tag} | {note}")
+
+
+def line_for(g, st, fresh):
+    """Prefer the line just fetched. Otherwise reuse the last stored line. No extra credit."""
+    key = game_key(g["away"], g["home"])
+    if fresh and key in fresh:
+        return fresh[key], "fresh"
+    cached = (st.get("last_lines") or {}).get(key)
+    if cached and cached.get("total") is not None:
+        return cached, "reused"
+    pre = (st.get("pregame") or {}).get(key)
+    if pre is not None:
+        return {"total": pre, "over": None, "under": None, "last_update": None}, "pregame_only"
+    return None, "unavailable"
+
+
+def _parse_update_age(iso):
+    if not iso:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return time.time() - dt.timestamp()
+
+
+def checkpoint_names(g, gs):
+    """Checkpoints whose clock we are on, or that we crossed since the last poll."""
+    done = set(gs.get("checkpoints") or [])
+    found = []
+    if g.get("at_halftime") and "halftime" not in done:
+        found.append(("halftime", "on_time"))
+    if g.get("at_end_q3") and "end_q3" not in done:
+        found.append(("end_q3", "on_time"))
+    clock = g.get("clock_secs")
+    if g.get("period") == 4 and clock is not None:
+        last = gs.get("last_clock")
+        last_period = gs.get("last_period")
+        nearest_name, nearest_target = min(CHECKPOINT_CLOCK, key=lambda item: abs(clock - item[1]))
+        if nearest_name not in done and abs(clock - nearest_target) <= 70:
+            found.append((nearest_name, "on_time"))
+        if last_period == 4 and last is not None and last > clock and (last - clock) <= 150:
+            for name, target in CHECKPOINT_CLOCK:
+                if name in done or any(hit[0] == name for hit in found):
+                    continue
+                if last >= target > clock:
+                    found.append((name, "crossed"))
+    return found
+
+
+def _quality(g, line, source):
+    issues = []
+    if g.get("away_score") is None or g.get("home_score") is None:
+        issues.append("score_missing")
+    elif (g.get("away_score") or 0) + (g.get("home_score") or 0) != g.get("total"):
+        issues.append("score_inconsistent")
+    if g.get("period") == 4 and g.get("clock_secs") is None:
+        issues.append("clock_missing")
+    if line is None or line.get("total") is None:
+        issues.append("line_missing")
+    else:
+        if line.get("over") is None or line.get("under") is None:
+            issues.append("price_missing")
+        age = _parse_update_age(line.get("last_update"))
+        if age is None:
+            issues.append("line_timestamp_unknown")
+        elif age > LINE_STALE_S:
+            issues.append("line_stale")
+    if not g.get("box"):
+        issues.append("lineup_missing")
+    else:
+        issues.append("lineup_not_live")  # box minutes are game totals, not the on-court five
+    return issues, source
+
+
+def checkpoints_path(sd):
+    suffix = "-dryrun" if DRY_RUN else ""
+    return os.path.join(state_dir(), f"checkpoints-{sd.isoformat()}{suffix}.json")
+
+
+def grades_path(sd):
+    suffix = "-dryrun" if DRY_RUN else ""
+    return os.path.join(state_dir(), f"grades-{sd.isoformat()}{suffix}.json")
+
+
+def load_checkpoints(sd):
+    p = checkpoints_path(sd)
+    if os.path.exists(p):
+        with open(p) as f:
+            return json.load(f)
+    return {"slate": sd.isoformat(), "calibration": model.CALIBRATION, "records": []}
+
+
+def save_checkpoints(sd, doc):
+    _write_json(checkpoints_path(sd), doc)
+
+
+def confirmed_index(sd):
+    """Rows Richie recorded, keyed by (game_id, checkpoint)."""
+    path = os.path.join(state_dir(), "confirmed-lines.csv")
+    out = {}
+    if not os.path.exists(path):
+        return out
+    with open(path, newline="") as f:
+        for row in csv.DictReader(f):
+            if (row.get("slate") or "") != sd.isoformat():
+                continue
+            key = (str(row.get("game_id") or ""), row.get("checkpoint") or "")
+            out[key] = row
+    return out
+
+
+def record_checkpoints(g, st, sd, fresh_lines):
+    gs = st["games"].setdefault(g["id"], {})
+    names = checkpoint_names(g, gs)
+    gs["last_clock"] = g.get("clock_secs")
+    gs["last_period"] = g.get("period")
+    if not names:
+        return
+    line, source = line_for(g, st, fresh_lines)
+    issues, source = _quality(g, line, source)
+    if "score_missing" in issues or "score_inconsistent" in issues:
+        log(f"[Yen] checkpoint skipped for {g['away']} @ {g['home']}: score not consistent")
+        return
+    if "clock_missing" in issues and g.get("period") == 4:
+        log(f"[Yen] checkpoint skipped for {g['away']} @ {g['home']}: clock missing")
+        return
+    pre = st.get("pregame", {}).get(game_key(g["away"], g["home"]))
+    market = line if line and line.get("total") is not None and source != "unavailable" else None
+    # Probabilities need a real number. Without one, still store the projection.
+    priced = market or {"total": g["total"], "over": None, "under": None}
+    res = yen_and_frank(g, priced, pre)
+    doc = load_checkpoints(sd)
+    confirmed = confirmed_index(sd)
+    logged = set(gs.get("checkpoints") or [])
+    for name, timing in names:
+        if name in logged:
+            continue
+        side = "OVER" if market and res["proj"] >= market["total"] else ("UNDER" if market else None)
+        row = {
+            "game_id": g["id"], "away": g["away"], "home": g["home"],
+            "checkpoint": name, "timing": timing,
+            "at": now_et().isoformat(),
+            "period": g.get("period"), "clock_secs": g.get("clock_secs"),
+            "away_score": g.get("away_score"), "home_score": g.get("home_score"),
+            "model": res["model"], "calibration": model.CALIBRATION,
+            "settlement": res["settlement"],
+            "proj": round(res["proj"], 2),
+            "proj_regulation": round(res["proj_regulation"], 2),
+            "expected_ot_points": round(res["expected_ot_points"], 2),
+            "lo_80": round(res["lo_80"], 2), "hi_80": round(res["hi_80"], 2),
+            "interval_label": model.CALIBRATION,
+            "p_over": round(res["p_over"], 4) if market else None,
+            "p_under": round(res["p_under"], 4) if market else None,
+            "p_push": round(res["p_push"], 4) if market else None,
+            "prob_label": model.CALIBRATION,
+            "model_side": side,
+            "line_total": market["total"] if market else None,
+            "line_over": market.get("over") if market else None,
+            "line_under": market.get("under") if market else None,
+            "line_status": source if market else "unavailable",
+            "line_last_update": market.get("last_update") if market else None,
+            "quality_issues": issues,
+            "missing_inputs": res["missing_inputs"],
+            "final_total": None,
+        }
+        conf = confirmed.get((g["id"], name))
+        if conf:
+            try:
+                row["confirmed_total"] = float(conf["confirmed_total"])
+                row["confirmed_side"] = (conf.get("confirmed_side") or "").upper()
+                row["confirmed_price"] = conf.get("confirmed_price") or None
+            except (TypeError, ValueError):
+                pass
+        doc["records"].append(row)
+        logged.add(name)
+        log(f"[Yen] checkpoint {name} ({timing}) {g['away']} @ {g['home']} "
+            f"proj {row['proj']:.1f} line {row['line_total']} status {row['line_status']} "
+            f"model {row['model']} issues={','.join(issues) or 'none'}")
+    gs["checkpoints"] = sorted(logged)
+    save_checkpoints(sd, doc)
+    save_state(st)
+
+
+def maybe_buyout(g, st, tg_token, channel):
+    """One advisory buyout per posted game. Uses the original number, not a new odds call."""
+    if g.get("state") != "in_progress":
+        return
+    gs = st["games"].get(g["id"]) or {}
+    if not gs.get("posted") or gs.get("buyout_posted"):
+        return
+    if g.get("period") not in (4, 5) and not g.get("in_ot"):
+        return
+    pre = st.get("pregame", {}).get(game_key(g["away"], g["home"]))
+    line = {"total": gs["posted_line"], "over": None, "under": None}
+    res = yen_and_frank(g, line, pre)
+    p_side = res["p_over"] if gs["posted_side"] == "OVER" else res["p_under"]
+    if not model.buyout_triggered(gs["posted_side"], res["proj"], gs["posted_line"], p_side):
+        return
+    msg = dell_buyout(g, gs, res["proj"], p_side)
+    if dell_post(msg, tg_token, channel):
+        gs["buyout_posted"] = True
+        log(f"[Livingston Dell] TAKE THE BUYOUT for {g['away']} @ {g['home']} "
+            f"(was {gs['posted_side']} {fmt_num(gs['posted_line'])}, proj now {res['proj']:.1f})"
+            f"{' (dry run)' if DRY_RUN else ''}")
+    else:
+        log(f"[Livingston Dell] FAILED to post buyout for {g['away']} @ {g['home']}")
+    save_state(st)
+
+
+def grade_slate(games, sd, st):
+    doc = load_checkpoints(sd)
+    finals = {}
+    for g in games:
+        if g.get("state") == "final":
+            finals[g["id"]] = g["total"]
+    if not finals:
+        return
+    changed = False
+    for rec in doc["records"]:
+        if rec.get("final_total") is None and rec.get("game_id") in finals:
+            rec["final_total"] = finals[rec["game_id"]]
+            rec["grade"] = model.grade_ou(rec["final_total"], rec.get("line_total"), rec.get("model_side"))
+            changed = True
+    if not changed and not any(r.get("final_total") is not None for r in doc["records"]):
+        return
+    if changed:
+        save_checkpoints(sd, doc)
+    summary = {
+        "slate": sd.isoformat(),
+        "calibration": model.CALIBRATION,
+        "baseline": {
+            "ppp": model.LEAGUE_PPP,
+            "poss_per_team": model.LEAGUE_POSS_PER_TEAM,
+            "sample_games": model.LEAGUE_SAMPLE_GAMES,
+            "season": model.LEAGUE_SEASON,
+            "interval": "UNCALIBRATED — full-game PPP dispersion, not checkpoint forecast errors",
+        },
+        "by_checkpoint": model.summarize_checkpoints(doc["records"]),
+    }
+    _write_json(grades_path(sd), summary)
+    parts = []
+    for name, row in sorted(summary["by_checkpoint"].items()):
+        mae = f"{row['mae']:.1f}" if row["mae"] is not None else "n/a"
+        cov = f"{row['interval_coverage']:.0%}" if row["interval_coverage"] is not None else "n/a"
+        hit = f"{row['ou_hit_rate']:.0%}" if row["ou_hit_rate"] is not None else "n/a"
+        parts.append(f"{name} n={row['n']} MAE={mae} cover={cov} hit={hit} pushes={row['ou_pushes']}")
+    signature = "; ".join(parts)
+    if signature and st.get("grade_sig") != signature:
+        st["grade_sig"] = signature
+        save_state(st)
+        log("[Yen] grade " + signature + " | probabilities remain UNCALIBRATED")
+
+
+def maybe_attach_box_scores(games, bdl_key, st, sd):
+    """ESPN public box scores for live possessions. BALLDONTLIE's free tier has no box."""
+    del bdl_key  # scoreboard still uses the BALLDONTLIE key; box stats do not
+    if os.environ.get("NBA_SKIP_BOX_SCORES") == "1":
+        return
+    before = json.dumps(st.get("espn") or {}, sort_keys=True)
+    for line in espn_box.attach_espn_boxes(games, st, sd):
+        log(line)
+    if json.dumps(st.get("espn") or {}, sort_keys=True) != before:
+        save_state(st)
 
 
 def tip_et(iso):
@@ -729,6 +1107,7 @@ def run(args):
             last_status = now_ts
         reuben_pregame(st, odds_key, games)           # one Odds API call per night, at startup
         dell_post_slate(st, games, sd, tg_token, channel)  # reuses that snapshot, no extra credits
+        maybe_attach_box_scores(games, bdl_key, st, sd)
         live = [g for g in games if g["state"] == "in_progress"]
         for g in live:
             if g["in_window"] and g["id"] not in st["games"]:
@@ -736,6 +1115,7 @@ def run(args):
                     f"{fmt_clock(g['clock_secs'])} score {g['away_score']}-{g['home_score']} "
                     f"pace {g['pace_ppm']:.2f} ppm ({g['elapsed_min']:.1f} min elapsed)")
         due = [g for g in live if g["in_window"] and due_for_eval(st["games"].get(g["id"], {}), time.time())]
+        lines = None
         if due:
             lines = reuben_fetch(st, odds_key, "live: " + ", ".join(f"{g['away']} @ {g['home']}" for g in due))
             if lines is None:
@@ -744,6 +1124,13 @@ def run(args):
             else:
                 for g in due:
                     evaluate(g, lines.get(game_key(g["away"], g["home"])), st, tg_token, channel)
+        # Checkpoints reuse last_lines / this poll's fetch. They do not add an Odds API call.
+        for g in games:
+            if g["state"] in ("in_progress", "final") or g.get("at_halftime") or g.get("at_end_q3"):
+                record_checkpoints(g, st, sd, lines)
+        for g in live:
+            maybe_buyout(g, st, tg_token, channel)
+        grade_slate(games, sd, st)
         polls += 1
         if all(g["state"] in FINAL_STATES for g in games):
             log(f"[Danny Ocean] all {len(games)} games final -- done for the night "
@@ -764,54 +1151,93 @@ def run(args):
 
 
 # ---- simulate ----------------------------------------------------------------
+def _sim_box(away_pts, home_pts, fga_a=78, fga_h=76):
+    return {
+        "away": {"fga": fga_a, "fta": 22, "oreb": 10, "tov": 12, "pts": away_pts},
+        "home": {"fga": fga_h, "fta": 20, "oreb": 9, "tov": 11, "pts": home_pts},
+    }
+
+
 def simulate():
     global DRY_RUN
     DRY_RUN = True
     print("=== SIMULATION: fabricated games, no Odds API / Telegram / BALLDONTLIE calls ===\n")
     print("Clock parser checks:", {t: parse_clock(t) for t in ["6:42", "Q3 6:42", "0:53.4", "53.4", "Halftime", "Final", " ", None]})
+    identity = model.project_equal_remaining(185, 10, 1.10, 1.10)
+    print(f"Possession identity: 185 + 10 x (1.10 + 1.10) = {identity:.0f}")
     fake = [
-        # fast-paced, mid margin -> OVER
+        # Q4 6:30, possession model, high pace -> OVER
         ({"id": 1, "visitor_team": {"full_name": "New York Knicks"}, "home_team": {"full_name": "Toronto Raptors"},
-          "visitor_team_score": 74, "home_team_score": 70, "period": 3, "time": "6:42",
-          "status": "3rd Qtr", "status_state": "in_progress", "datetime": "2026-11-18T00:30:00Z"},
+          "visitor_team_score": 110, "home_team_score": 104, "period": 4, "time": "6:30",
+          "status": "4th Qtr", "status_state": "in_progress", "datetime": "2026-11-18T00:30:00Z",
+          "visitor_box": _sim_box(110, 104)["away"], "home_box": _sim_box(110, 104)["home"]},
          {"total": 229.5, "over": -110, "under": -110}, 226.5),
-        # slow, close -> UNDER side contradicted by foul risk -> PASS
+        # Q4 6:00, close game whose projection is UNDER -> Frank PASS
         ({"id": 2, "visitor_team": {"full_name": "Detroit Pistons"}, "home_team": {"full_name": "San Antonio Spurs"},
-          "visitor_team_score": 66, "home_team_score": 63, "period": 3, "time": "Q3 4:10",
-          "status": "3rd Qtr", "status_state": "in_progress", "datetime": "2026-11-18T01:00:00Z"},
-         {"total": 214.5, "over": -112, "under": -108}, 222.5),
-        # slow blowout -> UNDER
+          "visitor_team_score": 90, "home_team_score": 94, "period": 4, "time": "6:00",
+          "status": "4th Qtr", "status_state": "in_progress", "datetime": "2026-11-18T01:00:00Z"},
+         {"total": 230.5, "over": -112, "under": -108}, 222.5),
+        # Q4 6:00 blowout, projection UNDER -> play (Frank only blocks OVER in a blowout)
         ({"id": 3, "visitor_team": {"full_name": "Utah Jazz"}, "home_team": {"full_name": "LA Clippers"},
-          "visitor_team_score": 58, "home_team_score": 84, "period": 3, "time": "2:15",
-          "status": "3rd Qtr", "status_state": "in_progress", "datetime": "2026-11-18T03:30:00Z"},
-         {"total": 207.5, "over": -105, "under": -115}, 221.5),
-        # not yet in window (Q3 9:30)
+          "visitor_team_score": 70, "home_team_score": 100, "period": 4, "time": "6:00",
+          "status": "4th Qtr", "status_state": "in_progress", "datetime": "2026-11-18T03:30:00Z"},
+         {"total": 220.5, "over": -105, "under": -115}, 221.5),
+        # Q4 9:30 is outside the 8:00-5:00 testing window
         ({"id": 4, "visitor_team": {"full_name": "Portland Trail Blazers"}, "home_team": {"full_name": "Minnesota Timberwolves"},
-          "visitor_team_score": 60, "home_team_score": 62, "period": 3, "time": "9:30",
-          "status": "3rd Qtr", "status_state": "in_progress", "datetime": "2026-11-18T01:00:00Z"},
+          "visitor_team_score": 90, "home_team_score": 92, "period": 4, "time": "9:30",
+          "status": "4th Qtr", "status_state": "in_progress", "datetime": "2026-11-18T01:00:00Z"},
          None, None),
     ]
-    sim_games = [scout(dict(r, status_state="scheduled", period=0, time=None)) for r, _, _ in fake]
+    sim_games = [scout(dict(r, status_state="scheduled", period=0, time=None,
+                            visitor_box=None, home_box=None)) for r, _, _ in fake]
     sim_pre = {game_key(g["away"], g["home"]): p for g, (_, _, p) in zip(sim_games, fake) if p is not None}
     print("\n## Slate card (Livingston Dell):")
     dell_post(dell_slate_text(sim_games, sim_pre, date(2026, 11, 18)), "", "")
+    posted = None
     for raw, line, pre in fake:
         g = scout(raw)
         print(f"\n## {g['away']} @ {g['home']}  Q{g['period']} {raw['time']!r} -> clock {g['clock_secs']}s, "
-              f"in_window={g['in_window']}")
+              f"in_window={g['in_window']} model_inputs={'box' if g.get('box') else 'pace fallback'}")
+        names = checkpoint_names(g, {})
+        if names:
+            print(f"   checkpoint: {', '.join(n for n, _ in names)}")
         if not g["in_window"]:
             print("   Rusty: not in trigger window -> Reuben is NOT called")
             continue
-        r = yen_and_frank(g, line)
-        print(f"   Rusty: score {g['away_score']}-{g['home_score']} (total {g['total']}), elapsed {g['elapsed_min']:.2f} min, "
-              f"remaining {g['remaining_min']:.2f} min, pace {r['pace']:.3f} ppm")
-        print(f"   Reuben: FanDuel {line['total']} (O {am(line['over'])}/U {am(line['under'])}), pregame {pre}, move {line['total']-pre:+g}")
-        print(f"   Yen: blended = 0.6*{r['pace']:.3f} + 0.4*{BASELINE_PPM} = {r['rate']:.3f}; adj rate {r['adj_rate']:.3f}; "
-              f"raw proj {r['raw_proj']:.1f}; final proj {r['proj']:.1f}; edge {r['edge']:+.1f}")
+        r = yen_and_frank(g, line, pre)
+        print(f"   Rusty: score {g['away_score']}-{g['home_score']} (total {g['total']}), "
+              f"elapsed {g['elapsed_min']:.2f} min, remaining {g['remaining_min']:.2f} min")
+        print(f"   Reuben: FanDuel {line['total']} (O {am(line['over'])}/U {am(line['under'])}), pregame {pre}")
+        print(f"   Yen: {r['model']} {r['calibration']} settlement={r['settlement']} "
+              f"reg {r['proj_regulation']:.1f} + OT {r['expected_ot_points']:.1f} "
+              f"-> {r['proj']:.1f} 80% {r['lo_80']:.1f}–{r['hi_80']:.1f} "
+              f"edge {r['edge']:+.1f} P(OVER)={r['p_over']:.2f} P(UNDER)={r['p_under']:.2f} P(push)={r['p_push']:.2f}")
+        print(f"   missing: {', '.join(r['missing_inputs'])}")
         print(f"   Frank: blowout={r['blowout']} close={r['close']} -> {r['verdict']} {r['reason']}")
         print(f"   Frank's note: {r['note']}")
         if r["verdict"] in ("OVER", "UNDER"):
             dell_post(dell_format(g, line, r, pre), "", "")
+            if posted is None and r["verdict"] == "OVER":
+                posted = (g, line, r)
+    if posted:
+        g, line, r = posted
+        cold = scout({
+            "id": 1, "visitor_team": {"full_name": g["away"]}, "home_team": {"full_name": g["home"]},
+            "visitor_team_score": g["away_score"], "home_team_score": g["home_score"],
+            "period": 4, "time": "1:00", "status": "4th Qtr", "status_state": "in_progress",
+            "datetime": "2026-11-18T00:30:00Z",
+        })
+        gs = {"posted": True, "posted_side": "OVER", "posted_line": line["total"], "buyout_posted": False}
+        later = yen_and_frank(cold, {"total": line["total"], "over": line["over"], "under": line["under"]}, 226.5)
+        print(f"\n## Buyout check at Q4 1:00, score unchanged {cold['away_score']}-{cold['home_score']}, "
+              f"proj {later['proj']:.1f} vs {line['total']}")
+        if model.buyout_triggered("OVER", later["proj"], line["total"], later["p_over"]):
+            dell_post(dell_buyout(cold, gs, later["proj"], later["p_over"]), "", "")
+        else:
+            print("   buyout threshold not met")
+    # Integer-line push, shown so the rule is visible in the simulate log.
+    print(f"\n## Integer line: final 210 vs 210 -> {model.grade_ou(210, 210, 'OVER')}; "
+          f"211 vs 210.5 OVER -> {model.grade_ou(211, 210.5, 'OVER')}")
 
 
 def main():
@@ -822,9 +1248,19 @@ def main():
     ap.add_argument("--simulate", action="store_true")
     ap.add_argument("--slate-preview", action="store_true",
                     help="print tonight's slate card using stored pregame totals; no Odds API/Telegram")
+    ap.add_argument("--grade", action="store_true",
+                    help="print the checkpoint grade summary already stored for a slate; no network")
     a = ap.parse_args()
     if a.simulate:
         return simulate()
+    if a.grade:
+        sd = slate_date()
+        path = grades_path(sd)
+        if not os.path.exists(path):
+            print(f"no grades file at {path}")
+            return
+        print(open(path).read())
+        return
     DRY_RUN = a.dry_run
     run(a)
 

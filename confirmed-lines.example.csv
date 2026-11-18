@@ -1,0 +1,2 @@
+slate,game_id,away,home,checkpoint,confirmed_total,confirmed_side,confirmed_price,note
+2026-11-18,18447166,New York Knicks,Toronto Raptors,q4_6:30,229.5,OVER,-110,example only — the live file is confirmed-lines.csv on the state branch
