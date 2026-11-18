@@ -13,7 +13,7 @@ flock 9
 
 shopt -s nullglob
 files=()
-for f in "$STATE_DIR"/state-*.json "$STATE_DIR"/checkpoints-*.json "$STATE_DIR"/grades-*.json "$STATE_DIR"/confirmed-lines.csv; do
+for f in "$STATE_DIR"/state-*.json "$STATE_DIR"/checkpoints-*.json "$STATE_DIR"/grades-*.json "$STATE_DIR"/record.json "$STATE_DIR"/record-dryrun.json "$STATE_DIR"/confirmed-lines.csv; do
   if [ -f "$f" ]; then
     files+=("$f")
   fi
@@ -51,7 +51,7 @@ dates=""
 for f in "${files[@]}"; do
   base=$(basename "$f")
   case "$base" in
-    state-*.json|checkpoints-*.json|grades-*.json|confirmed-lines.csv) ;;
+    state-*.json|checkpoints-*.json|grades-*.json|record.json|record-dryrun.json|confirmed-lines.csv) ;;
     *) continue ;;
   esac
   if grep -Eiq 'api[_-]?key|telegram_bot|x-access-token|/bot[0-9]+:' "$f"; then
