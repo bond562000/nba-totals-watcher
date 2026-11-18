@@ -59,6 +59,20 @@ Accepted clock, so a late cron still runs and the other DST offset does not:
 
 On a normal weekday the slate job posts, takes the one pregame Odds API snapshot, sees no afternoon tip, and exits. The evening job reuses that snapshot.
 
+The noon runs on Nov 18 never started. The workflow file reached `main` at 11:14 AM ET, after the 11:05 AM EDT-offset cron and only minutes before GitHub would have had to register the new schedule. The 12:05 and 12:30 PM EST crons are not in the Actions history. GitHub often skips the first scheduled fires after a workflow is added to the default branch; the cron expressions themselves are valid, and a manual run at 3:55 PM ET is what posted the slate. An evening or manual run still posts the slate when `slate_posted` is false, so a missed noon cron does not drop the card. The schedule is unchanged in this update.
+
+## CourtSide record
+
+The slate post opens with the running record of every OVER/UNDER the watcher has posted, graded on the official final including overtime. A push is shown only when one has happened. Win percentage ignores pushes. The streak skips pushes. Last night is one line. Buyouts do not change the grade, and a second call for the same game is ignored. PASS / NO PLAY is not a result. Confirmed bets from **Record confirmed line** are graded in `record.json` and are not part of the headline.
+
+```
+<b>CourtSide Picks (1-2 · 33% · L2)</b>
+Last night: ✅ Knicks/Raptors O 210.5 ❌ Blazers/Wolves U 207.5 ❌ Jazz/Clippers O 242.5
+🏀 Tonight's NBA Slate (Nov 18)
+```
+
+The Nov 17 seeds are in `recordbook.py`, checked against the ESPN scoreboard: Knicks 111–Raptors 102 (213) covered OVER 210.5; Blazers 105–Timberwolves 106 (211) missed UNDER 207.5; Jazz 132–Clippers 107 (239) missed OVER 242.5. The 12:04 AM post fits the Jazz tip at 10:30 PM, not the Hornets tip at 11:00 PM.
+
 ## State
 
 Slate state lives on a branch named `state`, as `state-YYYY-MM-DD.json` (the NBA date, which stays on the previous calendar date until 6:00 AM ET). The file holds:

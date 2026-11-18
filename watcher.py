@@ -26,6 +26,7 @@ from zoneinfo import ZoneInfo
 
 import espn_box
 import model
+import recordbook
 
 ET = ZoneInfo("America/New_York")
 BDL_URL = "https://api.balldontlie.io/v1/games"
@@ -598,7 +599,94 @@ def dell_buyout(g, gs, proj, p_side):
             f"Advisory only. FanDuel cash-out prices are not in the API.")
 
 
-def dell_slate_text(games, pregame, sd):
+def picks_record_path():
+    suffix = "-dryrun" if DRY_RUN else ""
+    return os.path.join(state_dir(), f"record{suffix}.json")
+
+
+def load_picks_record():
+    path = picks_record_path()
+    if os.path.exists(path):
+        with open(path) as f:
+            record = json.load(f)
+        record.setdefault("calls", [])
+        record.setdefault("confirmed", [])
+        return record
+    return recordbook.empty_record()
+
+
+def save_picks_record(record):
+    _write_json(picks_record_path(), record)
+
+
+_ESPN_FINAL_CACHE = {}
+
+
+def espn_final_for(call):
+    """Final score from the public scoreboard for an older slate. None if it is not final."""
+    slate = call.get("slate")
+    if not slate or os.environ.get("NBA_SKIP_RECORD_FETCH") == "1":
+        return None
+    if slate not in _ESPN_FINAL_CACHE:
+        payload, code, _ = espn_box.fetch_json(
+            f"{espn_box.SCOREBOARD}?dates={slate.replace('-', '')}")
+        events = espn_box.parse_scoreboard(payload) if payload and code == 200 else []
+        _ESPN_FINAL_CACHE[slate] = events
+    event = espn_box.match_event({"away": call.get("away"), "home": call.get("home")}, _ESPN_FINAL_CACHE[slate])
+    if event and event.get("state") == "final" and event.get("away_score") is not None:
+        return event["away_score"], event["home_score"]
+    return None
+
+
+def refresh_picks_record(st, games):
+    """Grade finished calls, including seeds and any night whose state file is on disk."""
+    record = load_picks_record()
+    recordbook.ensure_seeds(record)
+    recordbook.ingest_state(record, st, games)
+    for name in os.listdir(state_dir()) if os.path.isdir(state_dir()) else []:
+        if not name.startswith("state-") or not name.endswith(".json") or name.endswith(".tmp"):
+            continue
+        try:
+            with open(os.path.join(state_dir(), name)) as f:
+                saved = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            continue
+        recordbook.ingest_state(record, saved, games)
+    recordbook.ingest_confirmed(record, _confirmed_rows())
+    extra = {}
+    by_id = recordbook.games_index(games)
+    for bucket in (record["calls"], record.get("confirmed") or []):
+        for call in bucket:
+            if call.get("result") in ("win", "loss", "push"):
+                continue
+            gid = str(call.get("game_id"))
+            game = by_id.get(gid)
+            if game and game.get("state") != "final":
+                continue
+            if game and game.get("state") == "final":
+                continue
+            if gid in recordbook.SEED_FINALS:
+                continue
+            scores = espn_final_for(call)
+            if scores:
+                extra[gid] = scores
+    recordbook.grade_ready(record, by_id, extra)
+    save_picks_record(record)
+    wins, losses, pushes = recordbook.tally(record["calls"])
+    log_once("picks-record",
+             f"[Livingston Dell] CourtSide Picks {recordbook.record_string(wins, losses, pushes)}")
+    return record
+
+
+def _confirmed_rows():
+    path = os.path.join(state_dir(), "confirmed-lines.csv")
+    if not os.path.exists(path):
+        return []
+    with open(path, newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def dell_slate_text(games, pregame, sd, record=None):
     """Livingston Dell's daily slate card. games = scouted dicts; pregame = {game_key: total}."""
     gs = sorted(games, key=lambda g: g["tip"] or "9999")
     tips = [datetime.fromisoformat(g["tip"].replace("Z", "+00:00")).astimezone(ET) for g in gs if g["tip"]]
@@ -609,15 +697,17 @@ def dell_slate_text(games, pregame, sd):
         tot = pregame.get(game_key(g["away"], g["home"]))
         ou = f" (O/U {fmt_num(tot)})" if tot is not None else ""
         rows.append(f"{t} – {html.escape(g['away_nick'])} @ {html.escape(g['home_nick'])}{ou}")
-    return (f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
+    brand = recordbook.format_header(record, sd) if record else ""
+    return (brand + f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
             "\n\nLive Over/Under picks drop here in the 4th quarter, from 8:00 to 5:00 👀")
 
 
 def dell_post_slate(st, games, sd, tg_token, channel):
     """Post the slate once per slate date (state flag slate_posted)."""
+    record = refresh_picks_record(st, games)
     if st.get("slate_posted") or not games:
         return
-    text = dell_slate_text(games, st.get("pregame", {}), sd)
+    text = dell_slate_text(games, st.get("pregame", {}), sd, record)
     if dell_post(text, tg_token, channel):
         st["slate_posted"] = True
         log(f"[Livingston Dell] slate posted ({len(games)} games){' (dry run)' if DRY_RUN else ''}")
@@ -687,6 +777,10 @@ def evaluate(g, line, st, tg_token, channel):
             gs["posted_side"] = res["verdict"]
             gs["posted_line"] = line["total"]
             gs["posted_price"] = line["over"] if res["verdict"] == "OVER" else line["under"]
+            gs["away"] = g["away"]
+            gs["home"] = g["home"]
+            gs["away_nick"] = g["away_nick"]
+            gs["home_nick"] = g["home_nick"]
             log(f"[Livingston Dell] posted {res['verdict']} {fmt_num(line['total'])} for {g['away']} @ {g['home']}"
                 f"{' (dry run)' if DRY_RUN else ''}")
         else:
@@ -1131,6 +1225,7 @@ def run(args):
         for g in live:
             maybe_buyout(g, st, tg_token, channel)
         grade_slate(games, sd, st)
+        refresh_picks_record(st, games)
         polls += 1
         if all(g["state"] in FINAL_STATES for g in games):
             log(f"[Danny Ocean] all {len(games)} games final -- done for the night "
@@ -1192,7 +1287,10 @@ def simulate():
                             visitor_box=None, home_box=None)) for r, _, _ in fake]
     sim_pre = {game_key(g["away"], g["home"]): p for g, (_, _, p) in zip(sim_games, fake) if p is not None}
     print("\n## Slate card (Livingston Dell):")
-    dell_post(dell_slate_text(sim_games, sim_pre, date(2026, 11, 18)), "", "")
+    seeded = recordbook.empty_record()
+    recordbook.ensure_seeds(seeded)
+    recordbook.grade_ready(seeded, {})
+    dell_post(dell_slate_text(sim_games, sim_pre, date(2026, 11, 18), seeded), "", "")
     posted = None
     for raw, line, pre in fake:
         g = scout(raw)
