@@ -50,12 +50,14 @@ class WatcherTestCase(unittest.TestCase):
         self.tmp = tempfile.mkdtemp(prefix="nba-watch-")
         self._env = {}
         for key in ("NBA_STATE_DIR", "NBA_LOG_PATH", "NBA_SLOT", "NBA_BASE",
-                    "NBA_MAX_POLLS", "NBA_MAX_RUNTIME_S", "BALLDONTLIE_API_KEY",
-                    "TELEGRAM_BOT_TOKEN", "ODDS_API_KEY", "TELEGRAM_CHANNEL_ID"):
+                    "NBA_MAX_POLLS", "NBA_MAX_RUNTIME_S", "NBA_SKIP_BOX_SCORES",
+                    "BALLDONTLIE_API_KEY", "TELEGRAM_BOT_TOKEN", "ODDS_API_KEY",
+                    "TELEGRAM_CHANNEL_ID"):
             self._env[key] = os.environ.get(key)
         os.environ["NBA_STATE_DIR"] = self.tmp
         os.environ["NBA_LOG_PATH"] = os.path.join(self.tmp, "watcher.log")
         os.environ["NBA_SLOT"] = "manual"
+        os.environ["NBA_SKIP_BOX_SCORES"] = "1"
         os.environ.pop("NBA_MAX_POLLS", None)
         os.environ.pop("NBA_MAX_RUNTIME_S", None)
         watcher.DRY_RUN = False
@@ -248,34 +250,71 @@ class WatcherTestCase(unittest.TestCase):
         self.assertEqual(st["odds_calls"], 1)
 
     def test_trigger_window_and_frank_rules(self):
-        over = watcher.scout(_raw(
-            1, "New York Knicks", "Toronto Raptors", 74, 70, 3, "6:42",
+        # Alert window is Q4 with 8:00 through 5:00 left. Q3 is logged, not alerted.
+        q3 = watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 3, "6:42",
             "in_progress", KNICKS_TIP, "3rd Qtr"))
-        self.assertTrue(over["in_window"])
-        self.assertLessEqual(over["clock_secs"], watcher.Q3_TRIGGER_SECS)
-        res = watcher.yen_and_frank(over, {"total": 229.5, "over": -110, "under": -110})
+        self.assertFalse(q3["in_window"])
+        inside = watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 4, "6:30",
+            "in_progress", KNICKS_TIP, "4th Qtr"))
+        self.assertTrue(inside["in_window"])
+        self.assertTrue(watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 4, "8:00",
+            "in_progress", KNICKS_TIP, "4th Qtr"))["in_window"])
+        self.assertTrue(watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 4, "5:00",
+            "in_progress", KNICKS_TIP, "4th Qtr"))["in_window"])
+        self.assertFalse(watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 4, "9:30",
+            "in_progress", KNICKS_TIP, "4th Qtr"))["in_window"])
+        self.assertFalse(watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 4, "4:00",
+            "in_progress", KNICKS_TIP, "4th Qtr"))["in_window"])
+        for clock, name in (("8:00", "q4_8:00"), ("6:30", "q4_6:30"), ("5:00", "q4_5:00"), ("2:00", "q4_2:00")):
+            sample = watcher.scout(_raw(
+                9, "Boston Celtics", "Miami Heat", 100, 98, 4, clock,
+                "in_progress", KNICKS_TIP, "4th Qtr"))
+            self.assertEqual([n for n, _ in watcher.checkpoint_names(sample, {})], [name])
+        self.assertEqual(watcher.checkpoint_names(watcher.scout(_raw(
+            9, "Boston Celtics", "Miami Heat", 90, 88, 4, "9:30",
+            "in_progress", KNICKS_TIP, "4th Qtr")), {}), [])
+        half = watcher.scout(_raw(
+            9, "Boston Celtics", "Miami Heat", 55, 52, 2, "Halftime",
+            "in_progress", KNICKS_TIP, "Halftime"))
+        self.assertEqual([n for n, _ in watcher.checkpoint_names(half, {})], ["halftime"])
+        end_q3 = watcher.scout(_raw(
+            9, "Boston Celtics", "Miami Heat", 80, 78, 3, "0:00",
+            "in_progress", KNICKS_TIP, "End of 3rd"))
+        self.assertEqual([n for n, _ in watcher.checkpoint_names(end_q3, {})], ["end_q3"])
+
+        res = watcher.yen_and_frank(inside, {"total": 229.5, "over": -110, "under": -110})
         self.assertGreaterEqual(abs(res["edge"]), watcher.MIN_EDGE)
         self.assertEqual(res["verdict"], "OVER")
-        self.assertTrue(res["close"])
-        self.assertFalse(res["blowout"])
-        card = watcher.dell_format(over, {"total": 229.5, "over": -110, "under": -110}, res, 226.5)
-        self.assertIn("FINAL CALL: <b>OVER</b>", card)
+        self.assertEqual(res["model"], "pace_fallback")
+        self.assertEqual(res["calibration"], "UNCALIBRATED")
+        self.assertEqual(res["settlement"], "full_game_including_ot")
+        card = watcher.dell_format(inside, {"total": 229.5, "over": -110, "under": -110}, res, 226.5)
+        self.assertIn("FINAL CALL: <b>OVER 229.5</b>", card)
+        self.assertIn("Total <b>229.5</b>", card)
+        self.assertIn("Projected Total: <b>", card)
         self.assertIn("New York Knicks @ Toronto Raptors", card)
         self.assertIn("opened 226.5", card)
+        self.assertIn("UNCALIBRATED", card)
 
         close_under = watcher.scout(_raw(
-            2, "Detroit Pistons", "San Antonio Spurs", 66, 63, 3, "Q3 4:10",
-            "in_progress", "2026-11-18T01:00:00Z", "3rd Qtr"))
-        res = watcher.yen_and_frank(close_under, {"total": 214.5, "over": -112, "under": -108})
+            2, "Detroit Pistons", "San Antonio Spurs", 90, 94, 4, "6:00",
+            "in_progress", "2026-11-18T01:00:00Z", "4th Qtr"))
+        res = watcher.yen_and_frank(close_under, {"total": 230.5, "over": -112, "under": -108})
         self.assertLess(res["edge"], 0)
         self.assertEqual(res["verdict"], "PASS / NO PLAY")
         self.assertIn("close-game fouling", res["reason"])
 
         blowout = watcher.scout(_raw(
-            3, "Utah Jazz", "LA Clippers", 58, 84, 3, "2:15",
-            "in_progress", "2026-11-18T03:30:00Z", "3rd Qtr"))
+            3, "Utah Jazz", "LA Clippers", 70, 100, 4, "6:00",
+            "in_progress", "2026-11-18T03:30:00Z", "4th Qtr"))
         self.assertGreaterEqual(blowout["margin"], watcher.BLOWOUT_MARGIN)
-        res = watcher.yen_and_frank(blowout, {"total": 207.5, "over": -105, "under": -115})
+        res = watcher.yen_and_frank(blowout, {"total": 220.5, "over": -105, "under": -115})
         self.assertEqual(res["verdict"], "UNDER")
         self.assertTrue(res["blowout"])
         # Same spot with a total low enough that the side would be OVER: Frank passes.
@@ -284,34 +323,28 @@ class WatcherTestCase(unittest.TestCase):
         self.assertEqual(forced["verdict"], "PASS / NO PLAY")
         self.assertIn("blowout contradicts OVER", forced["reason"])
 
-        early = watcher.scout(_raw(
-            4, "Portland Trail Blazers", "Minnesota Timberwolves", 60, 62, 3, "9:30",
-            "in_progress", "2026-11-18T01:00:00Z", "3rd Qtr"))
-        self.assertFalse(early["in_window"])
-        self.assertGreater(early["clock_secs"], watcher.Q3_TRIGGER_SECS)
-
-        q4 = watcher.scout(_raw(
-            5, "Boston Celtics", "Miami Heat", 90, 88, 4, "9:30",
-            "in_progress", KNICKS_TIP, "4th Qtr"))
-        self.assertTrue(q4["in_window"])
-        q4_late = watcher.scout(_raw(
-            6, "Boston Celtics", "Miami Heat", 100, 98, 4, "8:00",
-            "in_progress", KNICKS_TIP, "4th Qtr"))
-        self.assertFalse(q4_late["in_window"])
-
     def test_dry_run_posts_once_and_mocks_odds(self):
         """End-to-end dry run: scripted scoreboard, mocked Odds API, no Telegram."""
         scheduled = watcher.scout(_raw(
             11, "New York Knicks", "Toronto Raptors", 0, 0, 0, None,
             "scheduled", KNICKS_TIP))
         live = watcher.scout(_raw(
-            11, "New York Knicks", "Toronto Raptors", 74, 70, 3, "6:42",
-            "in_progress", KNICKS_TIP, "3rd Qtr"))
+            11, "New York Knicks", "Toronto Raptors", 110, 104, 4, "6:30",
+            "in_progress", KNICKS_TIP, "4th Qtr",
+        ))
+        live["box"] = {
+            "away": {"fga": 78, "fta": 22, "oreb": 10, "tov": 12, "pts": 110},
+            "home": {"fga": 76, "fta": 20, "oreb": 9, "tov": 11, "pts": 104},
+        }
+        cold = watcher.scout(_raw(
+            11, "New York Knicks", "Toronto Raptors", 110, 104, 4, "1:00",
+            "in_progress", KNICKS_TIP, "4th Qtr"))
         final = watcher.scout(_raw(
             11, "New York Knicks", "Toronto Raptors", 110, 108, 4, "Final",
             "final", KNICKS_TIP, "Final"))
-        # Second live sample is still inside the window but already posted.
-        polls = iter([[scheduled], [live], [live], [final]])
+        # Hot Q4 sample posts the OVER. The cold 1:00 sample is outside the alert
+        # window, so it must not spend another Odds API call, and it should buy out.
+        polls = iter([[scheduled], [live], [cold], [final]])
 
         def fake_poll(_key, _sd):
             return next(polls)
@@ -360,8 +393,13 @@ class WatcherTestCase(unittest.TestCase):
         self.assertEqual(urls, [])
         self.assertEqual(odds_calls["n"], 2)  # one pregame, one live
         self.assertEqual(text.count("reusing saved pregame totals"), 1)
-        self.assertEqual(text.count("DRY RUN, would post"), 2)  # slate + one pick
-        self.assertIn("FINAL CALL: <b>OVER</b>", text)
+        self.assertEqual(text.count("DRY RUN, would post"), 3)  # slate + one pick + one buyout
+        self.assertEqual(text.count("FINAL CALL:"), 1)
+        self.assertIn("FINAL CALL: <b>OVER 229.5</b>", text)
+        self.assertIn("possession_estimate", text)
+        self.assertIn("checkpoint q4_6:30", text)
+        self.assertIn("TAKE THE BUYOUT", text)
+        self.assertIn("Original call: <b>OVER 229.5</b>", text)
         self.assertIn("Tonight's NBA Slate", text)
         self.assertNotIn("api.telegram.org", text)
         state = json.loads(Path(self.tmp, "state-2026-11-18-dryrun.json").read_text())
@@ -370,6 +408,7 @@ class WatcherTestCase(unittest.TestCase):
         self.assertEqual(state["pregame"]["knicks@raptors"], 226.5)
         self.assertEqual(state["odds_calls"], 2)
         self.assertTrue(state["games"]["11"]["posted"])
+        self.assertTrue(state["games"]["11"]["buyout_posted"])
         self.assertEqual(state["games"]["11"]["evals"], 1)
         # The pregame credit is recorded on the live file; the posted flags are not.
         live = json.loads(Path(self.tmp, "state-2026-11-18.json").read_text())
@@ -543,8 +582,11 @@ class WatcherTestCase(unittest.TestCase):
         finally:
             watcher.urllib.request.urlopen = orig
         self.assertIn("no Odds API / Telegram / BALLDONTLIE", text)
-        self.assertIn("FINAL CALL: <b>OVER</b>", text)
-        self.assertIn("FINAL CALL: <b>UNDER</b>", text)
+        self.assertIn("FINAL CALL: <b>OVER 229.5</b>", text)
+        self.assertIn("FINAL CALL: <b>UNDER 220.5</b>", text)
+        self.assertIn("TAKE THE BUYOUT", text)
+        self.assertIn("checkpoint: q4_6:30", text)
+        self.assertIn("UNCALIBRATED", text)
         self.assertIn("PASS / NO PLAY", text)
         self.assertIn("close-game fouling contradicts UNDER", text)
         self.assertIn("not in trigger window", text)
@@ -556,8 +598,10 @@ class WatcherTestCase(unittest.TestCase):
             [sys.executable, str(ROOT / "watcher.py"), "--simulate"],
             check=True, capture_output=True, text=True, cwd=ROOT,
         )
-        self.assertIn("FINAL CALL: <b>OVER</b>", proc.stdout)
-        self.assertIn("FINAL CALL: <b>UNDER</b>", proc.stdout)
+        self.assertIn("FINAL CALL: <b>OVER 229.5</b>", proc.stdout)
+        self.assertIn("FINAL CALL: <b>UNDER 220.5</b>", proc.stdout)
+        self.assertIn("TAKE THE BUYOUT", proc.stdout)
+        self.assertIn("= 207", proc.stdout)
         self.assertEqual(proc.stderr, "")
 
     def test_state_branch_roundtrip(self):

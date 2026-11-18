@@ -21,7 +21,9 @@ fi
 stage=$(mktemp -d)
 git archive origin/state | tar -x -C "$stage"
 shopt -s nullglob
-for f in "$stage"/state-*.json; do
-  cp "$f" "$STATE_DIR/"
+for f in "$stage"/state-*.json "$stage"/checkpoints-*.json "$stage"/grades-*.json "$stage"/confirmed-lines.csv; do
+  if [ -f "$f" ]; then
+    cp "$f" "$STATE_DIR/"
+  fi
 done
 rm -rf "$stage"
