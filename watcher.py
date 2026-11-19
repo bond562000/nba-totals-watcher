@@ -37,27 +37,39 @@ POLL_LIVE_S = 60          # BALLDONTLIE free tier ~5 req/min -> never faster tha
 POLL_IDLE_S = 180         # nothing in progress yet
 BASELINE_PPM = 4.75       # combined pts/min (~228 / 48)
 PACE_WEIGHT = 0.6         # blended = 0.6*pace + 0.4*baseline
-MIN_EDGE = 3.5
-BLOWOUT_MARGIN = 20
+MIN_EDGE = 3.5          # full play in the Q4 8:00–5:00 window
+LEAN_EDGE = 3.0         # lean in that same window
+Q3_FULL_EDGE = 5.0      # full play from Q3 2:00 through the start of Q4
+Q3_LEAN_EDGE = 4.5      # lean in that late-Q3 window
+BLOWOUT_MARGIN = 22
 CLOSE_MARGIN = 6
 # The projection no longer applies a blowout pace trim or a close-game foul bump.
 # Frank still passes OVER in a blowout and UNDER in a close game. Those used to
 # move the number (0.93x and +3). They are a veto only now.
-# Live alert window while the possession model is still a hypothesis:
-# 4th quarter, 8:00 through 5:00 remaining. The last 2:00 is logged separately
-# and is not an alert trigger (fouls, timeouts, and OT distort that stretch).
+# Primary alert window: 4th quarter, 8:00 through 5:00 remaining.
+# The last 2:00 is logged separately and is not an alert trigger.
+# Late Q3 (2:00 left through the end of the quarter, plus the first minute
+# of Q4) is a second window with a higher edge, because end-of-Q3 error is larger.
 Q4_WINDOW_MAX = 8 * 60
 Q4_WINDOW_MIN = 5 * 60
+Q3_LATE_MAX = 2 * 60
+Q4_OPEN_MIN = 11 * 60
 CHECKPOINT_CLOCK = (
     ("q4_8:00", 8 * 60),
     ("q4_6:30", int(6.5 * 60)),
     ("q4_5:00", 5 * 60),
     ("q4_2:00", 2 * 60),
 )
+Q3_CHECKPOINT_CLOCK = (
+    ("q3_2:00", 2 * 60),
+)
 LINE_STALE_S = 15 * 60
 MAX_EVALS_PER_GAME = 2
 REEVAL_GAP_S = 6 * 60
-MAX_ODDS_CALLS_PER_NIGHT = 15
+# 15 covered one pregame call plus the Q4 window. Late Q3 adds about one
+# fetch per tip cluster (early / national / west), so the cap is 18.
+# Expected spend is still ~6–9 credits a night, not the cap. Stop under 25.
+MAX_ODDS_CALLS_PER_NIGHT = 18
 MIN_CREDITS = 25
 FINAL_STATES = {"final", "postponed", "canceled", "abandoned"}
 
@@ -328,7 +340,7 @@ def scout(g):
          "home_nick": g["home_team"].get("name") or home.split()[-1], "away_score": a, "home_score": h,
          "total": a + h, "margin": abs(a - h), "period": period, "clock_secs": clock,
          "raw_time": t, "status": g.get("status"), "state": state,
-         "tip": g.get("datetime"), "in_window": False, "at_halftime": False,
+         "tip": g.get("datetime"), "in_window": False, "in_q3_late": False, "at_halftime": False,
          "at_end_q3": False, "in_ot": False}
     box = {}
     if g.get("visitor_box"):
@@ -344,6 +356,7 @@ def scout(g):
         s["pace_ppm"] = s["total"] / 24.0 if s["total"] else 0.0
     elif "end of 3" in status_l or "end of 3" in time_l:
         s["at_end_q3"] = True
+        s["in_q3_late"] = True
         s["elapsed_min"] = 36.0
         s["remaining_min"] = 12.0
         s["pace_ppm"] = s["total"] / 36.0 if s["total"] else 0.0
@@ -353,8 +366,10 @@ def scout(g):
         s["remaining_min"] = max(0.0, 48 - elapsed)
         s["pace_ppm"] = s["total"] / elapsed if elapsed > 0 else 0.0
         s["in_window"] = period == 4 and Q4_WINDOW_MIN <= clock <= Q4_WINDOW_MAX
+        s["in_q3_late"] = (period == 3 and clock <= Q3_LATE_MAX) or (period == 4 and clock >= Q4_OPEN_MIN)
         if period == 3 and clock <= 20:
             s["at_end_q3"] = True
+            s["in_q3_late"] = True
     elif state == "in_progress" and period and period > 4:
         s["in_ot"] = True
         s["elapsed_min"] = 48.0
@@ -479,12 +494,29 @@ def reuben_pregame(st, odds_key, games):
 # =============================================================================
 # AGENT 3 -- YEN: live totals quant;  AGENT 4 -- FRANK CATTON: risk + verdict
 # =============================================================================
+def alert_window(g):
+    """q4 is the primary window. q3_late is 2:00 left in Q3 through the first minute of Q4."""
+    if g.get("in_window"):
+        return "q4"
+    if g.get("in_q3_late"):
+        return "q3_late"
+    return None
+
+
+def edge_cutoffs(g):
+    """Full-play edge, then lean edge, for this clock."""
+    if g.get("in_q3_late") and not g.get("in_window"):
+        return Q3_FULL_EDGE, Q3_LEAN_EDGE
+    return MIN_EDGE, LEAN_EDGE
+
+
 def yen_and_frank(g, line, pregame_total=None):
     """Project the full-game total, then apply Frank's vetoes.
 
     The projection does not slow a blowout or add points for a close game.
-    Frank still passes an OVER when the margin is 20+ and an UNDER when the
-    margin is 6 or less. Edge still has to clear 3.5.
+    Frank passes an OVER when the margin is 22+ and an UNDER when the margin
+    is 6 or less. Q4 needs 3.5 for a play and 3.0 for a lean. Late Q3 needs
+    5.0 and 4.5 because that checkpoint has been noisier.
     """
     pack = model.project_game(g, pregame_total)
     proj = pack["proj"]
@@ -493,13 +525,22 @@ def yen_and_frank(g, line, pregame_total=None):
     p_over, p_under, p_push = model.ou_probabilities(proj, line["total"], pack["sd"])
     blowout = g["margin"] >= BLOWOUT_MARGIN
     close = g["margin"] <= CLOSE_MARGIN
+    full_edge, lean_edge = edge_cutoffs(g)
+    if abs(edge) >= full_edge:
+        tier = "play"
+    elif abs(edge) >= lean_edge:
+        tier = "lean"
+    else:
+        tier = None
     verdict, reason = side, ""
-    if abs(edge) < MIN_EDGE:
-        verdict, reason = "PASS / NO PLAY", f"edge {edge:+.1f} < {MIN_EDGE}"
+    if tier is None:
+        verdict, reason = "PASS / NO PLAY", f"edge {edge:+.1f} < {lean_edge}"
     elif blowout and side == "OVER":
         verdict, reason = "PASS / NO PLAY", "blowout contradicts OVER"
+        tier = None
     elif close and side == "UNDER":
         verdict, reason = "PASS / NO PLAY", "close-game fouling contradicts UNDER"
+        tier = None
     if verdict == "PASS / NO PLAY" and blowout and side == "OVER":
         note = (f"{g['margin']}-point margin. Frank passes OVER in a blowout of {BLOWOUT_MARGIN}+. "
                 f"The projection itself is not slowed down for the blowout.")
@@ -523,6 +564,8 @@ def yen_and_frank(g, line, pregame_total=None):
         "blowout": blowout,
         "close": close,
         "verdict": verdict,
+        "side": side,
+        "tier": tier,
         "reason": reason,
         "note": note,
         "p_over": p_over,
@@ -565,21 +608,24 @@ def dell_format(g, line, res, pregame_total=None):
     if pregame_total is not None:
         d = line["total"] - pregame_total
         move = f" (opened {fmt_num(pregame_total)}, {d:+g})"
-    odds = line["over"] if res["verdict"] == "OVER" else line["under"]
-    call = res["verdict"]
-    if call in ("OVER", "UNDER"):
-        call = f"{call} {fmt_num(line['total'])}"
-    side_p = res.get("p_over") if res["verdict"] == "OVER" else res.get("p_under")
+    side = res.get("side") or res["verdict"]
+    odds = line["over"] if side == "OVER" else line["under"]
+    call = f"{side} {fmt_num(line['total'])}"
+    if res.get("tier") == "lean":
+        call_line = f"⚠️ LEAN: <b>{call}</b> ({am(odds)})"
+    else:
+        call_line = f"✅ FINAL CALL: <b>{call}</b> ({am(odds)})"
+    side_p = res.get("p_over") if side == "OVER" else res.get("p_under")
     extra = ""
-    if res.get("lo_80") is not None and res["verdict"] in ("OVER", "UNDER") and side_p is not None:
+    if res.get("lo_80") is not None and res.get("tier") in ("play", "lean") and side_p is not None:
         kind = "possession estimate" if res.get("model") == "possession_estimate" else "pace fallback"
         extra = (f"📐 UNCALIBRATED 80% {res['lo_80']:.0f}–{res['hi_80']:.0f}"
-                 f" · P({res['verdict']}) {fmt_prob(side_p)} · full-game incl. OT · {kind}\n")
+                 f" · P({side}) {fmt_prob(side_p)} · full-game incl. OT · {kind}\n")
     return (f"🏀 {e(g['away'])} @ {e(g['home'])} | {qtxt} | Score: {g['away_score']}-{g['home_score']}\n"
             f"📊 FanDuel Live Line: Total <b>{fmt_num(line['total'])}</b> "
             f"(Over {am(line['over'])} / Under {am(line['under'])}){move}\n"
             f"🤖 Yen's Projected Total: <b>{res['proj']:.1f}</b>\n"
-            f"✅ FINAL CALL: <b>{call}</b> ({am(odds)})\n"
+            f"{call_line}\n"
             f"{extra}"
             f"📝 Frank's Inside Note: {e(res['note'])}")
 
@@ -593,7 +639,7 @@ def dell_buyout(g, gs, proj, p_side):
     return (f"⚠️ TAKE THE BUYOUT\n"
             f"🏀 {e(g['away'])} @ {e(g['home'])} | Q{g['period']} - {clock} | "
             f"Score: {g['away_score']}-{g['home_score']}\n"
-            f"Original call: <b>{gs['posted_side']} {fmt_num(gs['posted_line'])}</b>\n"
+            f"Original call: <b>{'LEAN ' if gs.get('posted_tier') == 'lean' else ''}{gs['posted_side']} {fmt_num(gs['posted_line'])}</b>\n"
             f"Updated projection: <b>{proj:.1f}</b> vs <b>{fmt_num(gs['posted_line'])}</b> "
             f"(UNCALIBRATED P({gs['posted_side']}) {fmt_prob(p_side)})\n"
             f"Advisory only. FanDuel cash-out prices are not in the API.")
@@ -770,18 +816,19 @@ def evaluate(g, line, st, tg_token, channel):
     gs.setdefault("decisions", []).append({"at": now_et().isoformat(), "verdict": res["verdict"],
                                            "proj": round(res["proj"], 1), "line": line["total"],
                                            "edge": round(res["edge"], 1), "model": res["model"]})
-    if res["verdict"] in ("OVER", "UNDER"):
+    if res.get("tier") in ("play", "lean"):
         msg = dell_format(g, line, res, pre)
         if dell_post(msg, tg_token, channel):
             gs["posted"] = True
-            gs["posted_side"] = res["verdict"]
+            gs["posted_tier"] = res["tier"]
+            gs["posted_side"] = res["side"]
             gs["posted_line"] = line["total"]
-            gs["posted_price"] = line["over"] if res["verdict"] == "OVER" else line["under"]
+            gs["posted_price"] = line["over"] if res["side"] == "OVER" else line["under"]
             gs["away"] = g["away"]
             gs["home"] = g["home"]
             gs["away_nick"] = g["away_nick"]
             gs["home_nick"] = g["home_nick"]
-            log(f"[Livingston Dell] posted {res['verdict']} {fmt_num(line['total'])} for {g['away']} @ {g['home']}"
+            log(f"[Livingston Dell] posted {res['tier']} {res['side']} {fmt_num(line['total'])} for {g['away']} @ {g['home']}"
                 f"{' (dry run)' if DRY_RUN else ''}")
         else:
             log(f"[Livingston Dell] FAILED to post {res['verdict']} for {g['away']} @ {g['home']}")
@@ -836,6 +883,10 @@ def checkpoint_names(g, gs):
     if g.get("at_end_q3") and "end_q3" not in done:
         found.append(("end_q3", "on_time"))
     clock = g.get("clock_secs")
+    if g.get("period") == 3 and clock is not None:
+        nearest_name, nearest_target = min(Q3_CHECKPOINT_CLOCK, key=lambda item: abs(clock - item[1]))
+        if nearest_name not in done and abs(clock - nearest_target) <= 70:
+            found.append((nearest_name, "on_time"))
     if g.get("period") == 4 and clock is not None:
         last = gs.get("last_clock")
         last_period = gs.get("last_period")
@@ -1204,11 +1255,12 @@ def run(args):
         maybe_attach_box_scores(games, bdl_key, st, sd)
         live = [g for g in games if g["state"] == "in_progress"]
         for g in live:
-            if g["in_window"] and g["id"] not in st["games"]:
-                log(f"[Rusty Ryan] TRIGGER {g['away']} @ {g['home']} Q{g['period']} "
+            window = alert_window(g)
+            if window and g["id"] not in st["games"]:
+                log(f"[Rusty Ryan] TRIGGER {window} {g['away']} @ {g['home']} Q{g['period']} "
                     f"{fmt_clock(g['clock_secs'])} score {g['away_score']}-{g['home_score']} "
                     f"pace {g['pace_ppm']:.2f} ppm ({g['elapsed_min']:.1f} min elapsed)")
-        due = [g for g in live if g["in_window"] and due_for_eval(st["games"].get(g["id"], {}), time.time())]
+        due = [g for g in live if alert_window(g) and due_for_eval(st["games"].get(g["id"], {}), time.time())]
         lines = None
         if due:
             lines = reuben_fetch(st, odds_key, "live: " + ", ".join(f"{g['away']} @ {g['home']}" for g in due))

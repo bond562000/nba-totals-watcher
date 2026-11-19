@@ -94,6 +94,7 @@ def add_call(record, call):
         "line": float(call["line"]),
         "posted_at": call.get("posted_at") or "",
         "source": call.get("source") or "watcher",
+        "tier": "lean" if call.get("tier") == "lean" else "play",
     }
     if call["side"] not in ("OVER", "UNDER"):
         return False
@@ -211,16 +212,19 @@ def _side_letter(side):
 def format_header(record, slate_date):
     """Compact block placed above the slate title."""
     calls = record.get("calls") or []
-    wins, losses, pushes = tally(calls)
+    leans = [c for c in calls if c.get("tier") == "lean"]
+    plays = [c for c in calls if c.get("tier") != "lean"]
+    wins, losses, pushes = tally(plays)
     decided = wins + losses
     bits = [record_string(wins, losses, pushes)]
     if decided:
         bits.append(f"{int(round(100.0 * wins / decided))}%")
-    streak = streak_label(calls)
+    streak = streak_label(plays)
     if streak:
         bits.append(streak)
-    lines = [f"<b>CourtSide Picks ({' · '.join(bits)})</b>"]
-    last = last_night_calls(calls, slate_date)
+    lw, ll, lp = tally(leans)
+    lines = [f"<b>CourtSide Picks ({' · '.join(bits)})</b> · Leans ({record_string(lw, ll, lp)})"]
+    last = last_night_calls(plays, slate_date)
     if last:
         parts = []
         for call in last:
@@ -267,6 +271,7 @@ def call_from_posted(game_id, gs, game, slate):
         "line": line,
         "posted_at": posted_at,
         "source": "watcher",
+        "tier": "lean" if gs.get("posted_tier") == "lean" else "play",
     }
 
 

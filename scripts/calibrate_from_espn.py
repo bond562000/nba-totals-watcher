@@ -16,6 +16,7 @@ import model  # noqa: E402
 
 MARKS = {
     "halftime": 24.0,
+    "q3_2:00": 34.0,
     "end_q3": 36.0,
     "q4_8:00": 40.0,
     "q4_6:30": 41.5,

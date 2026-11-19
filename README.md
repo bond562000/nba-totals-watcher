@@ -63,10 +63,10 @@ The noon runs on Nov 18 never started. The workflow file reached `main` at 11:14
 
 ## CourtSide record
 
-The slate post opens with the running record of every OVER/UNDER the watcher has posted, graded on the official final including overtime. A push is shown only when one has happened. Win percentage ignores pushes. The streak skips pushes. Last night is one line. Buyouts do not change the grade, and a second call for the same game is ignored. PASS / NO PLAY is not a result. Confirmed bets from **Record confirmed line** are graded in `record.json` and are not part of the headline.
+The slate post opens with the running record of every full OVER/UNDER the watcher has posted, graded on the official final including overtime. Leans are graded too and shown beside that record, so a lean does not change the main win-loss line. A push is shown only when one has happened. Win percentage ignores pushes. The streak skips pushes. Last night is one line. Buyouts do not change the grade, and a second call for the same game is ignored. PASS / NO PLAY is not a result. Confirmed bets from **Record confirmed line** are graded in `record.json` and are not part of the headline.
 
 ```
-<b>CourtSide Picks (1-2 · 33% · L2)</b>
+<b>CourtSide Picks (1-2 · 33% · L2)</b> · Leans (0-0)
 Last night: ✅ Knicks/Raptors O 210.5 ❌ Blazers/Wolves U 207.5 ❌ Jazz/Clippers O 242.5
 🏀 Tonight's NBA Slate (Nov 18)
 ```
@@ -91,9 +91,10 @@ This workflow has no `push` trigger, so commits on `state` do not start it. Push
 ## Rules
 
 - Alert window, while the possession model is still a hypothesis: 4th quarter with 8:00 through 5:00 left. The last 2:00 is logged and watched for a buyout, and it does not send a new pick.
-- A play needs an edge of at least 3.5. Frank still passes an OVER when the margin is 20 or more and an UNDER when the margin is 6 or less. Those rules no longer change the projected number (they used to trim the pace 7% or add 3 points).
+- Q4, 8:00 through 5:00: a full play needs an edge of at least 3.5. From 3.0 up to 3.5 the card is a lean (`⚠️ LEAN`), not a full play. Late Q3 (2:00 left through the end of the quarter, and the first minute of Q4) needs 5.0 for a play and 4.5 for a lean, because that part of the game has been noisier.
+- Frank passes an OVER when the margin is 22 or more, and an UNDER when the margin is 6 or less. The close-game line stays at 6. The replay measures projection error, not whether a close game's under is a bad bet, so that veto is unchanged. Neither veto changes the projected number.
 - One pick per game per night, plus at most one advisory buyout. At most two evaluations per game, at least 6 minutes apart. The testing window is often shorter than that gap, so most games get one evaluation. A quota skip does not use up an evaluation.
-- Odds API budget: one pregame call per slate, at most 15 calls a night, and no call when fewer than 25 credits are left. Checkpoint logs reuse the last fetch and add **0** credits. "Reusing saved pregame totals" is logged once per process.
+- Odds API budget: one pregame call per slate, at most 18 calls a night, and no call when fewer than 25 credits are left. The cap was 15 when the only live window was Q4. Late Q3 adds about one fetch per tip cluster, so three clusters is +3. Checkpoint logs still reuse the last fetch and add **0** credits. A normal night is still about 6–9 credits, not 18. "Reusing saved pregame totals" is logged once per process.
 
 ## Possession model (hypothesis)
 
@@ -142,6 +143,7 @@ On 18 final games from 2026-11-14 through 2026-11-17, replaying the play-by-play
 | Checkpoint | n | MAE | Bias (proj − final) | 80% coverage |
 | --- | --- | --- | --- | --- |
 | Halftime | 18 | 13.3 | −4.8 | 61% |
+| Q3 2:00 | 18 | 6.7 | −0.9 | 78% |
 | End of Q3 | 18 | 6.9 | −0.4 | 89% |
 | Q4 8:00 | 18 | 4.9 | −1.2 | 78% |
 | Q4 6:30 | 18 | 4.3 | −1.1 | 89% |
