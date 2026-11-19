@@ -1004,6 +1004,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-18T21:55:33.544892-05:00",
+      "away": "Atlanta Hawks",
+      "away_score": 94,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_8:00",
+      "clock_secs": 523.0,
+      "expected_ot_points": 0.78,
+      "final_total": null,
+      "game_id": "21718138",
+      "hi_80": 237.8,
+      "home": "Oklahoma City Thunder",
+      "home_score": 92,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T02:41:31Z",
+      "line_over": 110,
+      "line_status": "reused",
+      "line_total": 223.5,
+      "line_under": -146,
+      "lo_80": 218.85,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.743,
+      "p_push": 0.0,
+      "p_under": 0.257,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 228.33,
+      "proj_regulation": 227.54,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
