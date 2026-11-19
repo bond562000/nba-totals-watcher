@@ -182,11 +182,12 @@
       "checkpoints": [
         "q4_8:00"
       ],
-      "last_clock": 550.0,
+      "last_clock": 482.0,
       "last_period": 4
     },
     "21718138": {
       "checkpoints": [
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
@@ -202,12 +203,12 @@
         }
       ],
       "evals": 1,
-      "last_clock": 243.0,
+      "last_clock": 158.0,
       "last_eval_ts": 1795057179.6657739,
       "last_period": 4
     },
     "21718139": {
-      "last_clock": 164.0,
+      "last_clock": 160.0,
       "last_period": 1
     },
     "21718140": {
