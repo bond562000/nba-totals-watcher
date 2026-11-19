@@ -84,7 +84,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 140.0,
+      "last_clock": 134.0,
       "last_eval_ts": 1795055609.3857324,
       "last_period": 4
     },
@@ -174,28 +174,28 @@
         }
       ],
       "evals": 2,
-      "last_clock": 169.0,
+      "last_clock": 113.0,
       "last_eval_ts": 1795056111.3500524,
       "last_period": 4
     },
     "21718137": {
-      "last_clock": 164.0,
+      "last_clock": 130.0,
       "last_period": 3
     },
     "21718138": {
-      "last_clock": 720.0,
+      "last_clock": 643.0,
       "last_period": 4
     },
     "21718139": {
-      "last_clock": 687.0,
+      "last_clock": 567.0,
       "last_period": 1
     },
     "21718140": {
-      "last_clock": 158.0,
+      "last_clock": 123.0,
       "last_period": 3
     }
   },
-  "grade_sig": "q4_2:00 n=3 MAE=4.0 cover=100% hit=33% pushes=0; q4_5:00 n=3 MAE=3.2 cover=100% hit=67% pushes=0; q4_6:30 n=3 MAE=2.9 cover=100% hit=100% pushes=0; q4_8:00 n=3 MAE=5.8 cover=67% hit=0% pushes=0",
+  "grade_sig": "q4_2:00 n=4 MAE=5.7 cover=75% hit=25% pushes=0; q4_5:00 n=4 MAE=4.9 cover=75% hit=50% pushes=0; q4_6:30 n=4 MAE=3.5 cover=100% hit=100% pushes=0; q4_8:00 n=4 MAE=5.5 cover=75% hit=25% pushes=0",
   "last_lines": {
     "76ers@magic": {
       "commence": "2026-11-19T00:11:00Z",
