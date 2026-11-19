@@ -1472,6 +1472,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-18T22:24:18.821495-05:00",
+      "away": "Detroit Pistons",
+      "away_score": 120,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 177.0,
+      "expected_ot_points": 0.01,
+      "final_total": null,
+      "game_id": "21718137",
+      "hi_80": 245.89,
+      "home": "New Orleans Pelicans",
+      "home_score": 106,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T03:14:44Z",
+      "line_over": -102,
+      "line_status": "reused",
+      "line_total": 234.5,
+      "line_under": -130,
+      "lo_80": 235.16,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.925,
+      "p_push": 0.0,
+      "p_under": 0.075,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 240.53,
+      "proj_regulation": 240.52,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
