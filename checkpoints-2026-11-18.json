@@ -1684,6 +1684,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-19T00:00:57.161424-05:00",
+      "away": "Phoenix Suns",
+      "away_score": 109,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 425.0,
+      "expected_ot_points": 0.13,
+      "final_total": null,
+      "game_id": "21718142",
+      "hi_80": 248.29,
+      "home": "Sacramento Kings",
+      "home_score": 96,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T03:14:44Z",
+      "line_over": 100,
+      "line_status": "reused",
+      "line_total": 230.5,
+      "line_under": -132,
+      "lo_80": 231.65,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.9277,
+      "p_push": 0.0,
+      "p_under": 0.0723,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 239.97,
+      "proj_regulation": 239.83,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
