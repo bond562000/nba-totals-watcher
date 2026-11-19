@@ -203,7 +203,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 280.0,
+      "last_clock": 264.0,
       "last_eval_ts": 1795058104.3885243,
       "last_period": 4
     },
@@ -230,22 +230,23 @@
       "last_period": 4
     },
     "21718139": {
-      "last_clock": null,
-      "last_period": 1
+      "last_clock": 720.0,
+      "last_period": 2
     },
     "21718140": {
       "checkpoints": [
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
       ],
       "evals": 1,
-      "last_clock": 239.0,
+      "last_clock": 137.0,
       "last_eval_ts": 1795057796.3566897,
       "last_period": 4
     },
     "21718141": {
-      "last_clock": 529.0,
+      "last_clock": 483.0,
       "last_period": 1
     },
     "21718142": {
