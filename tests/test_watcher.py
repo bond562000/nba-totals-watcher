@@ -323,6 +323,46 @@ class WatcherTestCase(unittest.TestCase):
         self.assertEqual(forced["verdict"], "PASS / NO PLAY")
         self.assertIn("blowout contradicts OVER", forced["reason"])
 
+        def _edge_line(game, edge):
+            base = watcher.yen_and_frank(game, {"total": 0, "over": -110, "under": -110})
+            return {"total": base["proj"] - edge, "over": -110, "under": -110}
+
+        margin21 = watcher.scout(_raw(
+            8, "Boston Celtics", "Miami Heat", 80, 101, 4, "6:30",
+            "in_progress", KNICKS_TIP, "4th Qtr"))
+        self.assertEqual(margin21["margin"], 21)
+        played = watcher.yen_and_frank(margin21, _edge_line(margin21, 4.0))
+        self.assertEqual(played["tier"], "play")
+        self.assertEqual(played["verdict"], "OVER")
+        margin22 = watcher.scout(_raw(
+            8, "Boston Celtics", "Miami Heat", 80, 102, 4, "6:30",
+            "in_progress", KNICKS_TIP, "4th Qtr"))
+        vetoed = watcher.yen_and_frank(margin22, _edge_line(margin22, 4.0))
+        self.assertEqual(vetoed["verdict"], "PASS / NO PLAY")
+        self.assertIn("blowout contradicts OVER", vetoed["reason"])
+
+        lean = watcher.yen_and_frank(inside, _edge_line(inside, 3.2))
+        self.assertEqual(lean["tier"], "lean")
+        self.assertIn("⚠️ LEAN: <b>OVER", watcher.dell_format(inside, {"total": lean["proj"] - 3.2, "over": -110, "under": -110}, lean))
+        soft = watcher.yen_and_frank(inside, _edge_line(inside, 2.9))
+        self.assertIsNone(soft["tier"])
+        self.assertEqual(soft["verdict"], "PASS / NO PLAY")
+
+        late_q3 = watcher.scout(_raw(
+            8, "Boston Celtics", "Miami Heat", 90, 88, 3, "1:30",
+            "in_progress", KNICKS_TIP, "3rd Qtr"))
+        self.assertTrue(late_q3["in_q3_late"])
+        self.assertFalse(late_q3["in_window"])
+        self.assertEqual([n for n, _ in watcher.checkpoint_names(watcher.scout(_raw(
+            8, "Boston Celtics", "Miami Heat", 90, 88, 3, "2:00",
+            "in_progress", KNICKS_TIP, "3rd Qtr")), {})], ["q3_2:00"])
+        q3_lean = watcher.yen_and_frank(late_q3, _edge_line(late_q3, 4.6))
+        self.assertEqual(q3_lean["tier"], "lean")
+        q3_play = watcher.yen_and_frank(late_q3, _edge_line(late_q3, 5.2))
+        self.assertEqual(q3_play["tier"], "play")
+        q3_pass = watcher.yen_and_frank(late_q3, _edge_line(late_q3, 4.2))
+        self.assertEqual(q3_pass["verdict"], "PASS / NO PLAY")
+
     def test_dry_run_posts_once_and_mocks_odds(self):
         """End-to-end dry run: scripted scoreboard, mocked Odds API, no Telegram."""
         scheduled = watcher.scout(_raw(

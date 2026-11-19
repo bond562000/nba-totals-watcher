@@ -52,6 +52,7 @@ ESPN_REPLAY = {
     "mean_ot_points_when_reached": 5.5,
     "checkpoints": {
         "halftime": {"n": 18, "mae": 13.32, "bias": -4.75, "cover80": 0.61},
+        "q3_2:00": {"n": 18, "mae": 6.74, "bias": -0.91, "cover80": 0.78},
         "end_q3": {"n": 18, "mae": 6.85, "bias": -0.43, "cover80": 0.89},
         "q4_8:00": {"n": 18, "mae": 4.91, "bias": -1.24, "cover80": 0.78},
         "q4_6:30": {"n": 18, "mae": 4.28, "bias": -1.10, "cover80": 0.89},

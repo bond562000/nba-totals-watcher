@@ -37,7 +37,7 @@ class RecordTest(unittest.TestCase):
 
     def test_header_is_compact(self):
         text = recordbook.format_header(seeded(), date(2026, 11, 18))
-        self.assertTrue(text.startswith("<b>CourtSide Picks (1-2 · 33% · L2)</b>\n"))
+        self.assertTrue(text.startswith("<b>CourtSide Picks (1-2 · 33% · L2)</b> · Leans (0-0)\n"))
         self.assertIn("Last night: ✅ Knicks/Raptors O 210.5 ❌ Blazers/Wolves U 207.5 ❌ Jazz/Clippers O 242.5", text)
         self.assertNotIn("1-2-0", text)
 
@@ -118,6 +118,15 @@ class RecordTest(unittest.TestCase):
         recordbook.grade_ready(record, recordbook.games_index(games))
         self.assertEqual(record["calls"][0]["result"], "win")
         self.assertEqual(record["calls"][0]["final_total"], 222)
+        recordbook.add_call(record, {
+            "game_id": "77", "slate": "2026-11-18", "away": "A", "home": "B",
+            "away_nick": "A", "home_nick": "B", "side": "UNDER", "line": 210.5,
+            "tier": "lean", "posted_at": "2026-11-19T01:00:00-05:00",
+        })
+        recordbook.apply_final(record["calls"][-1], 100, 100)
+        self.assertEqual(record["calls"][-1]["result"], "win")
+        self.assertEqual(recordbook.tally([c for c in record["calls"] if c.get("tier") == "lean"]), (1, 0, 0))
+        self.assertEqual(recordbook.tally([c for c in record["calls"] if c.get("tier") != "lean"]), (1, 0, 0))
 
 
 if __name__ == "__main__":

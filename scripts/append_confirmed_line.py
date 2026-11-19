@@ -10,7 +10,7 @@ from datetime import datetime
 
 FIELDS = ["slate", "game_id", "away", "home", "checkpoint",
           "confirmed_total", "confirmed_side", "confirmed_price", "note"]
-CHECKPOINTS = {"halftime", "end_q3", "q4_8:00", "q4_6:30", "q4_5:00", "q4_2:00"}
+CHECKPOINTS = {"halftime", "end_q3", "q3_2:00", "q4_8:00", "q4_6:30", "q4_5:00", "q4_2:00"}
 
 
 def need(name):
