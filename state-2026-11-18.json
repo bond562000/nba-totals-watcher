@@ -259,7 +259,7 @@
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 182.0,
+      "last_clock": null,
       "last_period": 4
     },
     "21718142": {
@@ -273,7 +273,7 @@
       "last_period": 4
     }
   },
-  "grade_sig": "q4_2:00 n=11 MAE=3.8 cover=82% hit=55% pushes=0; q4_5:00 n=11 MAE=4.5 cover=91% hit=73% pushes=0; q4_6:30 n=11 MAE=4.1 cover=91% hit=82% pushes=0; q4_8:00 n=11 MAE=4.3 cover=82% hit=55% pushes=0",
+  "grade_sig": "q4_2:00 n=12 MAE=3.7 cover=83% hit=58% pushes=0; q4_5:00 n=12 MAE=4.3 cover=92% hit=75% pushes=0; q4_6:30 n=12 MAE=4.0 cover=92% hit=83% pushes=0; q4_8:00 n=12 MAE=4.4 cover=83% hit=58% pushes=0",
   "last_lines": {
     "76ers@magic": {
       "commence": "2026-11-19T00:11:00Z",
