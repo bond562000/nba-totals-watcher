@@ -83,7 +83,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 256.0,
+      "last_clock": 254.0,
       "last_eval_ts": 1795055609.3857324,
       "last_period": 4
     },
@@ -143,7 +143,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 180.0,
+      "last_clock": 138.0,
       "last_eval_ts": 1795055737.288066,
       "last_period": 4
     },
@@ -172,20 +172,20 @@
         }
       ],
       "evals": 2,
-      "last_clock": 284.0,
+      "last_clock": 237.0,
       "last_eval_ts": 1795056111.3500524,
       "last_period": 4
     },
     "21718137": {
-      "last_clock": 245.0,
+      "last_clock": 192.0,
       "last_period": 3
     },
     "21718138": {
-      "last_clock": 92.0,
+      "last_clock": null,
       "last_period": 3
     },
     "21718140": {
-      "last_clock": 360.0,
+      "last_clock": 309.0,
       "last_period": 3
     }
   },
