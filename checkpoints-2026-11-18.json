@@ -297,6 +297,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-18T21:10:12.085667-05:00",
+      "away": "Philadelphia 76ers",
+      "away_score": 102,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 379.0,
+      "expected_ot_points": 0.91,
+      "final_total": null,
+      "game_id": "21718134",
+      "hi_80": 245.05,
+      "home": "Orlando Magic",
+      "home_score": 104,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T02:09:51Z",
+      "line_over": 108,
+      "line_status": "fresh",
+      "line_total": 239.5,
+      "line_under": -144,
+      "lo_80": 229.68,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3609,
+      "p_push": 0.0,
+      "p_under": 0.6391,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 237.36,
+      "proj_regulation": 236.46,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
