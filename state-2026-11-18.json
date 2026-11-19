@@ -1,19 +1,21 @@
 {
   "credits_remaining": 489,
   "espn": {
-    "backoff_until": 0,
-    "fails": 0
+    "backoff_until": 1795053807.4619179,
+    "fails": 1,
+    "last_code": 0
   },
   "games": {
     "21718131": {
       "checkpoints": [
         "q4_8:00"
       ],
-      "last_clock": 520.0,
+      "last_clock": 521.0,
       "last_period": 4
     },
     "21718132": {
       "checkpoints": [
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -27,12 +29,12 @@
         }
       ],
       "evals": 1,
-      "last_clock": 525.0,
+      "last_clock": 419.0,
       "last_eval_ts": 1795053714.4491465,
       "last_period": 4
     },
     "21718133": {
-      "last_clock": 416.0,
+      "last_clock": 382.0,
       "last_period": 3
     },
     "21718134": {
@@ -40,19 +42,19 @@
       "last_period": 4
     },
     "21718135": {
-      "last_clock": 464.0,
+      "last_clock": 414.0,
       "last_period": 3
     },
     "21718136": {
-      "last_clock": 404.0,
+      "last_clock": 400.0,
       "last_period": 3
     },
     "21718137": {
-      "last_clock": 201.0,
+      "last_clock": 157.0,
       "last_period": 2
     },
     "21718138": {
-      "last_clock": 93.0,
+      "last_clock": null,
       "last_period": 2
     },
     "21718140": {
