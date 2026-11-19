@@ -763,19 +763,11 @@ def dell_format(g, line, res, pregame_total=None):
         call_line = f"⚠️ LEAN: <b>{call}</b> ({am(odds)})"
     else:
         call_line = f"✅ FINAL CALL: <b>{call}</b> ({am(odds)})"
-    side_p = res.get("p_over") if side == "OVER" else res.get("p_under")
-    extra = ""
-    if res.get("lo_80") is not None and res.get("tier") in ("play", "lean") and side_p is not None:
-        kind = "possession estimate" if res.get("model") == "possession_estimate" else "pace fallback"
-        extra = (f"📐 UNCALIBRATED 80% {res['lo_80']:.0f}–{res['hi_80']:.0f}"
-                 f" · P({side}) {fmt_prob(side_p)} · full-game incl. OT · {kind}\n")
     return (f"🏀 {e(g['away'])} @ {e(g['home'])} | {qtxt} | Score: {g['away_score']}-{g['home_score']}\n"
             f"📊 FanDuel Live Line: Total <b>{fmt_num(line['total'])}</b> "
             f"(Over {am(line['over'])} / Under {am(line['under'])}){move}\n"
             f"🤖 Yen's Projected Total: <b>{res['proj']:.1f}</b>\n"
-            f"{call_line}\n"
-            f"{extra}"
-            f"📝 Frank's Inside Note: {e(res['note'])}")
+            f"{call_line}")
 
 
 def dell_buyout(g, gs, proj, p_side):
@@ -788,9 +780,7 @@ def dell_buyout(g, gs, proj, p_side):
             f"🏀 {e(g['away'])} @ {e(g['home'])} | Q{g['period']} - {clock} | "
             f"Score: {g['away_score']}-{g['home_score']}\n"
             f"Original call: <b>{'LEAN ' if gs.get('posted_tier') == 'lean' else ''}{gs['posted_side']} {fmt_num(gs['posted_line'])}</b>\n"
-            f"Updated projection: <b>{proj:.1f}</b> vs <b>{fmt_num(gs['posted_line'])}</b> "
-            f"(UNCALIBRATED P({gs['posted_side']}) {fmt_prob(p_side)})\n"
-            f"Advisory only. FanDuel cash-out prices are not in the API.")
+            f"Updated projection: <b>{proj:.1f}</b> vs <b>{fmt_num(gs['posted_line'])}</b>")
 
 
 def parlays_path():
@@ -838,6 +828,8 @@ def post_parlay_board(board, st, sd, tg_token, channel, odds_key):
     early = [row for row in document["parlays"]
              if row.get("slate") == sd.isoformat() and row.get("board") == "early"]
     changes = parlays.change_note(early, built) if board == "final" else None
+    for line in parlays.board_log_lines(board, built, changes):
+        log(f"[Livingston Dell] {line}")
     if not built:
         log(f"[Livingston Dell] no {board} parlay cleared the floor")
         st[flag] = True
@@ -1103,7 +1095,7 @@ def evaluate(g, line, st, tg_token, channel):
     res = yen_and_frank(g, line, pre)
     _log_projection(g, res, line, pre, tag)
     log(f"[Frank Catton] {res['verdict']} | {tag} | blowout={res['blowout']} close={res['close']} "
-        f"{res['reason']} | model={res['model']} | eval {gs['evals']}/{MAX_EVALS_PER_GAME}")
+        f"{res['reason']} | model={res['model']} | {res['note']} | eval {gs['evals']}/{MAX_EVALS_PER_GAME}")
     gs.setdefault("decisions", []).append({"at": now_et().isoformat(), "verdict": res["verdict"],
                                            "proj": round(res["proj"], 1), "line": line["total"],
                                            "edge": round(res["edge"], 1), "model": res["model"]})
@@ -1346,7 +1338,9 @@ def maybe_buyout(g, st, tg_token, channel):
     if dell_post(msg, tg_token, channel):
         gs["buyout_posted"] = True
         log(f"[Livingston Dell] TAKE THE BUYOUT for {g['away']} @ {g['home']} "
-            f"(was {gs['posted_side']} {fmt_num(gs['posted_line'])}, proj now {res['proj']:.1f})"
+            f"(was {gs['posted_side']} {fmt_num(gs['posted_line'])}, proj now {res['proj']:.1f}, "
+            f"UNCALIBRATED P({gs['posted_side']}) {fmt_prob(p_side)}; advisory only, "
+            f"FanDuel cash-out prices are not in the API)"
             f"{' (dry run)' if DRY_RUN else ''}")
     else:
         log(f"[Livingston Dell] FAILED to post buyout for {g['away']} @ {g['home']}")
@@ -1727,6 +1721,8 @@ def main():
         early = [row for row in document["parlays"]
                  if row.get("slate") == sd.isoformat() and row.get("board") == "early"]
         changes = parlays.change_note(early, built or []) if a.parlays == "final" else None
+        for line in parlays.board_log_lines(a.parlays, built or [], changes):
+            log(f"[Livingston Dell] {line}")
         messages = parlays.render_parlays(built or [], a.parlays, changes)
         if not messages:
             print("No parlay cleared the floor.")

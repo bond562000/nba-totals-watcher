@@ -182,13 +182,13 @@ After an OVER or UNDER is posted, the watcher keeps projecting that game. It sen
 
 ### Alert
 
-The card is still the five-line quick read. The FanDuel total, Yen's projection, and the final-call number are bold. An OVER/UNDER names the total (`OVER 229.5`). One extra line carries the uncalibrated interval and probability.
+The card is the game, the FanDuel total and price, Yen's projection, and the call. The 80% interval, the model name, and Frank's note stay in the run log.
 
 ## Pregame parlays
 
 Two boards, separate from the noon slate card.
 
-- **11:08 AM ET, EARLY BOARD.** Up to 6 parlays from ESPN game logs. 0 Odds API credits. The card says FanDuel may not have every prop open yet. `--parlays early` prints it and does not send.
+- **11:08 AM ET, EARLY BOARD.** Up to 6 parlays from ESPN game logs. 0 Odds API credits. That source note stays in the run log. `--parlays early` prints the card and does not send.
 - **3:30 PM ET, FINAL BOARD.** Rebuilds with the latest ESPN injury list, up to 7 parlays, and says which legs were dropped or added. `--parlays final` prints it and does not buy prices or send.
 
 Player legs are points, rebounds, and assists. The floor is the highest of 25/20/15/10 points, 10/8/6/5/3 rebounds, or 8/6/5/3 assists that the player still cleared in 85% of the last 10 and 85% of the season. Points against one of the eight stingiest defenses need 90%. Average minutes at least 24, and a stable minute load. Out and doubtful players are skipped. A parlay takes at most 3 player legs from one game. Totals legs use the saved FanDuel total against season scoring blended 60/40 with the last five finals, and only when the gap is at least 3.
