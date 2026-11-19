@@ -180,6 +180,7 @@
     },
     "21718137": {
       "checkpoints": [
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -193,7 +194,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 442.0,
+      "last_clock": 420.0,
       "last_eval_ts": 1795057735.0091925,
       "last_period": 4
     },
@@ -215,20 +216,21 @@
         }
       ],
       "evals": 1,
-      "last_clock": 158.0,
+      "last_clock": 119.0,
       "last_eval_ts": 1795057179.6657739,
       "last_period": 4
     },
     "21718139": {
-      "last_clock": 160.0,
+      "last_clock": 105.0,
       "last_period": 1
     },
     "21718140": {
       "checkpoints": [
+        "q4_6:30",
         "q4_8:00"
       ],
       "evals": 1,
-      "last_clock": 514.0,
+      "last_clock": 419.0,
       "last_eval_ts": 1795057796.3566897,
       "last_period": 4
     }
