@@ -197,7 +197,7 @@ The final board's paid check is two games: the smallest absolute spreads, tie-br
 
 The prop check is skipped when fewer than 60 credits remain, or when reserving 9 live credits and 2 pregame credits for each remaining night plus today's 6 prop credits would pass 500. Live totals keep the priority.
 
-After the games end, the final board is graded into `parlays.json` (the early board, if the final never posted). The slate header keeps `Parlays (0-0) · Legs (0-0)`. The slate card also shows `Odds credits: 412 left`. State records `credits_by_feature` for `pregame`, `live`, and `props`.
+After the games end, the final board is graded into `parlays.json` (the early board, if the final never posted). The slate header keeps `Parlays (0-0) · Legs (0-0)`. Credit totals stay in `state` (`credits_remaining`, `credits_by_feature` for pregame, live, and props) and in the run log. They are not posted to the channel.
 
 Odds API cost, from their markets × regions rule: the one pregame call is now `totals,spreads` on one region, so **2 credits** instead of 1. Props are **6 credits** on the final board only. Early board is **0**. Live fetches stay **1 credit** each, about **6–9 a night**. A full day is about **14–17 credits**. Thirty days at the low end is about 420. Thirty days at 2 + 6 + 9 = 17 is 510, which is why the prop check drops itself before that path is locked in.
 

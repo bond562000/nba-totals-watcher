@@ -14,7 +14,7 @@ import tempfile
 import unittest
 import urllib.error
 from contextlib import redirect_stdout
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -649,6 +649,17 @@ class WatcherTestCase(unittest.TestCase):
         self.assertIn("close-game fouling contradicts UNDER", text)
         self.assertIn("not in trigger window", text)
         self.assertIn("Tonight's NBA Slate (Nov 18)", text)
+        self.assertIn("last 2:00 of the 3rd quarter", text)
+        self.assertNotIn("Odds credits", text)
+
+    def test_slate_card_names_the_late_third_and_hides_credits(self):
+        text = watcher.dell_slate_text([], {}, date(2026, 11, 19))
+        self.assertIn(
+            "Live Over/Under picks drop here from the last 2:00 of the 3rd quarter "
+            "to the start of the 4th quarter",
+            text)
+        self.assertNotIn("Odds credits", text)
+        self.assertNotIn("8:00 to 5:00", text)
         self.assertNotIn("apiKey", text)
 
     def test_cli_simulate_subprocess(self):

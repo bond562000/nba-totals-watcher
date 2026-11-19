@@ -1020,7 +1020,7 @@ def _confirmed_rows():
         return list(csv.DictReader(f))
 
 
-def dell_slate_text(games, pregame, sd, record=None, credits=None):
+def dell_slate_text(games, pregame, sd, record=None):
     """Livingston Dell's daily slate card. games = scouted dicts; pregame = {game_key: total}."""
     gs = sorted(games, key=lambda g: g["tip"] or "9999")
     tips = [datetime.fromisoformat(g["tip"].replace("Z", "+00:00")).astimezone(ET) for g in gs if g["tip"]]
@@ -1034,13 +1034,9 @@ def dell_slate_text(games, pregame, sd, record=None, credits=None):
     brand = ""
     if record:
         brand = recordbook.format_header(record, sd, parlays.parlay_header(load_parlays()))
-    if credits is None:
-        credit = "Odds credits: not checked yet"
-    else:
-        credit = f"Odds credits: {credits} left"
     return (brand + f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
-            f"\n\n{credit}"
-            "\nLive Over/Under picks drop here in the 4th quarter, from 8:00 to 5:00 👀")
+            "\n\nLive Over/Under picks drop here from the last 2:00 of the 3rd quarter "
+            "to the start of the 4th quarter 👀")
 
 
 def dell_post_slate(st, games, sd, tg_token, channel):
@@ -1048,7 +1044,7 @@ def dell_post_slate(st, games, sd, tg_token, channel):
     record = refresh_picks_record(st, games)
     if st.get("slate_posted") or not games:
         return
-    text = dell_slate_text(games, st.get("pregame", {}), sd, record, st.get("credits_remaining"))
+    text = dell_slate_text(games, st.get("pregame", {}), sd, record)
     if dell_post(text, tg_token, channel):
         st["slate_posted"] = True
         log(f"[Livingston Dell] slate posted ({len(games)} games){' (dry run)' if DRY_RUN else ''}")
