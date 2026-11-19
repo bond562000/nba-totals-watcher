@@ -1946,6 +1946,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-19T00:20:14.735245-05:00",
+      "away": "Utah Jazz",
+      "away_score": 98,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 309.0,
+      "expected_ot_points": 0.03,
+      "final_total": null,
+      "game_id": "21718141",
+      "hi_80": 210.98,
+      "home": "Los Angeles Lakers",
+      "home_score": 83,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T03:14:44Z",
+      "line_over": -128,
+      "line_status": "reused",
+      "line_total": 233.5,
+      "line_under": -104,
+      "lo_80": 196.45,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.0,
+      "p_push": 0.0,
+      "p_under": 1.0,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 203.71,
+      "proj_regulation": 203.68,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
