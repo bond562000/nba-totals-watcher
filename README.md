@@ -178,6 +178,18 @@ After an OVER or UNDER is posted, the watcher keeps projecting that game. It sen
 
 The card is still the five-line quick read. The FanDuel total, Yen's projection, and the final-call number are bold. An OVER/UNDER names the total (`OVER 229.5`). One extra line carries the uncalibrated interval and probability.
 
+## Pregame parlays
+
+The noon run, after the slate card, posts one player-parlay message and one totals-parlay message when any legs clear the floor. If the noon job missed, the next run still posts them while a game is scheduled. `--parlays` prints the same card and does not send it.
+
+Player legs are floors from ESPN game logs: 15+ points, 3+ rebounds, 1+ three, 1+ steal. A leg needs an 85% hit rate over the last 10 and over the season, average minutes of at least 24, and a stable minute load. Against one of the eight stingiest defenses, points and threes need 90%. Out and doubtful players are skipped. The number on the card is that historical rate, labeled UNCALIBRATED.
+
+Totals legs use the FanDuel number already saved in `state.pregame` and a projection from each team's season points scored and allowed, blended 60/40 with the last five finals. The gap has to be at least 3 points. Those legs are separate from the live single-game calls.
+
+A parlay is 4 to 6 legs. The combined probability is the product and assumes independence. If two legs share a game, the card says the product ignores that correlation. After the games end, each leg and each parlay is graded into `parlays.json`. A player leg is graded only from a final box, so a pregame zero does not become a loss. The slate header adds `Parlays (0-0) · Legs (0-0)`.
+
+Player-prop prices stay off. The Odds API serves them only on the single-event odds endpoint, at 1 credit per market per region. Points, rebounds, threes, and steals for one game is 4 credits, about 48 credits on a 12-game slate, which does not fit beside the live totals in a 500-credit month. About 488 credits were left when this was checked.
+
 ## Local commands
 
 ```bash

@@ -209,7 +209,7 @@ def _side_letter(side):
     return "O" if side == "OVER" else "U"
 
 
-def format_header(record, slate_date):
+def format_header(record, slate_date, parlay_line=None):
     """Compact block placed above the slate title."""
     calls = record.get("calls") or []
     leans = [c for c in calls if c.get("tier") == "lean"]
@@ -223,7 +223,10 @@ def format_header(record, slate_date):
     if streak:
         bits.append(streak)
     lw, ll, lp = tally(leans)
-    lines = [f"<b>CourtSide Picks ({' · '.join(bits)})</b> · Leans ({record_string(lw, ll, lp)})"]
+    headline = f"<b>CourtSide Picks ({' · '.join(bits)})</b> · Leans ({record_string(lw, ll, lp)})"
+    if parlay_line:
+        headline += f" · {parlay_line}"
+    lines = [headline]
     last = last_night_calls(plays, slate_date)
     if last:
         parts = []
