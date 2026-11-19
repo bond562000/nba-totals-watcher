@@ -8,6 +8,7 @@
   "games": {
     "21718131": {
       "checkpoints": [
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
@@ -31,7 +32,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 223.0,
+      "last_clock": 189.0,
       "last_eval_ts": 1795054212.0846863,
       "last_period": 4
     },
@@ -98,7 +99,7 @@
       "last_period": 4
     },
     "21718135": {
-      "last_clock": 190.0,
+      "last_clock": 186.0,
       "last_period": 3
     },
     "21718136": {

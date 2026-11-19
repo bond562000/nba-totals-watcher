@@ -377,6 +377,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-18T21:14:22.350728-05:00",
+      "away": "Memphis Grizzlies",
+      "away_score": 116,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 189.0,
+      "expected_ot_points": 1.31,
+      "final_total": null,
+      "game_id": "21718131",
+      "hi_80": 255.77,
+      "home": "Cleveland Cavaliers",
+      "home_score": 117,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T02:13:01Z",
+      "line_over": -114,
+      "line_status": "reused",
+      "line_total": 248.5,
+      "line_under": -114,
+      "lo_80": 244.84,
+      "missing_inputs": [
+        "current_lineup",
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.664,
+      "p_push": 0.0,
+      "p_under": 0.336,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 250.31,
+      "proj_regulation": 248.99,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
