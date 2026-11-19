@@ -237,7 +237,7 @@
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 136.0,
+      "last_clock": 124.0,
       "last_period": 4
     },
     "21718140": {
@@ -253,7 +253,10 @@
       "last_period": 4
     },
     "21718141": {
-      "last_clock": 552.0,
+      "checkpoints": [
+        "q4_8:00"
+      ],
+      "last_clock": 518.0,
       "last_period": 4
     },
     "21718142": {
