@@ -67,7 +67,10 @@
       "last_period": 4
     },
     "21718133": {
-      "last_clock": 602.0,
+      "checkpoints": [
+        "q4_8:00"
+      ],
+      "last_clock": 531.0,
       "last_period": 4
     },
     "21718134": {
@@ -96,16 +99,19 @@
         }
       ],
       "evals": 2,
-      "last_clock": 153.0,
+      "last_clock": 69.0,
       "last_eval_ts": 1795054399.1892097,
       "last_period": 4
     },
     "21718135": {
-      "last_clock": 582.0,
+      "checkpoints": [
+        "q4_8:00"
+      ],
+      "last_clock": 524.0,
       "last_period": 4
     },
     "21718136": {
-      "last_clock": 625.0,
+      "last_clock": 604.0,
       "last_period": 4
     },
     "21718137": {
