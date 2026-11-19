@@ -920,6 +920,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-18T21:48:20.229494-05:00",
+      "away": "Washington Wizards",
+      "away_score": 98,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 169.0,
+      "expected_ot_points": 0.23,
+      "final_total": null,
+      "game_id": "21718136",
+      "hi_80": 205.43,
+      "home": "Toronto Raptors",
+      "home_score": 90,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T02:41:31Z",
+      "line_over": 102,
+      "line_status": "reused",
+      "line_total": 210.5,
+      "line_under": -136,
+      "lo_80": 195.22,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.0053,
+      "p_push": 0.0,
+      "p_under": 0.9947,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 200.33,
+      "proj_regulation": 200.1,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"
