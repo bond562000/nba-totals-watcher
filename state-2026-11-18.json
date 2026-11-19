@@ -1,5 +1,5 @@
 {
-  "credits_remaining": 488,
+  "credits_remaining": 487,
   "espn": {
     "backoff_until": 0,
     "fails": 0,
@@ -8,6 +8,7 @@
   "games": {
     "21718131": {
       "checkpoints": [
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -21,7 +22,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 436.0,
+      "last_clock": 375.0,
       "last_eval_ts": 1795053838.829654,
       "last_period": 4
     },
@@ -53,7 +54,19 @@
       "checkpoints": [
         "q4_8:00"
       ],
+      "decisions": [
+        {
+          "at": "2026-11-18T21:07:05.145081-05:00",
+          "edge": 1.2,
+          "line": 239.5,
+          "model": "possession_estimate",
+          "proj": 240.7,
+          "verdict": "PASS / NO PLAY"
+        }
+      ],
+      "evals": 1,
       "last_clock": 497.0,
+      "last_eval_ts": 1795054025.1447148,
       "last_period": 4
     },
     "21718135": {
@@ -65,7 +78,7 @@
       "last_period": 3
     },
     "21718137": {
-      "last_clock": 118.0,
+      "last_clock": 116.0,
       "last_period": 2
     },
     "21718138": {
@@ -73,104 +86,104 @@
       "last_period": 3
     },
     "21718140": {
-      "last_clock": 103.0,
+      "last_clock": 65.0,
       "last_period": 2
     }
   },
   "last_lines": {
     "76ers@magic": {
       "commence": "2026-11-19T00:11:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -120,
-      "total": 241.5,
-      "under": -110
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -112,
+      "total": 239.5,
+      "under": -118
     },
     "bucks@heat": {
       "commence": "2026-11-19T00:18:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -114,
-      "total": 242.5,
-      "under": -114
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -102,
+      "total": 244.5,
+      "under": -130
     },
     "bulls@nets": {
       "commence": "2026-11-19T00:41:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -118,
-      "total": 247.5,
-      "under": -112
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -106,
+      "total": 249.5,
+      "under": -125
     },
     "celtics@nuggets": {
       "commence": "2026-11-19T02:40:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
+      "last_update": "2026-11-19T02:06:52Z",
       "over": -106,
       "total": 220.5,
       "under": -114
     },
     "clippers@spurs": {
       "commence": "2026-11-20T01:10:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
+      "last_update": "2026-11-19T02:06:52Z",
       "over": -110,
       "total": 225.5,
       "under": -110
     },
     "grizzlies@cavaliers": {
       "commence": "2026-11-19T00:10:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": 104,
-      "total": 253.5,
-      "under": -138
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -108,
+      "total": 252.5,
+      "under": -122
     },
     "hawks@thunder": {
       "commence": "2026-11-19T01:11:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -104,
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -118,
       "total": 225.5,
-      "under": -128
+      "under": -112
     },
     "jazz@lakers": {
       "commence": "2026-11-19T03:10:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
+      "last_update": "2026-11-19T02:06:52Z",
       "over": -110,
       "total": 230.5,
       "under": -110
     },
     "pistons@pelicans": {
       "commence": "2026-11-19T01:11:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -112,
-      "total": 229.5,
-      "under": -118
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -108,
+      "total": 227.5,
+      "under": -122
     },
     "rockets@pacers": {
       "commence": "2026-11-19T00:10:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -128,
-      "total": 223.5,
-      "under": -104
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -118,
+      "total": 225.5,
+      "under": -112
     },
     "suns@kings": {
       "commence": "2026-11-19T03:10:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
+      "last_update": "2026-11-19T02:06:52Z",
       "over": -106,
       "total": 227.5,
       "under": -114
     },
     "warriors@mavericks": {
       "commence": "2026-11-19T01:12:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -118,
-      "total": 224.5,
-      "under": -112
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -122,
+      "total": 223.5,
+      "under": -108
     },
     "wizards@raptors": {
       "commence": "2026-11-19T00:42:00Z",
-      "last_update": "2026-11-19T02:03:41Z",
-      "over": -110,
-      "total": 212.5,
-      "under": -120
+      "last_update": "2026-11-19T02:06:52Z",
+      "over": -146,
+      "total": 210.5,
+      "under": 110
     }
   },
-  "odds_calls": 3,
+  "odds_calls": 4,
   "pregame": {
     "76ers@magic": 221.5,
     "bucks@heat": 236.5,
