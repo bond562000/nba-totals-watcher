@@ -232,10 +232,11 @@
     },
     "21718139": {
       "checkpoints": [
+        "q4_5:00",
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 374.0,
+      "last_clock": 339.0,
       "last_period": 4
     },
     "21718140": {
@@ -251,11 +252,11 @@
       "last_period": 4
     },
     "21718141": {
-      "last_clock": 143.0,
+      "last_clock": null,
       "last_period": 3
     },
     "21718142": {
-      "last_clock": 627.0,
+      "last_clock": 585.0,
       "last_period": 4
     }
   },
