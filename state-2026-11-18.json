@@ -231,8 +231,11 @@
       "last_period": 4
     },
     "21718139": {
-      "last_clock": 449.0,
-      "last_period": 2
+      "checkpoints": [
+        "q4_8:00"
+      ],
+      "last_clock": 549.0,
+      "last_period": 4
     },
     "21718140": {
       "checkpoints": [
@@ -247,12 +250,12 @@
       "last_period": 4
     },
     "21718141": {
-      "last_clock": 203.0,
-      "last_period": 1
+      "last_clock": 353.0,
+      "last_period": 3
     },
     "21718142": {
-      "last_clock": 69.0,
-      "last_period": 1
+      "last_clock": 720.0,
+      "last_period": 4
     }
   },
   "grade_sig": "q4_2:00 n=9 MAE=4.5 cover=78% hit=44% pushes=0; q4_5:00 n=9 MAE=4.4 cover=89% hit=67% pushes=0; q4_6:30 n=9 MAE=3.9 cover=89% hit=78% pushes=0; q4_8:00 n=9 MAE=4.6 cover=78% hit=44% pushes=0",
