@@ -15,9 +15,10 @@ Modes:  (default) live run until slate is over
 Secrets come from the environment only:
   BALLDONTLIE_API_KEY, TELEGRAM_BOT_TOKEN, ODDS_API_KEY, TELEGRAM_CHANNEL_ID
 
-On GitHub Actions, NBA_SLOT is slate | evening | late | manual. A scheduled slot
-exits immediately when the current America/New_York hour is not that slot's hour
-(UTC cron fires twice, once per DST offset). State is read and written under
+On GitHub Actions, NBA_SLOT is slate | parlay-early | parlay-final | evening |
+late | manual. A scheduled slot exits immediately when the America/New_York
+clock is outside that slot's window (UTC cron fires twice, once per DST
+offset). Parlay slots are one pass. State is read and written under
 NBA_STATE_DIR so a later job on the same slate can resume.
 """
 import argparse, csv, html, json, os, re, socket, sys, time, urllib.parse, urllib.request, urllib.error
@@ -139,6 +140,8 @@ def slot_name():
 
 def slot_hour_ok(slot, now=None):
     """False when this process should no-op because the ET clock is the other DST offset."""
+    if os.environ.get("NBA_PARLAY_FORCE") == "1" and slot in ("parlay-early", "parlay-final"):
+        return True
     if slot in (None, "", "manual"):
         return True
     now = now or now_et()
@@ -155,6 +158,12 @@ def slot_hour_ok(slot, now=None):
         if now.hour == 23:
             return True
         return now.hour == 0 and now.minute <= 15
+    if slot == "parlay-early":
+        # 10:55–11:40 AM. The other offset of these crons is 10:08 AM or 12:08 PM.
+        return (10, 55) <= hm <= (11, 40)
+    if slot == "parlay-final":
+        # 3:20–4:10 PM. The other offset is 2:30 PM or 4:30 PM.
+        return (15, 20) <= hm <= (16, 10)
     return False
 
 
@@ -222,7 +231,10 @@ def _write_json(path, obj):
 # Quota fields are shared with the live state file so a dry run that takes the
 # pregame snapshot does not make the live run buy it again. Posted flags are not
 # copied: a dry run must not suppress the real Telegram card.
-QUOTA_KEYS = ("pregame", "pregame_done", "odds_calls", "credits_remaining")
+QUOTA_KEYS = (
+    "pregame", "pregame_done", "pregame_meta", "odds_calls", "credits_remaining",
+    "credits_used_month", "credits_by_feature", "prop_quotes", "prop_events_done",
+)
 
 
 def _mirror_quota_to_live(st):
@@ -410,6 +422,42 @@ def game_key(away, home):
     return f"{team_key(away)}@{team_key(home)}"
 
 
+def _parse_odds_board(data):
+    """FanDuel totals and spreads from one /odds payload. Spread is the absolute number."""
+    lines = {}
+    for ev in data or []:
+        key = game_key(ev.get("away_team") or "", ev.get("home_team") or "")
+        ln = {
+            "commence": ev.get("commence_time"),
+            "event_id": ev.get("id"),
+            "away": ev.get("away_team"),
+            "home": ev.get("home_team"),
+        }
+        for bk in ev.get("bookmakers") or []:
+            if bk.get("key") != "fanduel":
+                continue
+            for mk in bk.get("markets") or []:
+                name = mk.get("key")
+                if name == "totals":
+                    ln["last_update"] = mk.get("last_update")
+                    for outcome in mk.get("outcomes") or []:
+                        if outcome.get("name") == "Over":
+                            ln["total"], ln["over"] = outcome.get("point"), outcome.get("price")
+                        elif outcome.get("name") == "Under":
+                            ln["under"] = outcome.get("price")
+                            ln.setdefault("total", outcome.get("point"))
+                elif name == "spreads":
+                    points = []
+                    for outcome in mk.get("outcomes") or []:
+                        if outcome.get("point") is not None:
+                            points.append(abs(float(outcome["point"])))
+                    if points:
+                        ln["spread"] = points[0]
+        if ln.get("total") is not None or ln.get("spread") is not None:
+            lines[key] = ln
+    return lines
+
+
 def reuben_fetch(st, odds_key, why):
     """One Odds API call (1 credit). Returns {game_key: line} or None if skipped/failed.
 
@@ -422,7 +470,10 @@ def reuben_fetch(st, odds_key, why):
     if cr is not None and cr < MIN_CREDITS:
         log(f"[Reuben Tishkoff] QUOTA: only {cr} credits left (< {MIN_CREDITS}) -- skipping Odds API ({why})")
         return None
-    q = urllib.parse.urlencode({"apiKey": odds_key, "regions": "us", "markets": "totals",
+    feature = "pregame" if str(why).startswith("pregame") else "live"
+    # totals,spreads is 2 credits (markets × regions). A live fetch stays totals-only.
+    markets = "totals,spreads" if feature == "pregame" else "totals"
+    q = urllib.parse.urlencode({"apiKey": odds_key, "regions": "us", "markets": markets,
                                 "bookmakers": "fanduel", "oddsFormat": "american"})
     st["odds_calls"] += 1
     try:
@@ -440,56 +491,152 @@ def reuben_fetch(st, odds_key, why):
         st["credits_remaining"] = int(float(hl.get("x-requests-remaining")))
     except (TypeError, ValueError):
         pass
-    log(f"[Reuben Tishkoff] QUOTA: Odds API call #{st['odds_calls']} tonight ({why}); "
+    try:
+        st["credits_used_month"] = int(float(hl.get("x-requests-used")))
+    except (TypeError, ValueError):
+        pass
+    try:
+        cost = int(float(hl.get("x-requests-last")))
+    except (TypeError, ValueError):
+        cost = markets.count(",") + 1
+    spent = st.setdefault("credits_by_feature", {})
+    spent[feature] = int(spent.get(feature) or 0) + cost
+    log(f"[Reuben Tishkoff] QUOTA: Odds API call #{st['odds_calls']} tonight ({why}, {feature} +{cost}); "
         f"x-requests-remaining={hl.get('x-requests-remaining')} used={hl.get('x-requests-used')}")
-    lines = {}
-    for ev in data:
-        for bk in ev.get("bookmakers", []):
-            if bk.get("key") != "fanduel":
-                continue
-            for mk in bk.get("markets", []):
-                if mk.get("key") != "totals":
-                    continue
-                ln = {"commence": ev.get("commence_time"), "last_update": mk.get("last_update")}
-                for o in mk.get("outcomes", []):
-                    if o.get("name") == "Over":
-                        ln["total"], ln["over"] = o.get("point"), o.get("price")
-                    elif o.get("name") == "Under":
-                        ln["under"] = o.get("price")
-                        ln.setdefault("total", o.get("point"))
-                if ln.get("total") is not None:
-                    lines[game_key(ev["away_team"], ev["home_team"])] = ln
+    lines = _parse_odds_board(data)
     if lines:
         st.setdefault("last_lines", {}).update(lines)
     save_state(st)
     return lines
 
 
-def reuben_pregame(st, odds_key, games):
-    """ONE pregame call per night to record opening/pregame FanDuel totals."""
+def reuben_pregame(st, odds_key, games=None):
+    """ONE pregame call per slate. totals+spreads, so the call costs 2 credits."""
     if st.get("pregame_done"):
         n = len(st.get("pregame") or {})
         # Once per process. This used to print on every poll tick.
         log_once("pregame-reuse",
                  f"[Reuben Tishkoff] reusing saved pregame totals for {n} games; no Odds API call")
         return
-    pending = [g for g in games if g["state"] == "scheduled"]
-    if not pending:
-        st["pregame_done"] = True
-        save_state(st)
-        log("[Reuben Tishkoff] pregame snapshot skipped -- no games still scheduled")
-        return
+    pending = None
+    if games is not None:
+        pending = [g for g in games if g["state"] == "scheduled"]
+        if not pending:
+            st["pregame_done"] = True
+            save_state(st)
+            log("[Reuben Tishkoff] pregame snapshot skipped -- no games still scheduled")
+            return
     lines = reuben_fetch(st, odds_key, "pregame snapshot")
     st["pregame_done"] = True
+    meta = st.setdefault("pregame_meta", {})
     if lines:
-        for g in pending:
-            k = game_key(g["away"], g["home"])
-            if k in lines:
-                st["pregame"][k] = lines[k]["total"]
-                log(f"[Reuben Tishkoff] pregame FanDuel total {g['away']} @ {g['home']}: {lines[k]['total']}")
-            else:
-                log(f"[Reuben Tishkoff] pregame: no FanDuel total yet for {g['away']} @ {g['home']}")
+        for key, ln in lines.items():
+            if ln.get("total") is not None:
+                st["pregame"][key] = ln["total"]
+            meta[key] = {
+                "key": key,
+                "total": ln.get("total"),
+                "spread": ln.get("spread"),
+                "event_id": ln.get("event_id"),
+                "away": ln.get("away"),
+                "home": ln.get("home"),
+            }
+        if pending is not None:
+            for g in pending:
+                k = game_key(g["away"], g["home"])
+                if k in lines and lines[k].get("total") is not None:
+                    spread = lines[k].get("spread")
+                    extra = f", spread {spread:g}" if spread is not None else ""
+                    log(f"[Reuben Tishkoff] pregame FanDuel total {g['away']} @ {g['home']}: {lines[k]['total']}{extra}")
+                else:
+                    log(f"[Reuben Tishkoff] pregame: no FanDuel total yet for {g['away']} @ {g['home']}")
     save_state(st)
+
+
+def reuben_props(st, odds_key, chosen):
+    """One FanDuel prop request per chosen game. 3 markets × 1 region = 3 credits each."""
+    if st.get("props_done"):
+        log_once("props-reuse", "[Reuben Tishkoff] reusing saved prop quotes; no Odds API call")
+        return st.get("prop_quotes") or {}
+    if DRY_RUN or not odds_key:
+        log("[Reuben Tishkoff] prop prices not purchased on a dry run")
+        return st.get("prop_quotes") or {}
+    bag = st.get("credits_by_feature") or {}
+    if not parlays.props_allowed(
+            st.get("credits_remaining"), st.get("credits_used_month"), now_et().date(),
+            live_spent_today=int(bag.get("live") or 0),
+            pregame_spent_today=int(bag.get("pregame") or 0)):
+        log(f"[Reuben Tishkoff] prop check skipped -- credits left {st.get('credits_remaining')} "
+            f"(floor {parlays.PROP_MIN_REMAINING}, month cap {parlays.PLAN_CREDITS})")
+        st["props_done"] = True
+        save_state(st)
+        return {}
+    quotes = dict(st.get("prop_quotes") or {})
+    done = set(str(item) for item in (st.get("prop_events_done") or []))
+    failed = False
+    for game in chosen:
+        event_id = str(game.get("event_id") or "")
+        if not event_id or event_id in done:
+            continue
+        if st["odds_calls"] >= MAX_ODDS_CALLS_PER_NIGHT:
+            log(f"[Reuben Tishkoff] QUOTA: nightly cap {MAX_ODDS_CALLS_PER_NIGHT} reached -- skipping props")
+            failed = True
+            break
+        cr = st.get("credits_remaining")
+        if cr is not None and cr < MIN_CREDITS:
+            log(f"[Reuben Tishkoff] QUOTA: only {cr} credits left (< {MIN_CREDITS}) -- skipping props")
+            failed = True
+            break
+        q = urllib.parse.urlencode({
+            "apiKey": odds_key, "regions": "us",
+            "markets": "player_points,player_rebounds,player_assists",
+            "bookmakers": "fanduel", "oddsFormat": "american",
+        })
+        url = (f"https://api.the-odds-api.com/v4/sports/basketball_nba/events/"
+               f"{urllib.parse.quote(event_id)}/odds?{q}")
+        st["odds_calls"] += 1
+        try:
+            data, hdr = http_get(url)
+        except urllib.error.HTTPError as exc:
+            log(f"[Reuben Tishkoff] Odds API HTTP {exc.code} (props); call #{st['odds_calls']}")
+            failed = True
+            save_state(st)
+            continue
+        except Exception:
+            log(f"[Reuben Tishkoff] Odds API error (props request failed); call #{st['odds_calls']}")
+            failed = True
+            save_state(st)
+            continue
+        hl = {k.lower(): v for k, v in hdr.items()}
+        try:
+            st["credits_remaining"] = int(float(hl.get("x-requests-remaining")))
+        except (TypeError, ValueError):
+            pass
+        try:
+            st["credits_used_month"] = int(float(hl.get("x-requests-used")))
+        except (TypeError, ValueError):
+            pass
+        try:
+            cost = int(float(hl.get("x-requests-last")))
+        except (TypeError, ValueError):
+            cost = 3
+        spent = st.setdefault("credits_by_feature", {})
+        spent["props"] = int(spent.get("props") or 0) + cost
+        log(f"[Reuben Tishkoff] QUOTA: props call #{st['odds_calls']} cost {cost}; "
+            f"x-requests-remaining={hl.get('x-requests-remaining')}")
+        parsed = parlays.parse_prop_payload(data)
+        quotes[event_id] = parsed
+        if game.get("key"):
+            quotes[game["key"]] = parsed
+        done.add(event_id)
+        st["prop_quotes"] = quotes
+        st["prop_events_done"] = sorted(done)
+        save_state(st)
+    wanted = {str(game.get("event_id")) for game in chosen if game.get("event_id")}
+    if not failed and wanted <= done:
+        st["props_done"] = True
+        save_state(st)
+    return quotes
 
 
 # =============================================================================
@@ -665,35 +812,58 @@ def save_parlays(document):
     _write_json(parlays_path(), document)
 
 
-def maybe_post_parlays(st, games, sd, tg_token, channel):
-    """One pregame card per slate, before tip, on the same run as the slate post."""
-    if st.get("parlays_posted") or os.environ.get("NBA_SKIP_PARLAYS") == "1":
+def post_parlay_board(board, st, sd, tg_token, channel, odds_key):
+    """Post one board and exit. Early spends 0 odds credits. Final may buy props."""
+    flag = "early_board_posted" if board == "early" else "final_board_posted"
+    if st.get(flag) or os.environ.get("NBA_SKIP_PARLAYS") == "1":
         return
-    if not any(g.get("state") == "scheduled" for g in games):
-        return
+    quotes = {}
+    if board == "final":
+        reuben_pregame(st, odds_key, None)
+        chosen, how = parlays.pick_prop_games(list((st.get("pregame_meta") or {}).values()))
+        names = ", ".join(
+            f"{row.get('away')} @ {row.get('home')} (spread {row.get('spread')})" for row in chosen)
+        log(f"[Reuben Tishkoff] prop games by {how}: {names or 'none'}")
+        quotes = reuben_props(st, odds_key, chosen) or {}
     try:
-        built = parlays.build_for_slate(sd, st.get("pregame") or {})
+        built = parlays.build_for_slate(
+            sd, st.get("pregame") or {}, board=board, prop_quotes=quotes or None)
     except Exception as exc:
         log(f"[Livingston Dell] parlay build failed: {type(exc).__name__}")
         return
     if built is None:
         log("[Livingston Dell] parlay board unavailable -- will retry")
         return
+    document = load_parlays()
+    early = [row for row in document["parlays"]
+             if row.get("slate") == sd.isoformat() and row.get("board") == "early"]
+    changes = parlays.change_note(early, built) if board == "final" else None
     if not built:
-        log("[Livingston Dell] no parlay cleared the floor tonight")
-        st["parlays_posted"] = True
+        log(f"[Livingston Dell] no {board} parlay cleared the floor")
+        st[flag] = True
         save_state(st)
         return
-    document = load_parlays()
-    document["parlays"] = [row for row in document["parlays"] if row.get("slate") != sd.isoformat()] + built
+    document["parlays"] = [
+        row for row in document["parlays"]
+        if not (row.get("slate") == sd.isoformat() and row.get("board") == board)
+    ] + built
     save_parlays(document)
-    for text in parlays.render_parlays(built):
+    for text in parlays.render_parlays(built, board, changes):
         if not dell_post(text, tg_token, channel):
-            log("[Livingston Dell] FAILED to post parlays -- will retry")
+            log("[Livingston Dell] FAILED to post parlay board -- will retry")
             return
-    st["parlays_posted"] = True
+    st[flag] = True
     save_state(st)
-    log(f"[Livingston Dell] posted {len(built)} parlays{' (dry run)' if DRY_RUN else ''}")
+    log(f"[Livingston Dell] posted {board} board ({len(built)} parlays){' (dry run)' if DRY_RUN else ''}")
+
+
+def maybe_final_board_from_slate(st, sd, tg_token, channel, odds_key):
+    """Day-game slate holds the runner, so it posts the 3:30 board itself."""
+    if st.get("final_board_posted") or os.environ.get("NBA_SKIP_PARLAYS") == "1":
+        return
+    if not slot_hour_ok("parlay-final", now_et()):
+        return
+    post_parlay_board("final", st, sd, tg_token, channel, odds_key)
 
 
 _PARLAY_BOXES = {}
@@ -716,7 +886,7 @@ def grade_open_parlays(games):
     player_boxes = {}
     if os.environ.get("NBA_SKIP_PARLAYS") != "1":
         needed = {}
-        for parlay in document["parlays"]:
+        for parlay in parlays.active_parlays(document):
             for leg in parlay.get("legs") or []:
                 if leg.get("kind") == "player" and not leg.get("result") and leg.get("event_id"):
                     needed.setdefault(str(leg["event_id"]), leg)
@@ -740,7 +910,7 @@ def grade_open_parlays(games):
         finals[str(game.get("id"))] = game.get("total")
         finals[f"{(game.get('away_nick') or '').lower()}@{(game.get('home_nick') or '').lower()}"] = game.get("total")
     changed = False
-    for parlay in document["parlays"]:
+    for parlay in parlays.active_parlays(document):
         for leg in parlay.get("legs") or []:
             if leg.get("result"):
                 continue
@@ -850,7 +1020,7 @@ def _confirmed_rows():
         return list(csv.DictReader(f))
 
 
-def dell_slate_text(games, pregame, sd, record=None):
+def dell_slate_text(games, pregame, sd, record=None, credits=None):
     """Livingston Dell's daily slate card. games = scouted dicts; pregame = {game_key: total}."""
     gs = sorted(games, key=lambda g: g["tip"] or "9999")
     tips = [datetime.fromisoformat(g["tip"].replace("Z", "+00:00")).astimezone(ET) for g in gs if g["tip"]]
@@ -864,8 +1034,13 @@ def dell_slate_text(games, pregame, sd, record=None):
     brand = ""
     if record:
         brand = recordbook.format_header(record, sd, parlays.parlay_header(load_parlays()))
+    if credits is None:
+        credit = "Odds credits: not checked yet"
+    else:
+        credit = f"Odds credits: {credits} left"
     return (brand + f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
-            "\n\nLive Over/Under picks drop here in the 4th quarter, from 8:00 to 5:00 👀")
+            f"\n\n{credit}"
+            "\nLive Over/Under picks drop here in the 4th quarter, from 8:00 to 5:00 👀")
 
 
 def dell_post_slate(st, games, sd, tg_token, channel):
@@ -873,7 +1048,7 @@ def dell_post_slate(st, games, sd, tg_token, channel):
     record = refresh_picks_record(st, games)
     if st.get("slate_posted") or not games:
         return
-    text = dell_slate_text(games, st.get("pregame", {}), sd, record)
+    text = dell_slate_text(games, st.get("pregame", {}), sd, record, st.get("credits_remaining"))
     if dell_post(text, tg_token, channel):
         st["slate_posted"] = True
         log(f"[Livingston Dell] slate posted ({len(games)} games){' (dry run)' if DRY_RUN else ''}")
@@ -1294,10 +1469,28 @@ def runtime_exceeded(started):
     return bool(limit) and (time.monotonic() - started) >= limit
 
 
+def run_parlay_slot(board):
+    """One board, then exit, so this job does not hold the runner."""
+    if not DRY_RUN:
+        tg_token = need_env("TELEGRAM_BOT_TOKEN")
+        channel = need_env("TELEGRAM_CHANNEL_ID")
+        odds_key = need_env("ODDS_API_KEY") if board == "final" else ""
+    else:
+        tg_token = channel = ""
+        odds_key = os.environ.get("ODDS_API_KEY", "") if board == "final" else ""
+    sd = slate_date()
+    log(f"[Danny Ocean] parlay board={board} slate={sd} mode={'dry-run' if DRY_RUN else 'LIVE'}")
+    st = load_state(sd)
+    post_parlay_board(board, st, sd, tg_token, channel, odds_key)
+
+
 def run(args):
     slot = slot_name()
     if not slot_hour_ok(slot):
         log(f"[Danny Ocean] slot={slot} is not due at {now_et():%Y-%m-%d %H:%M %Z} -- no-op")
+        return
+    if slot in ("parlay-early", "parlay-final"):
+        run_parlay_slot("early" if slot == "parlay-early" else "final")
         return
     bdl_key = need_env("BALLDONTLIE_API_KEY")
     if args.slate_preview:
@@ -1370,9 +1563,10 @@ def run(args):
                 bits.append(f"{g['away_nick']}@{g['home_nick']} {g['state']} {clk}")
             log("[Danny Ocean] status: " + "; ".join(bits))
             last_status = now_ts
-        reuben_pregame(st, odds_key, games)           # one Odds API call per night, at startup
+        reuben_pregame(st, odds_key, games)           # one Odds API call per slate, totals + spreads
         dell_post_slate(st, games, sd, tg_token, channel)  # reuses that snapshot, no extra credits
-        maybe_post_parlays(st, games, sd, tg_token, channel)
+        if slot == "slate":
+            maybe_final_board_from_slate(st, sd, tg_token, channel, odds_key)
         maybe_attach_box_scores(games, bdl_key, st, sd)
         live = [g for g in games if g["state"] == "in_progress"]
         for g in live:
@@ -1522,8 +1716,8 @@ def main():
                     help="print tonight's slate card using stored pregame totals; no Odds API/Telegram")
     ap.add_argument("--grade", action="store_true",
                     help="print the checkpoint grade summary already stored for a slate; no network")
-    ap.add_argument("--parlays", action="store_true",
-                    help="print tonight's pregame parlays and do not post them")
+    ap.add_argument("--parlays", nargs="?", const="final", choices=("early", "final"),
+                    help="print the early or final board and do not post or buy props")
     a = ap.parse_args()
     if a.simulate:
         return simulate()
@@ -1531,8 +1725,13 @@ def main():
         DRY_RUN = True
         sd = slate_date()
         st = load_state(sd)
-        built = parlays.build_for_slate(sd, st.get("pregame") or {})
-        messages = parlays.render_parlays(built)
+        built = parlays.build_for_slate(
+            sd, st.get("pregame") or {}, board=a.parlays, prop_quotes=st.get("prop_quotes") or None)
+        document = load_parlays()
+        early = [row for row in document["parlays"]
+                 if row.get("slate") == sd.isoformat() and row.get("board") == "early"]
+        changes = parlays.change_note(early, built or []) if a.parlays == "final" else None
+        messages = parlays.render_parlays(built or [], a.parlays, changes)
         if not messages:
             print("No parlay cleared the floor.")
             return

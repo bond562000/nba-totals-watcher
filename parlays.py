@@ -7,11 +7,11 @@ the FanDuel pregame total already stored on the slate. Probabilities are
 UNCALIBRATED. The combined figure assumes independence and says so when two
 legs share a game.
 
-Player-prop prices are not fetched. The Odds API can return them, but only
-one event at a time, at 1 credit per market per region. Four markets across a
-12-game slate is about 48 credits a night, which does not fit next to the
-live totals budget.
+The early board is ESPN history only. The final board buys FanDuel player
+points, rebounds, and assists for the two closest games, on the three main
+markets only. Alternate prop markets are not requested.
 """
+import calendar
 import os
 
 import espn_box
@@ -27,19 +27,28 @@ MAX_MINUTE_SD = 10.0
 STINGY_DEFENSE_N = 8
 TOTAL_EDGE_MIN = 3.0
 RECENT_FORM_WEIGHT = 0.4
-TARGET_PARLAYS = 6
-PLAYER_PARLAYS = 4
+EARLY_MAX = 6
+FINAL_MAX = 7
 TOTAL_PARLAYS = 2
 LEG_MIN = 4
 LEG_MAX = 6
+MAX_PLAYER_LEGS_PER_GAME = 3
 MAX_PLAYERS_PER_TEAM = 12
-
-FLOORS = (
-    ("points", "15+ points", 15),
-    ("rebounds", "3+ rebounds", 3),
-    ("threes", "1+ three", 1),
-    ("steals", "1+ steal", 1),
+# Highest threshold that still clears the hit rate. Points, rebounds, assists only.
+FLOOR_LADDERS = (
+    ("points", (25, 20, 15, 10)),
+    ("rebounds", (10, 8, 6, 5, 3)),
+    ("assists", (8, 6, 5, 3)),
 )
+# The Odds API charges markets × regions. totals+spreads on one region is 2.
+# Three prop markets × one region × two events is 6. Live totals stay at 1 per fetch.
+PLAN_CREDITS = 500
+LIVE_RESERVE_PER_NIGHT = 9
+PREGAME_CREDITS = 2
+PROP_CREDITS = 6
+PROP_MIN_REMAINING = 60
+SPREAD_BLOWOUT = 10
+PROP_GAME_COUNT = 2
 OUT_STATUSES = {"out", "doubtful", "suspension", "suspended", "injured reserve"}
 
 
@@ -100,8 +109,7 @@ def player_games(gamelog):
             "minutes": minutes,
             "points": _num(val("points")) or 0,
             "rebounds": _num(val("totalRebounds")) or 0,
-            "threes": _made(val("threePointFieldGoalsMade-threePointFieldGoalsAttempted")) or 0,
-            "steals": _num(val("steals")) or 0,
+            "assists": _num(val("assists")) or 0,
         })
     return parsed
 
@@ -133,12 +141,19 @@ def qualify_player(name, player_id, team, opponent, event_id, games, stingy):
     if _stdev(minutes) > MAX_MINUTE_SD:
         return []
     legs = []
-    for stat, label, threshold in FLOORS:
-        season_rate, season_n = _rate(games, stat, threshold)
-        recent_rate, recent_n = _rate(recent, stat, threshold)
-        need = HIT_RATE_VS_STINGY if stingy and stat in ("points", "threes") else HIT_RATE_MIN
-        if season_rate < need or recent_rate < need:
+    for stat, ladder in FLOOR_LADDERS:
+        need = HIT_RATE_VS_STINGY if stingy and stat == "points" else HIT_RATE_MIN
+        chosen = None
+        for threshold in ladder:
+            season_rate, season_n = _rate(games, stat, threshold)
+            recent_rate, recent_n = _rate(recent, stat, threshold)
+            if season_rate < need or recent_rate < need:
+                continue
+            chosen = (threshold, season_rate, season_n, recent_rate, recent_n)
+            break
+        if not chosen:
             continue
+        threshold, season_rate, season_n, recent_rate, recent_n = chosen
         probability = min(season_rate, recent_rate)
         legs.append({
             "kind": "player",
@@ -149,11 +164,12 @@ def qualify_player(name, player_id, team, opponent, event_id, games, stingy):
             "event_id": str(event_id),
             "stat": stat,
             "threshold": threshold,
-            "label": f"{name} {label}",
+            "label": f"{name} {threshold}+ {stat}",
             "probability": probability,
             "probability_label": "UNCALIBRATED",
             "recent": f"{int(round(recent_rate * recent_n))}/{recent_n}",
             "season": f"{int(round(season_rate * season_n))}/{season_n}",
+            "price": None,
             "result": None,
         })
     return legs
@@ -231,7 +247,7 @@ def _shares_game(legs):
 
 
 def _pack(legs, size):
-    """Greedy packs. At most two legs from the same player, prefer different games."""
+    """Greedy packs. At most two legs from one player and three player legs from one game."""
     unused = list(legs)
     parlays = []
     while len(unused) >= LEG_MIN and len(parlays) < size:
@@ -245,10 +261,10 @@ def _pack(legs, size):
             if players.get(player, 0) >= 2:
                 rest.append(leg)
                 continue
-            if len(chosen) >= LEG_MAX:
+            if leg.get("kind") == "player" and games.get(event, 0) >= MAX_PLAYER_LEGS_PER_GAME:
                 rest.append(leg)
                 continue
-            if len(chosen) >= LEG_MIN and games.get(event, 0) >= 1 and any(games[k] == 0 for k in games):
+            if len(chosen) >= LEG_MAX:
                 rest.append(leg)
                 continue
             chosen.append(leg)
@@ -259,53 +275,113 @@ def _pack(legs, size):
         combined = 1.0
         for leg in chosen:
             combined *= leg["probability"]
+        price = combined_american(chosen)
         parlays.append({
             "legs": chosen,
             "combined_probability": combined,
+            "combined_price": price,
             "probability_label": "UNCALIBRATED",
             "same_game": _shares_game(chosen),
             "result": None,
         })
         unused = rest
-    return parlays
+    return parlays, unused
 
 
-def build_parlays(player_legs, total_legs, slate):
-    player_legs = sorted(player_legs, key=lambda leg: leg["probability"], reverse=True)
-    parlays = []
-    for kind, legs, count in (("player", player_legs, PLAYER_PARLAYS), ("total", total_legs, TOTAL_PARLAYS)):
-        for index, parlay in enumerate(_pack(legs, count), start=1):
-            parlay["kind"] = kind
-            parlay["slate"] = slate
-            parlay["id"] = f"{slate}-{kind}-{index}"
-            parlays.append(parlay)
-    return parlays[:TARGET_PARLAYS]
-
-
-def render_parlays(parlays):
-    """One message per kind. Returns a list of Telegram texts."""
-    messages = []
-    for kind, title, icon in (
-        ("player", "Player Parlays", "🏀"),
-        ("total", "Totals Parlays", "📊"),
-    ):
-        group = [parlay for parlay in parlays if parlay["kind"] == kind]
-        if not group:
-            continue
-        lines = [f"{icon} <b>{title}</b> · UNCALIBRATED"]
+def build_parlays(player_legs, total_legs, slate, board="early"):
+    """Up to 6 parlays on the early board and 7 on the final board."""
+    limit = FINAL_MAX if board == "final" else EARLY_MAX
+    total_slots = min(TOTAL_PARLAYS, limit if total_legs else 0)
+    if total_legs and limit >= 5:
+        total_slots = min(TOTAL_PARLAYS, 2)
+    player_slots = max(0, limit - total_slots)
+    priced = [leg for leg in player_legs if leg.get("price") is not None]
+    plain = [leg for leg in player_legs if leg.get("price") is None]
+    priced.sort(key=lambda leg: leg["probability"], reverse=True)
+    plain.sort(key=lambda leg: leg["probability"], reverse=True)
+    priced_rows, leftover = _pack(priced, min(2, player_slots))
+    plain_rows, _rest = _pack(leftover + plain, player_slots - len(priced_rows))
+    total_rows, _rest = _pack(total_legs, total_slots)
+    rows = []
+    for kind, group in (("player", priced_rows + plain_rows), ("total", total_rows)):
         for index, parlay in enumerate(group, start=1):
-            pct = _shown_pct(parlay["combined_probability"])
-            lines.append(f"\n<b>{index}.</b> combined {pct}"
-                         + (" · same-game legs, product ignores correlation" if parlay.get("same_game") else ""))
-            for leg in parlay["legs"]:
-                if leg["kind"] == "player":
-                    detail = f"{leg['recent']} last {RECENT_GAMES}, {leg['season']} season"
-                else:
-                    detail = f"proj <b>{leg['projection']:.1f}</b>, edge {leg['edge']:+.1f}"
-                lines.append(f"• {leg['label']} — {_shown_pct(leg['probability'])} ({detail})")
-        lines.append("\nHit rates are historical floors, not prices. Independence is assumed.")
-        messages.append("\n".join(lines))
-    return messages
+            parlay["kind"] = kind
+            parlay["board"] = board
+            parlay["slate"] = slate
+            parlay["id"] = f"{slate}-{board}-{kind}-{index}"
+            rows.append(parlay)
+    return rows[:limit]
+
+
+def _fmt_american(price):
+    price = int(round(price))
+    return f"+{price}" if price > 0 else str(price)
+
+
+def american_to_decimal(price):
+    price = float(price)
+    if price >= 0:
+        return 1.0 + price / 100.0
+    return 1.0 + 100.0 / abs(price)
+
+
+def decimal_to_american(decimal):
+    if decimal >= 2:
+        return int(round((decimal - 1.0) * 100))
+    if decimal <= 1:
+        return None
+    return int(round(-100.0 / (decimal - 1.0)))
+
+
+def combined_american(legs):
+    """American price of the product. None unless every leg has a price."""
+    if not legs or any(leg.get("price") is None for leg in legs):
+        return None
+    decimal = 1.0
+    for leg in legs:
+        decimal *= american_to_decimal(leg["price"])
+    return decimal_to_american(decimal)
+
+
+def render_parlays(parlays, board="early", changes=None):
+    """One board message, split only when it would exceed Telegram's length."""
+    if not parlays:
+        return []
+    title = "EARLY BOARD" if board == "early" else "FINAL BOARD"
+    icon = "🏀" if board == "early" else "📊"
+    lines = [f"{icon} <b>{title}</b> · UNCALIBRATED"]
+    if board == "early":
+        lines.append("FanDuel may not have every prop open yet. ESPN history only, 0 odds credits.")
+    elif changes:
+        lines.append(changes)
+    priced = any(leg.get("price") is not None for parlay in parlays for leg in parlay["legs"])
+    if board == "final" and not priced:
+        lines.append("No FanDuel floor was at or below the history line. Alternate prop markets were not bought.")
+    for index, parlay in enumerate(parlays, start=1):
+        pct = _shown_pct(parlay["combined_probability"])
+        price = ""
+        if parlay.get("combined_price") is not None:
+            price = f" · FanDuel <b>{_fmt_american(parlay['combined_price'])}</b>"
+        lines.append(f"\n<b>{index}.</b> combined {pct}{price}"
+                     + (" · same-game legs, product ignores correlation" if parlay.get("same_game") else ""))
+        for leg in parlay["legs"]:
+            lines.append(f"• {leg['label']} — {_leg_detail(leg)}")
+    lines.append("\nHit rates are UNCALIBRATED. The combined price multiplies the priced legs only when every leg has one. Independence is assumed.")
+    text = "\n".join(lines)
+    if len(text) <= 3500 or len(parlays) == 1:
+        return [text]
+    midpoint = max(1, len(parlays) // 2)
+    return render_parlays(parlays[:midpoint], board, changes) + render_parlays(parlays[midpoint:], board, None)
+
+
+def _leg_detail(leg):
+    if leg.get("price") is not None:
+        point = leg.get("book_point")
+        book = f"FanDuel Over {point:g} ({_fmt_american(leg['price'])})"
+        return f"{_shown_pct(leg['probability'])} · {book}"
+    if leg["kind"] == "player":
+        return f"{_shown_pct(leg['probability'])} ({leg['recent']} last {RECENT_GAMES}, {leg['season']} season)"
+    return f"{_shown_pct(leg['probability'])} (proj <b>{leg['projection']:.1f}</b>, edge {leg['edge']:+.1f})"
 
 
 def _shown_pct(probability):
@@ -342,8 +418,7 @@ def player_stats_from_summary(payload):
             out[pid] = {
                 "points": _num(grab("PTS")) or 0,
                 "rebounds": _num(grab("REB")) or 0,
-                "threes": _made(grab("3PT")) or 0,
-                "steals": _num(grab("STL")) or 0,
+                "assists": _num(grab("AST")) or 0,
             }
     return out
 
@@ -369,8 +444,21 @@ def grade_parlay(parlay):
     return "win"
 
 
+def active_parlays(document):
+    """Final board replaces the early board for the record. Older cards have no board."""
+    rows = (document or {}).get("parlays") or []
+    grouped = {}
+    for row in rows:
+        grouped.setdefault(row.get("slate"), []).append(row)
+    chosen = []
+    for group in grouped.values():
+        final = [row for row in group if row.get("board") == "final"]
+        chosen.extend(final or group)
+    return chosen
+
+
 def parlay_header(document):
-    parlays = (document or {}).get("parlays") or []
+    parlays = active_parlays(document)
     legs = [leg for parlay in parlays for leg in parlay.get("legs") or []]
     def bits(rows, key="result"):
         wins = sum(1 for row in rows if row.get(key) == "win")
@@ -382,6 +470,119 @@ def parlay_header(document):
 
 def empty_parlays():
     return {"parlays": []}
+
+
+def _person(name):
+    text = (name or "").lower().replace(".", "").replace("'", "")
+    for suffix in (" iii", " ii", " iv", " jr", " sr"):
+        if text.endswith(suffix):
+            text = text[: -len(suffix)]
+    return " ".join(text.split())
+
+
+def pick_prop_games(meta):
+    """Two closest games by absolute spread. |spread| >= 10 is out.
+
+    meta items need key, spread, total. When no game has a spread, the two
+    highest totals are the fallback. A blowout is not filled back in.
+    """
+    rows = list(meta or [])
+    known = [row for row in rows if row.get("spread") is not None]
+    if not known:
+        ranked = sorted(rows, key=lambda row: -(row.get("total") or 0))
+        return ranked[:PROP_GAME_COUNT], "highest total"
+    eligible = [row for row in known if abs(row["spread"]) < SPREAD_BLOWOUT]
+    eligible.sort(key=lambda row: (abs(row["spread"]), -(row.get("total") or 0)))
+    return eligible[:PROP_GAME_COUNT], "closest spread"
+
+
+def props_allowed(credits_remaining, credits_used, day, live_spent_today=0, pregame_spent_today=0):
+    """True when today's 6 prop credits still leave 9 live and 2 pregame for the month."""
+    if credits_remaining is None or credits_remaining < PROP_MIN_REMAINING:
+        return False
+    if credits_used is None:
+        credits_used = PLAN_CREDITS - int(credits_remaining)
+    days_left = calendar.monthrange(day.year, day.month)[1] - day.day + 1
+    tonight_live = max(0, LIVE_RESERVE_PER_NIGHT - live_spent_today)
+    pregame_left = max(0, PREGAME_CREDITS - pregame_spent_today)
+    future = max(0, days_left - 1) * (LIVE_RESERVE_PER_NIGHT + PREGAME_CREDITS)
+    projected = credits_used + PROP_CREDITS + tonight_live + pregame_left + future
+    return projected <= PLAN_CREDITS
+
+
+def parse_prop_payload(payload):
+    """FanDuel Overs from player_points, player_rebounds, and player_assists."""
+    stat_of = {
+        "player_points": "points",
+        "player_rebounds": "rebounds",
+        "player_assists": "assists",
+    }
+    found = {}
+    for book in (payload or {}).get("bookmakers") or []:
+        if book.get("key") not in (None, "fanduel"):
+            continue
+        for market in book.get("markets") or []:
+            stat = stat_of.get(market.get("key"))
+            if not stat:
+                continue
+            for outcome in market.get("outcomes") or []:
+                if outcome.get("name") != "Over":
+                    continue
+                point = _num(outcome.get("point"))
+                price = _num(outcome.get("price"))
+                if point is None or price is None:
+                    continue
+                who = _person(outcome.get("description") or outcome.get("player") or "")
+                if not who:
+                    continue
+                found.setdefault(who, {}).setdefault(stat, []).append(
+                    {"point": point, "price": int(price)})
+    return found
+
+
+def attach_prop_prices(legs, quotes_by_event):
+    """Price a historical floor when FanDuel has an Over at or below that floor.
+
+    The main market usually posts one number near a coin flip. A 24.5 does not
+    replace a 15+ floor. Alternate markets are a separate purchase and are not
+    in `quotes_by_event` unless the response happened to include them.
+    """
+    for leg in legs:
+        if leg.get("kind") != "player":
+            continue
+        bucket = (quotes_by_event or {}).get(str(leg.get("event_id")))
+        if not bucket:
+            bucket = (quotes_by_event or {}).get(leg.get("match_key")) or {}
+        offers = bucket.get(_person(leg.get("player"))) or {}
+        choices = offers.get(leg.get("stat")) or []
+        ceiling = float(leg["threshold"]) - 0.5
+        usable = [offer for offer in choices if offer["point"] <= ceiling + 1e-9]
+        if not usable:
+            continue
+        best = max(usable, key=lambda offer: (offer["point"], -abs(offer["price"])))
+        leg["price"] = best["price"]
+        leg["book_point"] = best["point"]
+        # The book's Over is the leg we can grade and price. Keep the history rate.
+        leg["threshold"] = best["point"] + 0.5
+
+
+def board_labels(parlays):
+    return {leg.get("label") for parlay in parlays or [] for leg in parlay.get("legs") or []}
+
+
+def change_note(early, final):
+    if not early:
+        return "No early board was posted."
+    dropped = sorted(board_labels(early) - board_labels(final))
+    added = sorted(board_labels(final) - board_labels(early))
+    if not dropped and not added:
+        return "Same legs as the early board."
+    parts = ["Changed vs the early board."]
+    if dropped:
+        parts.append("Dropped: " + "; ".join(dropped[:12]) + ("…" if len(dropped) > 12 else ""))
+    if added:
+        parts.append("Added: " + "; ".join(added[:12]) + ("…" if len(added) > 12 else ""))
+    return " ".join(parts)
 
 
 # --- ESPN collection (used by the live run and --parlays, not by unit tests) ---
@@ -468,9 +669,13 @@ def collect_player_legs(events, fetch):
                     continue
                 fetched += 1
                 games = _gamelog(athlete.get("id"), fetch)
-                logs.extend(qualify_player(
+                fresh = qualify_player(
                     athlete.get("displayName") or athlete.get("fullName"),
-                    athlete.get("id"), team, opponent, event["id"], games, stingy))
+                    athlete.get("id"), team, opponent, event["id"], games, stingy)
+                match_key = _game_key(event.get("away"), event.get("home"))
+                for leg in fresh:
+                    leg["match_key"] = match_key
+                logs.extend(fresh)
     return logs
 
 
@@ -551,7 +756,7 @@ def slate_events(slate, fetch):
     return events
 
 
-def build_for_slate(slate, pregame, fetch=None):
+def build_for_slate(slate, pregame, board="early", prop_quotes=None, fetch=None):
     """Network entry used by --parlays and the noon run. fetch returns (payload, code)."""
     fetch = fetch or (lambda url: espn_box.fetch_json(url)[:2])
     events = slate_events(slate, fetch)
@@ -578,4 +783,6 @@ def build_for_slate(slate, pregame, fetch=None):
         "state": "scheduled", "espn_id": event.get("id"), "id": event.get("id"),
     } for event in scheduled]
     total_legs = totals_legs(games, pregame or {}, projections)
-    return build_parlays(player_legs, total_legs, slate.isoformat())
+    if prop_quotes:
+        attach_prop_prices(player_legs, prop_quotes)
+    return build_parlays(player_legs, total_legs, slate.isoformat(), board)
