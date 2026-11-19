@@ -254,9 +254,10 @@
     },
     "21718141": {
       "checkpoints": [
+        "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 470.0,
+      "last_clock": 395.0,
       "last_period": 4
     },
     "21718142": {
@@ -266,11 +267,11 @@
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 144.0,
+      "last_clock": 95.0,
       "last_period": 4
     }
   },
-  "grade_sig": "q4_2:00 n=9 MAE=4.5 cover=78% hit=44% pushes=0; q4_5:00 n=9 MAE=4.4 cover=89% hit=67% pushes=0; q4_6:30 n=9 MAE=3.9 cover=89% hit=78% pushes=0; q4_8:00 n=9 MAE=4.6 cover=78% hit=44% pushes=0",
+  "grade_sig": "q4_2:00 n=10 MAE=4.2 cover=80% hit=50% pushes=0; q4_5:00 n=10 MAE=4.7 cover=90% hit=70% pushes=0; q4_6:30 n=10 MAE=4.0 cover=90% hit=80% pushes=0; q4_8:00 n=10 MAE=4.5 cover=80% hit=50% pushes=0",
   "last_lines": {
     "76ers@magic": {
       "commence": "2026-11-19T00:11:00Z",
