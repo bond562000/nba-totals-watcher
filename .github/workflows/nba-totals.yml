@@ -1,9 +1,12 @@
 # NBA totals watcher.
 #
 # GitHub cron is UTC, best-effort, and often late. Each job is killed at 6 hours.
-# Three slots cover the slate, each scheduled at both the EDT and EST offsets.
-# watcher.py exits immediately when the America/New_York clock is outside that
-# slot's window, so the off-by-one-hour cron does not poll or spend an Odds API credit.
+# Slots cover the slate, two short parlay boards, the evening, and the late
+# night. Each is scheduled at both the EDT and EST offsets. watcher.py exits
+# immediately when the America/New_York clock is outside that slot's window,
+# so the off-by-one-hour cron does not poll or spend an Odds API credit.
+# Parlay boards are one pass and are killed after 4 minutes so they release
+# the concurrency group before the evening watcher needs it.
 #
 # A second cron later in the same ET hour is a safety net when the first fire is
 # dropped. Concurrency keeps a single watcher running; a newer waiting run
@@ -16,11 +19,22 @@ name: NBA totals watcher
 
 on:
   schedule:
-    # Slate — 12:05 PM and 12:30 PM ET.
+    # Early parlay board — 11:08 AM and 11:28 AM ET. 11:05 EST is 16:05 UTC,
+    # which is already the noon slate's EDT cron, so this slot uses :08 and :28.
+    - cron: '8 15 * * *'    # 11:08 AM EDT
+    - cron: '28 15 * * *'   # 11:28 AM EDT
+    - cron: '8 16 * * *'    # 11:08 AM EST
+    - cron: '28 16 * * *'   # 11:28 AM EST
+    # Slate — 12:05 PM and 12:30 PM ET. The card only. Parlays are the slots above and below.
     - cron: '5 16 * * *'    # 12:05 PM EDT
     - cron: '30 16 * * *'   # 12:30 PM EDT
     - cron: '5 17 * * *'    # 12:05 PM EST
     - cron: '30 17 * * *'   # 12:30 PM EST
+    # Final parlay board — 3:30 PM and 3:50 PM ET.
+    - cron: '30 19 * * *'   # 3:30 PM EDT
+    - cron: '50 19 * * *'   # 3:50 PM EDT
+    - cron: '30 20 * * *'   # 3:30 PM EST
+    - cron: '50 20 * * *'   # 3:50 PM EST
     # Evening — 5:45 PM and 6:20 PM ET. Queues behind the slate job, which
     # exits at 5:55 PM, then polls until 11:30 PM (under the 6-hour cap).
     - cron: '45 21 * * *'   # 5:45 PM EDT
@@ -46,10 +60,19 @@ on:
           - simulate
           - live
       follow:
-        description: 'Keep polling until the slate ends. Off runs a single pass so a manual dry run does not block the night.'
+        description: 'Keep polling until the slate ends. Off runs a single pass so a manual dry run does not block the night. Ignored for a parlay board.'
         required: true
         default: false
         type: boolean
+      board:
+        description: 'Parlay board. none runs the live watcher. early or final posts that board and exits.'
+        required: true
+        default: none
+        type: choice
+        options:
+          - none
+          - early
+          - final
 
 permissions:
   contents: write
@@ -82,21 +105,35 @@ jobs:
           EVENT_SCHEDULE: ${{ github.event.schedule }}
           INPUT_MODE: ${{ inputs.mode }}
           INPUT_FOLLOW: ${{ inputs.follow }}
+          INPUT_BOARD: ${{ inputs.board }}
         run: |
           set -euo pipefail
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "slot=manual" >> "$GITHUB_OUTPUT"
             echo "mode=${INPUT_MODE}" >> "$GITHUB_OUTPUT"
-            if [ "$INPUT_FOLLOW" = "true" ]; then
-              echo "max_polls=" >> "$GITHUB_OUTPUT"
-            else
+            if [ "$INPUT_BOARD" = "early" ] || [ "$INPUT_BOARD" = "final" ]; then
+              echo "slot=parlay-${INPUT_BOARD}" >> "$GITHUB_OUTPUT"
               echo "max_polls=1" >> "$GITHUB_OUTPUT"
+              echo "max_runtime=240" >> "$GITHUB_OUTPUT"
+              echo "force=1" >> "$GITHUB_OUTPUT"
+            else
+              echo "slot=manual" >> "$GITHUB_OUTPUT"
+              echo "force=" >> "$GITHUB_OUTPUT"
+              if [ "$INPUT_FOLLOW" = "true" ]; then
+                echo "max_polls=" >> "$GITHUB_OUTPUT"
+              else
+                echo "max_polls=1" >> "$GITHUB_OUTPUT"
+              fi
+              echo "max_runtime=21000" >> "$GITHUB_OUTPUT"
             fi
             exit 0
           fi
           case "$EVENT_SCHEDULE" in
+            "8 15 * * *"|"28 15 * * *"|"8 16 * * *"|"28 16 * * *")
+              slot=parlay-early ;;
             "5 16 * * *"|"30 16 * * *"|"5 17 * * *"|"30 17 * * *")
               slot=slate ;;
+            "30 19 * * *"|"50 19 * * *"|"30 20 * * *"|"50 20 * * *")
+              slot=parlay-final ;;
             "45 21 * * *"|"20 22 * * *"|"45 22 * * *"|"20 23 * * *")
               slot=evening ;;
             "20 3 * * *"|"45 3 * * *"|"20 4 * * *"|"45 4 * * *"|\
@@ -108,7 +145,14 @@ jobs:
           esac
           echo "slot=$slot" >> "$GITHUB_OUTPUT"
           echo "mode=live" >> "$GITHUB_OUTPUT"
-          echo "max_polls=" >> "$GITHUB_OUTPUT"
+          echo "force=" >> "$GITHUB_OUTPUT"
+          if [ "$slot" = "parlay-early" ] || [ "$slot" = "parlay-final" ]; then
+            echo "max_polls=1" >> "$GITHUB_OUTPUT"
+            echo "max_runtime=240" >> "$GITHUB_OUTPUT"
+          else
+            echo "max_polls=" >> "$GITHUB_OUTPUT"
+            echo "max_runtime=21000" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Run watcher
         env:
@@ -118,8 +162,9 @@ jobs:
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           NBA_STATE_DIR: ${{ runner.temp }}/nba-state
           NBA_SLOT: ${{ steps.slot.outputs.slot }}
-          NBA_MAX_RUNTIME_S: "21000"
+          NBA_MAX_RUNTIME_S: ${{ steps.slot.outputs.max_runtime }}
           NBA_MAX_POLLS: ${{ steps.slot.outputs.max_polls }}
+          NBA_PARLAY_FORCE: ${{ steps.slot.outputs.force }}
           WATCH_MODE: ${{ steps.slot.outputs.mode }}
         run: |
           set -euo pipefail
@@ -140,7 +185,11 @@ jobs:
             *) echo "unknown mode: $WATCH_MODE" >&2; exit 2 ;;
           esac
           set +e
-          python -u watcher.py "${args[@]}"
+          if [ "$NBA_SLOT" = "parlay-early" ] || [ "$NBA_SLOT" = "parlay-final" ]; then
+            timeout 240 python -u watcher.py "${args[@]}"
+          else
+            python -u watcher.py "${args[@]}"
+          fi
           code=$?
           set -e
           stop_sync

@@ -25,7 +25,7 @@ Enable Actions on the repository if this is the first workflow (Actions tab → 
 
 1. Add the four secrets above.
 2. Open **Actions → NBA totals watcher → Run workflow**.
-3. Mode: **dry-run**. Leave **follow** off.
+3. Mode: **dry-run**. Leave **follow** off. Leave **board** on `none` for the live watcher, or set `early` / `final` to preview that board. A board run does not buy prop prices in dry-run.
 4. Open the job log. Cards appear between `DRY RUN, would post` lines. Telegram is not called.
 
 That pass still calls BALLDONTLIE. It calls The Odds API only when tonight's saved state has no pregame snapshot yet (one credit). A later run on the same slate reuses the saved totals.
@@ -45,17 +45,23 @@ Each slot is registered twice, an hour apart, because noon ET is 16:05 UTC on ED
 
 | Slot | Starts (ET) | Backup (ET) | Stops | Job |
 | --- | --- | --- | --- | --- |
-| Slate | 12:05 PM | 12:30 PM | 5:55 PM, or sooner when every remaining tip is after that | Posts the slate. Keeps polling while a game is live or tips before 5:55 PM (weekend afternoons). |
-| Evening | 5:45 PM | 6:20 PM | 11:30 PM | Waits if the slate job is still polling, then polls about every 60s while games are live (180s when idle). |
+| Early board | 11:08 AM | 11:28 AM | One pass, 4 minute cap | ESPN parlay card. 0 Odds API credits. |
+| Slate | 12:05 PM | 12:30 PM | 5:55 PM, or sooner when every remaining tip is after that | Posts the slate, without parlays. Keeps polling while a game is live or tips before 5:55 PM (weekend afternoons). |
+| Final board | 3:30 PM | 3:50 PM | One pass, 4 minute cap | Rebuilds the parlays and buys FanDuel props for two games. |
+| Evening | 5:45 PM | 6:20 PM | 11:30 PM | Waits if a board job is still in the group, then polls about every 60s while games are live (180s when idle). |
 | Late | 11:20 PM | 11:45 PM | 3:00 AM, or when every game is final | Same polling. Covers the end of the night after the evening job hands off, including West Coast games that finish around 1:30 AM. |
 
 The evening cron is 5:45 PM so it is already waiting when the slate job stops at 5:55 PM. A slate job that started at noon cannot still be running at 6:30 PM (the platform stops jobs at 6 hours). The handoff is a few minutes of Actions startup, and state is already on the `state` branch.
 
 Accepted clock, so a late cron still runs and the other DST offset does not:
 
+- Early board: 10:55–11:40 AM. The EST fires are 11:08 and 11:28 because 11:05 AM EST is the same UTC minute as the noon EDT slate cron.
 - Slate: ET hour 12.
+- Final board: 3:20–4:10 PM.
 - Evening: 5:40–6:40 PM.
 - Late: 11:00–11:59 PM, or 12:00–12:15 AM.
+
+**Run workflow** can post a board on its own. Set **board** to `early` or `final`. That run ignores the clock window, posts once, and exits. `none` is the live watcher. A board job shares `nba-totals-watcher` and is killed at 4 minutes, so it does not hold the runner into the evening. If the noon job is still polling a day game at 3:30, that process posts the final board itself. The queued 3:30 job then sees the flag and exits.
 
 On a normal weekday the slate job posts, takes the one pregame Odds API snapshot, sees no afternoon tip, and exits. The evening job reuses that snapshot.
 
@@ -94,7 +100,7 @@ This workflow has no `push` trigger, so commits on `state` do not start it. Push
 - Q4, 8:00 through 5:00: a full play needs an edge of at least 3.5. From 3.0 up to 3.5 the card is a lean (`⚠️ LEAN`), not a full play. Late Q3 (2:00 left through the end of the quarter, and the first minute of Q4) needs 5.0 for a play and 4.5 for a lean, because that part of the game has been noisier.
 - Frank passes an OVER when the margin is 22 or more, and an UNDER when the margin is 6 or less. The close-game line stays at 6. The replay measures projection error, not whether a close game's under is a bad bet, so that veto is unchanged. Neither veto changes the projected number.
 - One pick per game per night, plus at most one advisory buyout. At most two evaluations per game, at least 6 minutes apart. The testing window is often shorter than that gap, so most games get one evaluation. A quota skip does not use up an evaluation.
-- Odds API budget: one pregame call per slate, at most 18 calls a night, and no call when fewer than 25 credits are left. The cap was 15 when the only live window was Q4. Late Q3 adds about one fetch per tip cluster, so three clusters is +3. Checkpoint logs still reuse the last fetch and add **0** credits. A normal night is still about 6–9 credits, not 18. "Reusing saved pregame totals" is logged once per process.
+- Odds API budget: one pregame call per slate (`totals,spreads`, 2 credits), at most 18 calls a night, and no call when fewer than 25 credits are left. The final board may add two prop calls (about 6 credits) when 60 or more credits remain and the month still projects under 500. The cap was 15 when the only live window was Q4. Late Q3 adds about one fetch per tip cluster, so three clusters is +3. Checkpoint logs still reuse the last fetch and add **0** credits. A normal night of live calls is still about 6–9 credits, not 18. "Reusing saved pregame totals" is logged once per process.
 
 ## Possession model (hypothesis)
 
@@ -180,15 +186,20 @@ The card is still the five-line quick read. The FanDuel total, Yen's projection,
 
 ## Pregame parlays
 
-The noon run, after the slate card, posts one player-parlay message and one totals-parlay message when any legs clear the floor. If the noon job missed, the next run still posts them while a game is scheduled. `--parlays` prints the same card and does not send it.
+Two boards, separate from the noon slate card.
 
-Player legs are floors from ESPN game logs: 15+ points, 3+ rebounds, 1+ three, 1+ steal. A leg needs an 85% hit rate over the last 10 and over the season, average minutes of at least 24, and a stable minute load. Against one of the eight stingiest defenses, points and threes need 90%. Out and doubtful players are skipped. The number on the card is that historical rate, labeled UNCALIBRATED.
+- **11:08 AM ET, EARLY BOARD.** Up to 6 parlays from ESPN game logs. 0 Odds API credits. The card says FanDuel may not have every prop open yet. `--parlays early` prints it and does not send.
+- **3:30 PM ET, FINAL BOARD.** Rebuilds with the latest ESPN injury list, up to 7 parlays, and says which legs were dropped or added. `--parlays final` prints it and does not buy prices or send.
 
-Totals legs use the FanDuel number already saved in `state.pregame` and a projection from each team's season points scored and allowed, blended 60/40 with the last five finals. The gap has to be at least 3 points. Those legs are separate from the live single-game calls.
+Player legs are points, rebounds, and assists. The floor is the highest of 25/20/15/10 points, 10/8/6/5/3 rebounds, or 8/6/5/3 assists that the player still cleared in 85% of the last 10 and 85% of the season. Points against one of the eight stingiest defenses need 90%. Average minutes at least 24, and a stable minute load. Out and doubtful players are skipped. A parlay takes at most 3 player legs from one game. Totals legs use the saved FanDuel total against season scoring blended 60/40 with the last five finals, and only when the gap is at least 3.
 
-A parlay is 4 to 6 legs. The combined probability is the product and assumes independence. If two legs share a game, the card says the product ignores that correlation. After the games end, each leg and each parlay is graded into `parlays.json`. A player leg is graded only from a final box, so a pregame zero does not become a loss. The slate header adds `Parlays (0-0) · Legs (0-0)`.
+The final board's paid check is two games: the smallest absolute spreads, tie-break higher total, and any game with a spread of 10 or more is out. If the pregame snapshot has no spreads, it uses the two highest totals. For those games only, it requests FanDuel `player_points`, `player_rebounds`, and `player_assists` (one region). That is 3 credits per game, 6 per day, when the book returns all three markets. A price is attached when an Over in that response is at or below the historical floor (a 14.5 prices a 15+ floor; a 24.5 does not replace it). The main market is usually one number, so most floors stay unpriced. `player_*_alternate` is not requested: those three extra markets would be another 6 credits a day, about 180 a month, and the 9-live upper band would clear 500. When every leg in a parlay has a price, the card shows the multiplied American price.
 
-Player-prop prices stay off. The Odds API serves them only on the single-event odds endpoint, at 1 credit per market per region. Points, rebounds, threes, and steals for one game is 4 credits, about 48 credits on a 12-game slate, which does not fit beside the live totals in a 500-credit month. About 488 credits were left when this was checked.
+The prop check is skipped when fewer than 60 credits remain, or when reserving 9 live credits and 2 pregame credits for each remaining night plus today's 6 prop credits would pass 500. Live totals keep the priority.
+
+After the games end, the final board is graded into `parlays.json` (the early board, if the final never posted). The slate header keeps `Parlays (0-0) · Legs (0-0)`. The slate card also shows `Odds credits: 412 left`. State records `credits_by_feature` for `pregame`, `live`, and `props`.
+
+Odds API cost, from their markets × regions rule: the one pregame call is now `totals,spreads` on one region, so **2 credits** instead of 1. Props are **6 credits** on the final board only. Early board is **0**. Live fetches stay **1 credit** each, about **6–9 a night**. A full day is about **14–17 credits**. Thirty days at the low end is about 420. Thirty days at 2 + 6 + 9 = 17 is 510, which is why the prop check drops itself before that path is locked in.
 
 ## Local commands
 

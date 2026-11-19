@@ -129,6 +129,18 @@ class WatcherTestCase(unittest.TestCase):
         self.assertFalse(watcher.slot_hour_ok("late", after_midnight.replace(minute=20)))
         self.assertTrue(watcher.slot_hour_ok("manual", evening.replace(hour=3)))
         self.assertFalse(watcher.slot_hour_ok("unknown", evening))
+        early = datetime(2026, 7, 15, 11, 8, tzinfo=watcher.ET)
+        self.assertTrue(watcher.slot_hour_ok("parlay-early", early))
+        self.assertFalse(watcher.slot_hour_ok("parlay-early", early.replace(hour=10, minute=8)))
+        self.assertFalse(watcher.slot_hour_ok("parlay-early", early.replace(hour=12, minute=8)))
+        final = datetime(2026, 1, 15, 15, 30, tzinfo=watcher.ET)
+        self.assertTrue(watcher.slot_hour_ok("parlay-final", final))
+        self.assertFalse(watcher.slot_hour_ok("parlay-final", final.replace(hour=16, minute=30)))
+        os.environ["NBA_PARLAY_FORCE"] = "1"
+        try:
+            self.assertTrue(watcher.slot_hour_ok("parlay-final", early))
+        finally:
+            os.environ.pop("NBA_PARLAY_FORCE", None)
 
     def test_wrong_hour_exits_before_any_api_call(self):
         os.environ["NBA_SLOT"] = "slate"
@@ -226,6 +238,8 @@ class WatcherTestCase(unittest.TestCase):
             watcher.urllib.request.urlopen = orig_open
         self.assertEqual(lines, {})
         self.assertIn("apiKey=SUPERSECRET", captured["url"])
+        self.assertIn("markets=totals%2Cspreads", captured["url"])
+        self.assertEqual(ok["credits_by_feature"]["pregame"], 2)
         self.assertNotIn("SUPERSECRET", buf.getvalue())
         log_text = Path(os.environ["NBA_LOG_PATH"]).read_text()
         self.assertNotIn("SUPERSECRET", log_text)
@@ -588,23 +602,26 @@ class WatcherTestCase(unittest.TestCase):
         except when the off-season instant is still inside that same slot's window."""
         text = (ROOT / ".github" / "workflows" / "nba-totals.yml").read_text()
         crons = re.findall(r"- cron: '([^']+)'", text)
-        self.assertGreaterEqual(len(crons), 6)
-        slots = ("slate", "evening", "late")
-
-        def accepted(cron, month):
-            minute, hour, *_ = cron.split()
-            utc = datetime(2026, month, 15, int(hour), int(minute), tzinfo=timezone.utc)
-            et = utc.astimezone(watcher.ET)
-            return [s for s in slots if watcher.slot_hour_ok(s, et)]
-
+        self.assertGreaterEqual(len(crons), 12)
+        mapping = {}
+        folded = text.replace("\\\n", "")
+        body = folded.split('case "$EVENT_SCHEDULE" in', 1)[1].split("esac", 1)[0]
+        for arm in body.split(";;"):
+            if "slot=" not in arm:
+                continue
+            slot = arm.split("slot=", 1)[1].strip().split()[0]
+            for cron in re.findall(r'"([^"]+)"', arm):
+                mapping[cron] = slot
         for cron in crons:
-            jan = accepted(cron, 1)
-            jul = accepted(cron, 7)
-            self.assertLessEqual(len(jan), 1, cron)
-            self.assertLessEqual(len(jul), 1, cron)
-            self.assertTrue(jan or jul, cron)
-            if jan and jul:
-                self.assertEqual(jan, jul, cron)
+            self.assertIn(cron, mapping, cron)
+            slot = mapping[cron]
+
+            def hits(month, _cron=cron, _slot=slot):
+                minute, hour, *_ = _cron.split()
+                utc = datetime(2026, month, 15, int(hour), int(minute), tzinfo=timezone.utc)
+                return watcher.slot_hour_ok(_slot, utc.astimezone(watcher.ET))
+
+            self.assertNotEqual(hits(1), hits(7), cron)
 
     def test_posted_game_is_not_evaluated_again(self):
         self.assertFalse(watcher.due_for_eval({"posted": True, "evals": 1}, 10**12))
