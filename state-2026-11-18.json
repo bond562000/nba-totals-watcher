@@ -1,5 +1,9 @@
 {
   "credits_remaining": 490,
+  "espn": {
+    "backoff_until": 0,
+    "fails": 0
+  },
   "games": {},
   "last_lines": {
     "76ers@magic": {
