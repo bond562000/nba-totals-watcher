@@ -50,7 +50,7 @@ class WatcherTestCase(unittest.TestCase):
         self.tmp = tempfile.mkdtemp(prefix="nba-watch-")
         self._env = {}
         for key in ("NBA_STATE_DIR", "NBA_LOG_PATH", "NBA_SLOT", "NBA_BASE",
-                    "NBA_MAX_POLLS", "NBA_MAX_RUNTIME_S", "NBA_SKIP_BOX_SCORES",
+                    "NBA_MAX_POLLS", "NBA_MAX_RUNTIME_S", "NBA_SKIP_BOX_SCORES", "NBA_SKIP_PARLAYS",
                     "BALLDONTLIE_API_KEY", "TELEGRAM_BOT_TOKEN", "ODDS_API_KEY",
                     "TELEGRAM_CHANNEL_ID"):
             self._env[key] = os.environ.get(key)
@@ -58,6 +58,7 @@ class WatcherTestCase(unittest.TestCase):
         os.environ["NBA_LOG_PATH"] = os.path.join(self.tmp, "watcher.log")
         os.environ["NBA_SLOT"] = "manual"
         os.environ["NBA_SKIP_BOX_SCORES"] = "1"
+        os.environ["NBA_SKIP_PARLAYS"] = "1"
         os.environ.pop("NBA_MAX_POLLS", None)
         os.environ.pop("NBA_MAX_RUNTIME_S", None)
         watcher.DRY_RUN = False

@@ -26,6 +26,7 @@ from zoneinfo import ZoneInfo
 
 import espn_box
 import model
+import parlays
 import recordbook
 
 ET = ZoneInfo("America/New_York")
@@ -645,6 +646,123 @@ def dell_buyout(g, gs, proj, p_side):
             f"Advisory only. FanDuel cash-out prices are not in the API.")
 
 
+def parlays_path():
+    suffix = "-dryrun" if DRY_RUN else ""
+    return os.path.join(state_dir(), f"parlays{suffix}.json")
+
+
+def load_parlays():
+    path = parlays_path()
+    if os.path.exists(path):
+        with open(path) as f:
+            document = json.load(f)
+        document.setdefault("parlays", [])
+        return document
+    return parlays.empty_parlays()
+
+
+def save_parlays(document):
+    _write_json(parlays_path(), document)
+
+
+def maybe_post_parlays(st, games, sd, tg_token, channel):
+    """One pregame card per slate, before tip, on the same run as the slate post."""
+    if st.get("parlays_posted") or os.environ.get("NBA_SKIP_PARLAYS") == "1":
+        return
+    if not any(g.get("state") == "scheduled" for g in games):
+        return
+    try:
+        built = parlays.build_for_slate(sd, st.get("pregame") or {})
+    except Exception as exc:
+        log(f"[Livingston Dell] parlay build failed: {type(exc).__name__}")
+        return
+    if built is None:
+        log("[Livingston Dell] parlay board unavailable -- will retry")
+        return
+    if not built:
+        log("[Livingston Dell] no parlay cleared the floor tonight")
+        st["parlays_posted"] = True
+        save_state(st)
+        return
+    document = load_parlays()
+    document["parlays"] = [row for row in document["parlays"] if row.get("slate") != sd.isoformat()] + built
+    save_parlays(document)
+    for text in parlays.render_parlays(built):
+        if not dell_post(text, tg_token, channel):
+            log("[Livingston Dell] FAILED to post parlays -- will retry")
+            return
+    st["parlays_posted"] = True
+    save_state(st)
+    log(f"[Livingston Dell] posted {len(built)} parlays{' (dry run)' if DRY_RUN else ''}")
+
+
+_PARLAY_BOXES = {}
+
+
+def grade_open_parlays(games):
+    """Grade totals from the scoreboard in hand, and player legs only after the final box."""
+    document = load_parlays()
+    if not document["parlays"]:
+        return
+    finals = {}
+    final_pairs = set()
+    open_pairs = set()
+    for game in games:
+        pair = frozenset(((game.get("away_nick") or "").lower(), (game.get("home_nick") or "").lower()))
+        if game.get("state") == "final":
+            final_pairs.add(pair)
+        else:
+            open_pairs.add(pair)
+    player_boxes = {}
+    if os.environ.get("NBA_SKIP_PARLAYS") != "1":
+        needed = {}
+        for parlay in document["parlays"]:
+            for leg in parlay.get("legs") or []:
+                if leg.get("kind") == "player" and not leg.get("result") and leg.get("event_id"):
+                    needed.setdefault(str(leg["event_id"]), leg)
+        for event_id, leg in needed.items():
+            if event_id in _PARLAY_BOXES:
+                player_boxes[event_id] = _PARLAY_BOXES[event_id]
+                continue
+            pair = frozenset((
+                recordbook._nick(leg.get("team") or "").lower(),
+                recordbook._nick(leg.get("opponent") or "").lower(),
+            ))
+            if pair in open_pairs and pair not in final_pairs:
+                continue
+            payload, code, _ = espn_box.fetch_json(f"{espn_box.SUMMARY}?event={event_id}")
+            if not payload or code != 200 or not parlays.summary_is_final(payload):
+                continue
+            player_boxes[event_id] = _PARLAY_BOXES[event_id] = parlays.player_stats_from_summary(payload)
+    for game in games:
+        if game.get("state") != "final":
+            continue
+        finals[str(game.get("id"))] = game.get("total")
+        finals[f"{(game.get('away_nick') or '').lower()}@{(game.get('home_nick') or '').lower()}"] = game.get("total")
+    changed = False
+    for parlay in document["parlays"]:
+        for leg in parlay.get("legs") or []:
+            if leg.get("result"):
+                continue
+            if leg.get("kind") == "total":
+                actual = finals.get(str(leg.get("event_id")))
+                if actual is None:
+                    actual = finals.get(f"{(leg.get('away_nick') or '').lower()}@{(leg.get('home_nick') or '').lower()}")
+            else:
+                stats = (player_boxes.get(str(leg.get("event_id"))) or {}).get(str(leg.get("player_id"))) or {}
+                actual = stats.get(leg.get("stat"))
+            result = parlays.grade_leg(leg, actual)
+            if result:
+                leg["result"] = result
+                changed = True
+        result = parlays.grade_parlay(parlay)
+        if result and parlay.get("result") != result:
+            parlay["result"] = result
+            changed = True
+    if changed:
+        save_parlays(document)
+
+
 def picks_record_path():
     suffix = "-dryrun" if DRY_RUN else ""
     return os.path.join(state_dir(), f"record{suffix}.json")
@@ -743,7 +861,9 @@ def dell_slate_text(games, pregame, sd, record=None):
         tot = pregame.get(game_key(g["away"], g["home"]))
         ou = f" (O/U {fmt_num(tot)})" if tot is not None else ""
         rows.append(f"{t} – {html.escape(g['away_nick'])} @ {html.escape(g['home_nick'])}{ou}")
-    brand = recordbook.format_header(record, sd) if record else ""
+    brand = ""
+    if record:
+        brand = recordbook.format_header(record, sd, parlays.parlay_header(load_parlays()))
     return (brand + f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
             "\n\nLive Over/Under picks drop here in the 4th quarter, from 8:00 to 5:00 👀")
 
@@ -1252,6 +1372,7 @@ def run(args):
             last_status = now_ts
         reuben_pregame(st, odds_key, games)           # one Odds API call per night, at startup
         dell_post_slate(st, games, sd, tg_token, channel)  # reuses that snapshot, no extra credits
+        maybe_post_parlays(st, games, sd, tg_token, channel)
         maybe_attach_box_scores(games, bdl_key, st, sd)
         live = [g for g in games if g["state"] == "in_progress"]
         for g in live:
@@ -1278,6 +1399,7 @@ def run(args):
             maybe_buyout(g, st, tg_token, channel)
         grade_slate(games, sd, st)
         refresh_picks_record(st, games)
+        grade_open_parlays(games)
         polls += 1
         if all(g["state"] in FINAL_STATES for g in games):
             log(f"[Danny Ocean] all {len(games)} games final -- done for the night "
@@ -1400,9 +1522,24 @@ def main():
                     help="print tonight's slate card using stored pregame totals; no Odds API/Telegram")
     ap.add_argument("--grade", action="store_true",
                     help="print the checkpoint grade summary already stored for a slate; no network")
+    ap.add_argument("--parlays", action="store_true",
+                    help="print tonight's pregame parlays and do not post them")
     a = ap.parse_args()
     if a.simulate:
         return simulate()
+    if a.parlays:
+        DRY_RUN = True
+        sd = slate_date()
+        st = load_state(sd)
+        built = parlays.build_for_slate(sd, st.get("pregame") or {})
+        messages = parlays.render_parlays(built)
+        if not messages:
+            print("No parlay cleared the floor.")
+            return
+        for text in messages:
+            print(text)
+            print("-" * 40)
+        return
     if a.grade:
         sd = slate_date()
         path = grades_path(sd)
