@@ -83,7 +83,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 334.0,
+      "last_clock": 299.0,
       "last_eval_ts": 1795055609.3857324,
       "last_period": 4
     },
@@ -142,12 +142,13 @@
         }
       ],
       "evals": 2,
-      "last_clock": 310.0,
+      "last_clock": 251.0,
       "last_eval_ts": 1795055737.288066,
       "last_period": 4
     },
     "21718136": {
       "checkpoints": [
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -161,20 +162,20 @@
         }
       ],
       "evals": 1,
-      "last_clock": 448.0,
+      "last_clock": 386.0,
       "last_eval_ts": 1795055737.288995,
       "last_period": 4
     },
     "21718137": {
-      "last_clock": 396.0,
+      "last_clock": 374.0,
       "last_period": 3
     },
     "21718138": {
-      "last_clock": 225.0,
+      "last_clock": 189.0,
       "last_period": 3
     },
     "21718140": {
-      "last_clock": 519.0,
+      "last_clock": 459.0,
       "last_period": 3
     }
   },
