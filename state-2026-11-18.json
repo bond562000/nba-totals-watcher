@@ -202,16 +202,19 @@
         }
       ],
       "evals": 1,
-      "last_clock": 318.0,
+      "last_clock": 243.0,
       "last_eval_ts": 1795057179.6657739,
       "last_period": 4
     },
     "21718139": {
-      "last_clock": 304.0,
+      "last_clock": 164.0,
       "last_period": 1
     },
     "21718140": {
-      "last_clock": 606.0,
+      "checkpoints": [
+        "q4_8:00"
+      ],
+      "last_clock": 514.0,
       "last_period": 4
     }
   },
