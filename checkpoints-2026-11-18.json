@@ -1348,6 +1348,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-18T22:14:02.301862-05:00",
+      "away": "Golden State Warriors",
+      "away_score": 81,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 324.0,
+      "expected_ot_points": 0.0,
+      "final_total": null,
+      "game_id": "21718140",
+      "hi_80": 218.75,
+      "home": "Dallas Mavericks",
+      "home_score": 106,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-19T03:06:14Z",
+      "line_over": -136,
+      "line_status": "reused",
+      "line_total": 213.5,
+      "line_under": 102,
+      "lo_80": 203.94,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3547,
+      "p_push": 0.0,
+      "p_under": 0.6453,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 211.35,
+      "proj_regulation": 211.35,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-18"

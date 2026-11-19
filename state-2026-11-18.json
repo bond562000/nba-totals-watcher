@@ -194,7 +194,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 420.0,
+      "last_clock": 381.0,
       "last_eval_ts": 1795057735.0091925,
       "last_period": 4
     },
@@ -216,23 +216,32 @@
         }
       ],
       "evals": 1,
-      "last_clock": 119.0,
+      "last_clock": null,
       "last_eval_ts": 1795057179.6657739,
       "last_period": 4
     },
     "21718139": {
-      "last_clock": 105.0,
+      "last_clock": null,
       "last_period": 1
     },
     "21718140": {
       "checkpoints": [
+        "q4_5:00",
         "q4_6:30",
         "q4_8:00"
       ],
       "evals": 1,
-      "last_clock": 419.0,
+      "last_clock": 324.0,
       "last_eval_ts": 1795057796.3566897,
       "last_period": 4
+    },
+    "21718141": {
+      "last_clock": 662.0,
+      "last_period": 1
+    },
+    "21718142": {
+      "last_clock": 608.0,
+      "last_period": 1
     }
   },
   "grade_sig": "q4_2:00 n=6 MAE=4.5 cover=83% hit=50% pushes=0; q4_5:00 n=6 MAE=5.1 cover=83% hit=67% pushes=0; q4_6:30 n=6 MAE=4.1 cover=83% hit=100% pushes=0; q4_8:00 n=6 MAE=5.8 cover=67% hit=33% pushes=0",
