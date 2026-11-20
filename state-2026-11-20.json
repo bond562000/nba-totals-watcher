@@ -1,10 +1,12 @@
 {
   "credits_by_feature": {
-    "pregame": 2
+    "pregame": 2,
+    "props": 6
   },
-  "credits_remaining": 466,
-  "credits_used_month": 34,
+  "credits_remaining": 460,
+  "credits_used_month": 40,
   "early_board_posted": true,
+  "final_board_posted": true,
   "games": {},
   "last_lines": {
     "hornets@hawks": {
@@ -107,7 +109,7 @@
       "under": -114
     }
   },
-  "odds_calls": 1,
+  "odds_calls": 3,
   "pregame": {
     "hornets@hawks": 219.5,
     "kings@lakers": 229.5,
@@ -194,6 +196,893 @@
       "total": 238.5
     }
   },
+  "prop_events_done": [
+    "086d2fe80483ffcc280994fe2e12d4f4",
+    "d6ed1e97c331fc604506e4c354ab1cdc"
+  ],
+  "prop_quotes": {
+    "086d2fe80483ffcc280994fe2e12d4f4": {
+      "aaron gordon": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": -108
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -120
+          }
+        ]
+      },
+      "alperen sengun": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 19.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 9.5,
+            "price": 102
+          }
+        ]
+      },
+      "amen thompson": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 100
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": 118
+          }
+        ]
+      },
+      "cameron johnson": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 102
+          }
+        ]
+      },
+      "christian braun": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 116
+          }
+        ]
+      },
+      "demar derozan": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -118
+          }
+        ]
+      },
+      "fred vanvleet": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -154
+          }
+        ],
+        "points": [
+          {
+            "point": 12.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 136
+          }
+        ]
+      },
+      "jabari smith": {
+        "points": [
+          {
+            "point": 14.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -110
+          }
+        ]
+      },
+      "jamal murray": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": -106
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -180
+          }
+        ]
+      },
+      "kevin durant": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 124
+          }
+        ],
+        "points": [
+          {
+            "point": 21.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -166
+          }
+        ]
+      },
+      "marcus smart": {
+        "points": [
+          {
+            "point": 5.5,
+            "price": -122
+          }
+        ]
+      },
+      "nikola jokic": {
+        "assists": [
+          {
+            "point": 8.5,
+            "price": -112
+          }
+        ],
+        "points": [
+          {
+            "point": 25.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 11.5,
+            "price": 100
+          }
+        ]
+      },
+      "tari eason": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -114
+          }
+        ]
+      }
+    },
+    "d6ed1e97c331fc604506e4c354ab1cdc": {
+      "aj dybantsa": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -110
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -108
+          }
+        ]
+      },
+      "alex sarr": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -132
+          }
+        ]
+      },
+      "anthony davis": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 136
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 10.5,
+            "price": -108
+          }
+        ]
+      },
+      "bilal coulibaly": {
+        "points": [
+          {
+            "point": 6.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 134
+          }
+        ]
+      },
+      "isaac okoro": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -198
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 128
+          }
+        ]
+      },
+      "jalen smith": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 158
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 8.5,
+            "price": -122
+          }
+        ]
+      },
+      "josh giddey": {
+        "assists": [
+          {
+            "point": 8.5,
+            "price": -154
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": 102
+          }
+        ]
+      },
+      "kyshawn george": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -108
+          }
+        ],
+        "points": [
+          {
+            "point": 16.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -114
+          }
+        ]
+      },
+      "matas buzelis": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 158
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -136
+          }
+        ]
+      },
+      "nic claxton": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 154
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -120
+          }
+        ]
+      },
+      "norman powell": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -114
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 142
+          }
+        ]
+      },
+      "trae young": {
+        "assists": [
+          {
+            "point": 10.5,
+            "price": 116
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -118
+          }
+        ]
+      },
+      "tre jones": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": 100
+          }
+        ]
+      }
+    },
+    "rockets@nuggets": {
+      "aaron gordon": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": -108
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -120
+          }
+        ]
+      },
+      "alperen sengun": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 19.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 9.5,
+            "price": 102
+          }
+        ]
+      },
+      "amen thompson": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 100
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": 118
+          }
+        ]
+      },
+      "cameron johnson": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 102
+          }
+        ]
+      },
+      "christian braun": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 116
+          }
+        ]
+      },
+      "demar derozan": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -118
+          }
+        ]
+      },
+      "fred vanvleet": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -154
+          }
+        ],
+        "points": [
+          {
+            "point": 12.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 136
+          }
+        ]
+      },
+      "jabari smith": {
+        "points": [
+          {
+            "point": 14.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -110
+          }
+        ]
+      },
+      "jamal murray": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": -106
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -180
+          }
+        ]
+      },
+      "kevin durant": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 124
+          }
+        ],
+        "points": [
+          {
+            "point": 21.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -166
+          }
+        ]
+      },
+      "marcus smart": {
+        "points": [
+          {
+            "point": 5.5,
+            "price": -122
+          }
+        ]
+      },
+      "nikola jokic": {
+        "assists": [
+          {
+            "point": 8.5,
+            "price": -112
+          }
+        ],
+        "points": [
+          {
+            "point": 25.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 11.5,
+            "price": 100
+          }
+        ]
+      },
+      "tari eason": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -114
+          }
+        ]
+      }
+    },
+    "wizards@bulls": {
+      "aj dybantsa": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -110
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -108
+          }
+        ]
+      },
+      "alex sarr": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -132
+          }
+        ]
+      },
+      "anthony davis": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 136
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 10.5,
+            "price": -108
+          }
+        ]
+      },
+      "bilal coulibaly": {
+        "points": [
+          {
+            "point": 6.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 134
+          }
+        ]
+      },
+      "isaac okoro": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -198
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 128
+          }
+        ]
+      },
+      "jalen smith": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 158
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 8.5,
+            "price": -122
+          }
+        ]
+      },
+      "josh giddey": {
+        "assists": [
+          {
+            "point": 8.5,
+            "price": -154
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": 102
+          }
+        ]
+      },
+      "kyshawn george": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -108
+          }
+        ],
+        "points": [
+          {
+            "point": 16.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -114
+          }
+        ]
+      },
+      "matas buzelis": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 158
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -136
+          }
+        ]
+      },
+      "nic claxton": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 154
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -120
+          }
+        ]
+      },
+      "norman powell": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -114
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 142
+          }
+        ]
+      },
+      "trae young": {
+        "assists": [
+          {
+            "point": 10.5,
+            "price": 116
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -118
+          }
+        ]
+      },
+      "tre jones": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": 100
+          }
+        ]
+      }
+    }
+  },
+  "props_done": true,
   "slate": "2026-11-20",
   "slate_posted": true
 }
