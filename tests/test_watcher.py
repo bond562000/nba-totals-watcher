@@ -652,19 +652,18 @@ class WatcherTestCase(unittest.TestCase):
         self.assertIn("close-game fouling contradicts UNDER", text)
         self.assertIn("not in trigger window", text)
         self.assertIn("Tonight's NBA Slate (Nov 18)", text)
-        self.assertIn("last 2:00 of the 3rd quarter", text)
+        self.assertIn("8:00 to 5:00 left in the 4th", text)
         self.assertNotIn("Odds credits", text)
 
     def test_slate_card_names_the_late_third_and_hides_credits(self):
         text = watcher.dell_slate_text([], {}, date(2026, 11, 19))
         self.assertIn(
             "Live Over/Under picks drop here from the last 2:00 of the 3rd quarter "
-            "to the start of the 4th quarter",
+            "into the start of the 4th, and again from 8:00 to 5:00 left in the 4th",
             text)
         self.assertNotIn("Odds credits", text)
-        self.assertNotIn("8:00 to 5:00", text)
-        self.assertNotIn("apiKey", text)
         self.assertNotIn("UNCALIBRATED", text)
+        self.assertNotIn("apiKey", text)
 
     def test_public_posts_omit_diagnostics(self):
         game = watcher.scout(_raw(

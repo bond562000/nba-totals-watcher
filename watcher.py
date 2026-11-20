@@ -1028,7 +1028,7 @@ def dell_slate_text(games, pregame, sd, record=None):
         brand = recordbook.format_header(record, sd, parlays.parlay_header(load_parlays()))
     return (brand + f"🏀 {when} NBA Slate ({sd:%b} {sd.day})\n\n" + "\n".join(rows) +
             "\n\nLive Over/Under picks drop here from the last 2:00 of the 3rd quarter "
-            "to the start of the 4th quarter 👀")
+            "into the start of the 4th, and again from 8:00 to 5:00 left in the 4th 👀")
 
 
 def dell_post_slate(st, games, sd, tg_token, channel):
