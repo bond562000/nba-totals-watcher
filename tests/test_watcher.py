@@ -51,6 +51,7 @@ class WatcherTestCase(unittest.TestCase):
         self._env = {}
         for key in ("NBA_STATE_DIR", "NBA_LOG_PATH", "NBA_SLOT", "NBA_BASE",
                     "NBA_MAX_POLLS", "NBA_MAX_RUNTIME_S", "NBA_SKIP_BOX_SCORES", "NBA_SKIP_PARLAYS",
+                    "NBA_DISPATCHED", "NBA_PARLAY_FORCE",
                     "BALLDONTLIE_API_KEY", "TELEGRAM_BOT_TOKEN", "ODDS_API_KEY",
                     "TELEGRAM_CHANNEL_ID"):
             self._env[key] = os.environ.get(key)
@@ -59,6 +60,8 @@ class WatcherTestCase(unittest.TestCase):
         os.environ["NBA_SLOT"] = "manual"
         os.environ["NBA_SKIP_BOX_SCORES"] = "1"
         os.environ["NBA_SKIP_PARLAYS"] = "1"
+        os.environ.pop("NBA_DISPATCHED", None)
+        os.environ.pop("NBA_PARLAY_FORCE", None)
         os.environ.pop("NBA_MAX_POLLS", None)
         os.environ.pop("NBA_MAX_RUNTIME_S", None)
         watcher.DRY_RUN = False
@@ -141,6 +144,66 @@ class WatcherTestCase(unittest.TestCase):
             self.assertTrue(watcher.slot_hour_ok("parlay-final", early))
         finally:
             os.environ.pop("NBA_PARLAY_FORCE", None)
+        # A dispatched run may be ~45 minutes late. The cron window stays tighter.
+        late_early = datetime(2026, 7, 15, 11, 50, tzinfo=watcher.ET)
+        self.assertFalse(watcher.slot_hour_ok("parlay-early", late_early))
+        self.assertTrue(watcher.slot_hour_ok("slate", datetime(2026, 7, 15, 12, 55, tzinfo=watcher.ET)))
+        os.environ["NBA_DISPATCHED"] = "1"
+        try:
+            self.assertTrue(watcher.slot_hour_ok("parlay-early", late_early))
+            self.assertFalse(watcher.slot_hour_ok("parlay-early", datetime(2026, 7, 15, 12, 8, tzinfo=watcher.ET)))
+            self.assertTrue(watcher.slot_hour_ok("slate", datetime(2026, 7, 15, 12, 50, tzinfo=watcher.ET)))
+            self.assertFalse(watcher.slot_hour_ok("slate", datetime(2026, 7, 15, 12, 55, tzinfo=watcher.ET)))
+            self.assertFalse(watcher.slot_hour_ok("slate", datetime(2026, 7, 15, 13, 0, tzinfo=watcher.ET)))
+            self.assertTrue(watcher.slot_hour_ok("parlay-final", datetime(2026, 7, 15, 16, 12, tzinfo=watcher.ET)))
+            self.assertFalse(watcher.slot_hour_ok("parlay-final", datetime(2026, 7, 15, 17, 0, tzinfo=watcher.ET)))
+            self.assertTrue(watcher.slot_hour_ok("evening", datetime(2026, 7, 15, 17, 30, tzinfo=watcher.ET)))
+            self.assertFalse(watcher.slot_hour_ok("evening", datetime(2026, 7, 15, 18, 45, tzinfo=watcher.ET)))
+            self.assertTrue(watcher.slot_hour_ok("late", datetime(2026, 7, 16, 0, 5, tzinfo=watcher.ET)))
+            self.assertFalse(watcher.slot_hour_ok("late", datetime(2026, 7, 16, 0, 20, tzinfo=watcher.ET)))
+            self.assertTrue(watcher.handoff_due("evening", datetime(2026, 7, 15, 23, 30, tzinfo=watcher.ET)))
+        finally:
+            os.environ.pop("NBA_DISPATCHED", None)
+
+    def test_dispatched_slate_and_final_stop_after_tip(self):
+        now = datetime(2026, 11, 20, 12, 40, tzinfo=watcher.ET)
+        waiting = {"state": "scheduled", "tip": "2026-11-21T00:00:00Z"}
+        started = {"state": "scheduled", "tip": "2026-11-20T17:00:00Z"}
+        self.assertFalse(watcher.games_have_tipped([waiting], now))
+        self.assertTrue(watcher.games_have_tipped([started], now))
+        self.assertTrue(watcher.games_have_tipped([{"state": "in_progress", "tip": "2026-11-21T00:00:00Z"}], now))
+        os.environ["NBA_DISPATCHED"] = "1"
+        try:
+            self.assertTrue(watcher.dispatched_pre_tip_blocked("slate", [started], now))
+            self.assertTrue(watcher.dispatched_pre_tip_blocked("parlay-final", [started], now))
+            self.assertFalse(watcher.dispatched_pre_tip_blocked("slate", [waiting], now))
+            self.assertFalse(watcher.dispatched_pre_tip_blocked("evening", [started], now))
+        finally:
+            os.environ.pop("NBA_DISPATCHED", None)
+        self.assertFalse(watcher.dispatched_pre_tip_blocked("slate", [started], now))
+
+    def test_posted_cards_are_not_posted_again(self):
+        os.environ["NBA_SKIP_RECORD_FETCH"] = "1"
+        st = {"slate": "2026-11-20", "early_board_posted": True, "final_board_posted": True,
+              "slate_posted": True, "pregame": {}, "games": {}}
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            watcher.post_parlay_board("early", st, date(2026, 11, 20), "", "", "")
+            watcher.post_parlay_board("final", st, date(2026, 11, 20), "", "", "")
+            watcher.dell_post_slate(st, [{"id": "1", "away": "A", "home": "B"}], date(2026, 11, 20), "", "")
+        text = buf.getvalue()
+        self.assertIn("early board already posted", text)
+        self.assertIn("final board already posted", text)
+        self.assertIn("slate already posted", text)
+        self.assertNotIn("DRY RUN", text)
+
+    def test_workflow_names_dispatch_slots(self):
+        text = (ROOT / ".github" / "workflows" / "nba-totals.yml").read_text()
+        for name in ("auto", "early_board", "slate", "final_board", "evening", "late"):
+            self.assertIn(f"- {name}", text)
+        self.assertIn('slot=parlay-early', text)
+        self.assertIn('slot=parlay-final', text)
+        self.assertIn("dispatched=1", text)
 
     def test_wrong_hour_exits_before_any_api_call(self):
         os.environ["NBA_SLOT"] = "slate"

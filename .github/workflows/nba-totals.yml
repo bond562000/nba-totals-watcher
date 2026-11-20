@@ -65,7 +65,7 @@ on:
         default: false
         type: boolean
       board:
-        description: 'Parlay board. none runs the live watcher. early or final posts that board and exits.'
+        description: 'Manual parlay board when slot is auto. early or final posts that board and exits. Ignored when slot is a named slot.'
         required: true
         default: none
         type: choice
@@ -73,6 +73,18 @@ on:
           - none
           - early
           - final
+      slot:
+        description: 'auto keeps mode/follow/board. A named slot matches that cron, including its handoff, with about 45 minutes of late grace.'
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - early_board
+          - slate
+          - final_board
+          - evening
+          - late
 
 permissions:
   contents: write
@@ -106,25 +118,53 @@ jobs:
           INPUT_MODE: ${{ inputs.mode }}
           INPUT_FOLLOW: ${{ inputs.follow }}
           INPUT_BOARD: ${{ inputs.board }}
+          INPUT_SLOT: ${{ inputs.slot }}
         run: |
           set -euo pipefail
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "mode=${INPUT_MODE}" >> "$GITHUB_OUTPUT"
-            if [ "$INPUT_BOARD" = "early" ] || [ "$INPUT_BOARD" = "final" ]; then
-              echo "slot=parlay-${INPUT_BOARD}" >> "$GITHUB_OUTPUT"
-              echo "max_polls=1" >> "$GITHUB_OUTPUT"
-              echo "max_runtime=240" >> "$GITHUB_OUTPUT"
-              echo "force=1" >> "$GITHUB_OUTPUT"
-            else
-              echo "slot=manual" >> "$GITHUB_OUTPUT"
-              echo "force=" >> "$GITHUB_OUTPUT"
-              if [ "$INPUT_FOLLOW" = "true" ]; then
-                echo "max_polls=" >> "$GITHUB_OUTPUT"
-              else
+            case "${INPUT_SLOT:-auto}" in
+              early_board)
+                echo "slot=parlay-early" >> "$GITHUB_OUTPUT"
                 echo "max_polls=1" >> "$GITHUB_OUTPUT"
-              fi
-              echo "max_runtime=21000" >> "$GITHUB_OUTPUT"
-            fi
+                echo "max_runtime=240" >> "$GITHUB_OUTPUT"
+                echo "force=" >> "$GITHUB_OUTPUT"
+                echo "dispatched=1" >> "$GITHUB_OUTPUT"
+                ;;
+              final_board)
+                echo "slot=parlay-final" >> "$GITHUB_OUTPUT"
+                echo "max_polls=1" >> "$GITHUB_OUTPUT"
+                echo "max_runtime=240" >> "$GITHUB_OUTPUT"
+                echo "force=" >> "$GITHUB_OUTPUT"
+                echo "dispatched=1" >> "$GITHUB_OUTPUT"
+                ;;
+              slate|evening|late)
+                echo "slot=${INPUT_SLOT}" >> "$GITHUB_OUTPUT"
+                echo "max_polls=" >> "$GITHUB_OUTPUT"
+                echo "max_runtime=21000" >> "$GITHUB_OUTPUT"
+                echo "force=" >> "$GITHUB_OUTPUT"
+                echo "dispatched=1" >> "$GITHUB_OUTPUT"
+                ;;
+              *)
+                # slot=auto. board and follow keep the old manual behavior.
+                echo "dispatched=" >> "$GITHUB_OUTPUT"
+                if [ "$INPUT_BOARD" = "early" ] || [ "$INPUT_BOARD" = "final" ]; then
+                  echo "slot=parlay-${INPUT_BOARD}" >> "$GITHUB_OUTPUT"
+                  echo "max_polls=1" >> "$GITHUB_OUTPUT"
+                  echo "max_runtime=240" >> "$GITHUB_OUTPUT"
+                  echo "force=1" >> "$GITHUB_OUTPUT"
+                else
+                  echo "slot=manual" >> "$GITHUB_OUTPUT"
+                  echo "force=" >> "$GITHUB_OUTPUT"
+                  if [ "$INPUT_FOLLOW" = "true" ]; then
+                    echo "max_polls=" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "max_polls=1" >> "$GITHUB_OUTPUT"
+                  fi
+                  echo "max_runtime=21000" >> "$GITHUB_OUTPUT"
+                fi
+                ;;
+            esac
             exit 0
           fi
           case "$EVENT_SCHEDULE" in
@@ -146,6 +186,7 @@ jobs:
           echo "slot=$slot" >> "$GITHUB_OUTPUT"
           echo "mode=live" >> "$GITHUB_OUTPUT"
           echo "force=" >> "$GITHUB_OUTPUT"
+          echo "dispatched=" >> "$GITHUB_OUTPUT"
           if [ "$slot" = "parlay-early" ] || [ "$slot" = "parlay-final" ]; then
             echo "max_polls=1" >> "$GITHUB_OUTPUT"
             echo "max_runtime=240" >> "$GITHUB_OUTPUT"
@@ -165,6 +206,7 @@ jobs:
           NBA_MAX_RUNTIME_S: ${{ steps.slot.outputs.max_runtime }}
           NBA_MAX_POLLS: ${{ steps.slot.outputs.max_polls }}
           NBA_PARLAY_FORCE: ${{ steps.slot.outputs.force }}
+          NBA_DISPATCHED: ${{ steps.slot.outputs.dispatched }}
           WATCH_MODE: ${{ steps.slot.outputs.mode }}
         run: |
           set -euo pipefail

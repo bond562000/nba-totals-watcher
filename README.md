@@ -61,7 +61,19 @@ Accepted clock, so a late cron still runs and the other DST offset does not:
 - Evening: 5:40–6:40 PM.
 - Late: 11:00–11:59 PM, or 12:00–12:15 AM.
 
-**Run workflow** can post a board on its own. Set **board** to `early` or `final`. That run ignores the clock window, posts once, and exits. `none` is the live watcher. A board job shares `nba-totals-watcher` and is killed at 4 minutes, so it does not hold the runner into the evening. If the noon job is still polling a day game at 3:30, that process posts the final board itself. The queued 3:30 job then sees the flag and exits.
+**Run workflow** with **slot** left on `auto` is the manual path. **board** `early` or `final` ignores the clock, posts once, and exits. **follow** keeps a manual live run polling. A named **slot** ignores **board** and **follow** and matches that cron, including the 5:55 PM slate handoff and the 11:30 PM evening handoff. The crons stay in place as a backup. They no-op when they arrive hours late. A named dispatch accepts about 45 minutes after its start and still refuses a slate or final board once any game has tipped. A second dispatch does not post an early board, slate, or final board that state already marks as posted.
+
+GitHub's dispatch API takes strings. `ref` is `main`.
+
+```json
+{"ref":"main","inputs":{"slot":"early_board","mode":"live","follow":"false","board":"none"}}
+{"ref":"main","inputs":{"slot":"slate","mode":"live","follow":"false","board":"none"}}
+{"ref":"main","inputs":{"slot":"final_board","mode":"live","follow":"false","board":"none"}}
+{"ref":"main","inputs":{"slot":"evening","mode":"live","follow":"true","board":"none"}}
+{"ref":"main","inputs":{"slot":"late","mode":"live","follow":"true","board":"none"}}
+```
+
+Those five are the on-time runs: 11:08 AM, 12:05 PM, 3:30 PM, 5:45 PM, and 11:20 PM ET. Evening and late keep polling the way their crons do. `follow` in those two payloads matches that, and the slot still polls if `follow` is false.
 
 On a normal weekday the slate job posts, takes the one pregame Odds API snapshot, sees no afternoon tip, and exits. The evening job reuses that snapshot.
 

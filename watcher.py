@@ -138,6 +138,37 @@ def slot_name():
     return (os.environ.get("NBA_SLOT") or "manual").strip() or "manual"
 
 
+def _hm_between(hm, start, end):
+    return start <= hm <= end
+
+
+def dispatched_slot_ok(slot, now):
+    """On-time dispatch window: about 45 minutes after the slot's start, a few minutes before.
+
+    Scheduled crons keep the tighter windows in slot_hour_ok. A dispatch at 2 AM
+    for the final board does not sneak through here.
+    """
+    hm = (now.hour, now.minute)
+    if slot == "parlay-early":
+        # 11:08 AM, through 11:53.
+        return _hm_between(hm, (10, 55), (11, 53))
+    if slot == "slate":
+        # 12:05 PM, through 12:50.
+        return _hm_between(hm, (11, 50), (12, 50))
+    if slot == "parlay-final":
+        # 3:30 PM, through 4:15.
+        return _hm_between(hm, (15, 15), (16, 15))
+    if slot == "evening":
+        # 5:45 PM, through 6:30. The 11:30 PM handoff still applies after it starts.
+        return _hm_between(hm, (17, 30), (18, 30))
+    if slot == "late":
+        # 11:20 PM, through 12:05 AM.
+        if now.hour == 23:
+            return True
+        return now.hour == 0 and now.minute <= 5
+    return False
+
+
 def slot_hour_ok(slot, now=None):
     """False when this process should no-op because the ET clock is the other DST offset."""
     if os.environ.get("NBA_PARLAY_FORCE") == "1" and slot in ("parlay-early", "parlay-final"):
@@ -145,6 +176,8 @@ def slot_hour_ok(slot, now=None):
     if slot in (None, "", "manual"):
         return True
     now = now or now_et()
+    if os.environ.get("NBA_DISPATCHED") == "1":
+        return dispatched_slot_ok(slot, now)
     hm = (now.hour, now.minute)
     if slot == "slate":
         return now.hour == 12
@@ -805,7 +838,10 @@ def save_parlays(document):
 def post_parlay_board(board, st, sd, tg_token, channel, odds_key):
     """Post one board and exit. Early spends 0 odds credits. Final may buy props."""
     flag = "early_board_posted" if board == "early" else "final_board_posted"
-    if st.get(flag) or os.environ.get("NBA_SKIP_PARLAYS") == "1":
+    if st.get(flag):
+        log(f"[Livingston Dell] {board} board already posted -- not posting again")
+        return
+    if os.environ.get("NBA_SKIP_PARLAYS") == "1":
         return
     quotes = {}
     if board == "final":
@@ -1034,7 +1070,10 @@ def dell_slate_text(games, pregame, sd, record=None):
 def dell_post_slate(st, games, sd, tg_token, channel):
     """Post the slate once per slate date (state flag slate_posted)."""
     record = refresh_picks_record(st, games)
-    if st.get("slate_posted") or not games:
+    if not games:
+        return
+    if st.get("slate_posted"):
+        log_once("slate-already", "[Livingston Dell] slate already posted -- not posting again")
         return
     text = dell_slate_text(games, st.get("pregame", {}), sd, record)
     if dell_post(text, tg_token, channel):
@@ -1410,6 +1449,28 @@ def tip_et(iso):
         return str(iso)
 
 
+def games_have_tipped(games, now):
+    """True once any game has reached its tip or left the scheduled state."""
+    for game in games or []:
+        if game.get("state") not in (None, "", "scheduled"):
+            return True
+        tip = tip_dt(game)
+        if tip is not None and tip <= now:
+            return True
+    return False
+
+
+def dispatched_pre_tip_blocked(slot, games, now):
+    """A dispatched slate or final board does not post after the first tip."""
+    if os.environ.get("NBA_DISPATCHED") != "1":
+        return False
+    if slot not in ("slate", "parlay-final"):
+        return False
+    if not games:
+        return False
+    return games_have_tipped(games, now)
+
+
 def tip_dt(g):
     tip = g.get("tip")
     if not tip:
@@ -1470,6 +1531,12 @@ def run_parlay_slot(board):
         odds_key = os.environ.get("ODDS_API_KEY", "") if board == "final" else ""
     sd = slate_date()
     log(f"[Danny Ocean] parlay board={board} slate={sd} mode={'dry-run' if DRY_RUN else 'LIVE'}")
+    if os.environ.get("NBA_DISPATCHED") == "1" and board == "final":
+        bdl_key = os.environ.get("BALLDONTLIE_API_KEY", "").strip()
+        games = rusty_poll(bdl_key, sd) if bdl_key else None
+        if games and dispatched_pre_tip_blocked("parlay-final", games, now_et()):
+            log("[Danny Ocean] final board refused -- a game has already tipped")
+            return
     st = load_state(sd)
     post_parlay_board(board, st, sd, tg_token, channel, odds_key)
 
@@ -1533,6 +1600,10 @@ def run(args):
             log("[Danny Ocean] no games on the slate -- exiting")
             if looping:
                 write_done(sd)
+            break
+        if dispatched_pre_tip_blocked(slot, games, now):
+            log("[Danny Ocean] slate refused -- a game has already tipped")
+            save_state(st)
             break
         if args.slate_preview:
             print(dell_slate_text(games, st.get("pregame", {}), sd))
