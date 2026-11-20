@@ -5,6 +5,10 @@
   },
   "credits_remaining": 468,
   "credits_used_month": 32,
+  "espn": {
+    "backoff_until": 0,
+    "fails": 0
+  },
   "final_board_posted": true,
   "games": {},
   "last_lines": {
