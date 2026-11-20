@@ -343,30 +343,47 @@ def combined_american(legs):
     return decimal_to_american(decimal)
 
 
+def posted_change_note(changes):
+    """Changed-leg markers only. A missing early board is a log line, not a post."""
+    if not changes or changes.startswith("No early board"):
+        return None
+    return changes
+
+
+def board_log_lines(board, rows, changes):
+    """Diagnostics that stay in the Actions log and off the Telegram card."""
+    lines = []
+    if board == "early":
+        lines.append("early board is ESPN history only; FanDuel may not have every prop open; 0 odds credits")
+    if changes:
+        lines.append(f"board diff: {changes}")
+    priced = any(leg.get("price") is not None for parlay in rows or [] for leg in parlay.get("legs") or [])
+    if board == "final" and rows and not priced:
+        lines.append("no FanDuel floor at or below the history line; alternate prop markets were not bought")
+    if any(parlay.get("same_game") for parlay in rows or []):
+        lines.append("a parlay has same-game legs; the combined figure assumes independence")
+    lines.append("hit rates are UNCALIBRATED; a combined price is the product of leg prices only when every leg has one")
+    return lines
+
+
 def render_parlays(parlays, board="early", changes=None):
     """One board message, split only when it would exceed Telegram's length."""
     if not parlays:
         return []
     title = "EARLY BOARD" if board == "early" else "FINAL BOARD"
     icon = "🏀" if board == "early" else "📊"
-    lines = [f"{icon} <b>{title}</b> · UNCALIBRATED"]
-    if board == "early":
-        lines.append("FanDuel may not have every prop open yet. ESPN history only, 0 odds credits.")
-    elif changes:
-        lines.append(changes)
-    priced = any(leg.get("price") is not None for parlay in parlays for leg in parlay["legs"])
-    if board == "final" and not priced:
-        lines.append("No FanDuel floor was at or below the history line. Alternate prop markets were not bought.")
+    lines = [f"{icon} <b>{title}</b>"]
+    public_changes = posted_change_note(changes)
+    if public_changes:
+        lines.append(public_changes)
     for index, parlay in enumerate(parlays, start=1):
         pct = _shown_pct(parlay["combined_probability"])
         price = ""
         if parlay.get("combined_price") is not None:
             price = f" · FanDuel <b>{_fmt_american(parlay['combined_price'])}</b>"
-        lines.append(f"\n<b>{index}.</b> combined {pct}{price}"
-                     + (" · same-game legs, product ignores correlation" if parlay.get("same_game") else ""))
+        lines.append(f"\n<b>{index}.</b> combined {pct}{price}")
         for leg in parlay["legs"]:
             lines.append(f"• {leg['label']} — {_leg_detail(leg)}")
-    lines.append("\nHit rates are UNCALIBRATED. The combined price multiplies the priced legs only when every leg has one. Independence is assumed.")
     text = "\n".join(lines)
     if len(text) <= 3500 or len(parlays) == 1:
         return [text]

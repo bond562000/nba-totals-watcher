@@ -315,7 +315,10 @@ class WatcherTestCase(unittest.TestCase):
         self.assertIn("Projected Total: <b>", card)
         self.assertIn("New York Knicks @ Toronto Raptors", card)
         self.assertIn("opened 226.5", card)
-        self.assertIn("UNCALIBRATED", card)
+        self.assertNotIn("UNCALIBRATED", card)
+        self.assertNotIn("Frank's Inside Note", card)
+        self.assertNotIn("pace fallback", card)
+        self.assertNotIn("possession estimate", card)
 
         close_under = watcher.scout(_raw(
             2, "Detroit Pistons", "San Antonio Spurs", 90, 94, 4, "6:00",
@@ -661,6 +664,29 @@ class WatcherTestCase(unittest.TestCase):
         self.assertNotIn("Odds credits", text)
         self.assertNotIn("8:00 to 5:00", text)
         self.assertNotIn("apiKey", text)
+        self.assertNotIn("UNCALIBRATED", text)
+
+    def test_public_posts_omit_diagnostics(self):
+        game = watcher.scout(_raw(
+            1, "New York Knicks", "Toronto Raptors", 110, 104, 4, "6:30",
+            "in_progress", KNICKS_TIP, "4th Qtr"))
+        res = watcher.yen_and_frank(game, {"total": 229.5, "over": -110, "under": -110}, 226.5)
+        card = watcher.dell_format(game, {"total": 229.5, "over": -110, "under": -110}, res, 226.5)
+        buyout = watcher.dell_buyout(
+            game, {"posted_tier": "play", "posted_side": "OVER", "posted_line": 229.5}, res["proj"], res["p_over"])
+        slate = watcher.dell_slate_text([game], {"knicks@raptors": 226.5}, date(2026, 11, 19))
+        for text in (card, buyout, slate):
+            lowered = text.lower()
+            self.assertNotIn("uncalibrated", lowered)
+            self.assertNotIn("frank's inside note", lowered)
+            self.assertNotIn("advisory only", lowered)
+            self.assertNotIn("cash-out", lowered)
+            self.assertNotIn("possession estimate", lowered)
+            self.assertNotIn("pace fallback", lowered)
+            self.assertNotIn("odds credits", lowered)
+        self.assertIn("FINAL CALL", card)
+        self.assertIn("TAKE THE BUYOUT", buyout)
+        self.assertIn("NBA Slate", slate)
 
     def test_cli_simulate_subprocess(self):
         proc = subprocess.run(

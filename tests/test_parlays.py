@@ -8,6 +8,32 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import parlays  # noqa: E402
 
+_PUBLIC_BANNED = (
+    "uncalibrated",
+    "hit rates are",
+    "independence is assumed",
+    "assumes independence",
+    "product ignores correlation",
+    "same-game legs",
+    "fanduel may not have every prop",
+    "no early board",
+    "alternate prop markets",
+    "no fanduel floor",
+    "0 odds credits",
+    "espn history only",
+    "frank's inside note",
+    "advisory only",
+    "cash-out",
+    "possession estimate",
+    "pace fallback",
+)
+
+
+def _assert_public_card(test, text):
+    lowered = text.lower()
+    for phrase in _PUBLIC_BANNED:
+        test.assertNotIn(phrase, lowered, phrase)
+
 
 def _games(points, rebounds, assists, minutes=30):
     return [{
@@ -60,11 +86,9 @@ class ParlayTest(unittest.TestCase):
         self.assertTrue(built[0]["same_game"])
         text = "\n".join(parlays.render_parlays(built, "early"))
         self.assertIn("EARLY BOARD", text)
-        self.assertIn("FanDuel may not have every prop open yet", text)
-        self.assertIn("UNCALIBRATED", text)
         self.assertIn(">99%", text)
-        self.assertIn("same-game legs", text)
         self.assertNotIn("apiKey", text)
+        _assert_public_card(self, text)
 
     def test_grade_leg_and_parlay_once(self):
         leg = {"kind": "player", "stat": "points", "threshold": 15, "result": None}
@@ -166,6 +190,15 @@ class ParlayTest(unittest.TestCase):
             "final", note))
         self.assertIn("FINAL BOARD", text)
         self.assertIn("Dropped: A 10+ points", text)
+        _assert_public_card(self, text)
+        empty = "\n".join(parlays.render_parlays(
+            [{"legs": [{"kind": "player", "label": "C 5+ assists", "probability": 0.9,
+                        "recent": "9/10", "season": "18/20", "price": None}],
+              "combined_probability": 0.9, "same_game": True, "combined_price": None}],
+            "final", "No early board was posted."))
+        self.assertNotIn("No early board", empty)
+        self.assertNotIn("same-game", empty)
+        self.assertTrue(any("UNCALIBRATED" in line for line in parlays.board_log_lines("final", [], "No early board was posted.")))
 
     def test_at_most_three_player_legs_from_one_game(self):
         legs = []
