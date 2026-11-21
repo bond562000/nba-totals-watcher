@@ -217,6 +217,7 @@
     "21718153": {
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -238,7 +239,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 510.0,
+      "last_clock": 429.0,
       "last_eval_ts": 1795235563.0747507,
       "last_period": 4
     },
@@ -261,7 +262,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 153.0,
+      "last_clock": 109.0,
       "last_eval_ts": 1795236112.148907,
       "last_period": 3
     }
