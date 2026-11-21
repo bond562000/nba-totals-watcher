@@ -90,6 +90,19 @@
       "slate": "2026-11-20",
       "source": "watcher",
       "tier": "play"
+    },
+    {
+      "away": "Washington Wizards",
+      "away_nick": "Wizards",
+      "game_id": "21718151",
+      "home": "Chicago Bulls",
+      "home_nick": "Bulls",
+      "line": 203.5,
+      "posted_at": "2026-11-20T21:56:23.691469-05:00",
+      "side": "UNDER",
+      "slate": "2026-11-20",
+      "source": "watcher",
+      "tier": "play"
     }
   ],
   "confirmed": []
