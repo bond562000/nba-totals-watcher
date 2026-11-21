@@ -137,7 +137,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 144.0,
+      "last_clock": 65.0,
       "last_eval_ts": 1795228174.4607754,
       "last_period": 4
     },
@@ -169,7 +169,7 @@
       "evals": 2,
       "home": "Chicago Bulls",
       "home_nick": "Bulls",
-      "last_clock": 481.0,
+      "last_clock": 472.0,
       "last_eval_ts": 1795229783.6911685,
       "last_period": 4,
       "posted": true,
@@ -197,7 +197,7 @@
       "evals": 1,
       "home": "Oklahoma City Thunder",
       "home_nick": "Thunder",
-      "last_clock": 586.0,
+      "last_clock": 559.0,
       "last_eval_ts": 1795229037.406328,
       "last_period": 4,
       "posted": true,
@@ -207,11 +207,11 @@
       "posted_tier": "play"
     },
     "21718153": {
-      "last_clock": 386.0,
+      "last_clock": 367.0,
       "last_period": 1
     }
   },
-  "grade_sig": "q3_2:00 n=1 MAE=11.0 cover=100% hit=100% pushes=0; q4_2:00 n=1 MAE=5.7 cover=0% hit=100% pushes=0; q4_5:00 n=1 MAE=4.0 cover=100% hit=100% pushes=0; q4_6:30 n=1 MAE=4.3 cover=100% hit=100% pushes=0; q4_8:00 n=1 MAE=4.6 cover=100% hit=100% pushes=0",
+  "grade_sig": "q3_2:00 n=2 MAE=6.6 cover=100% hit=100% pushes=0; q4_2:00 n=2 MAE=8.8 cover=0% hit=100% pushes=0; q4_5:00 n=2 MAE=8.5 cover=50% hit=50% pushes=0; q4_6:30 n=2 MAE=6.7 cover=50% hit=50% pushes=0; q4_8:00 n=2 MAE=5.8 cover=100% hit=50% pushes=0",
   "last_lines": {
     "blazers@knicks": {
       "away": "Portland Trail Blazers",
