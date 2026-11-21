@@ -68,7 +68,7 @@
       "evals": 1,
       "home": "Brooklyn Nets",
       "home_nick": "Nets",
-      "last_clock": 300.0,
+      "last_clock": 246.0,
       "last_eval_ts": 1795228051.1176312,
       "last_period": 4,
       "posted": true,
@@ -104,13 +104,14 @@
         }
       ],
       "evals": 2,
-      "last_clock": 85.0,
+      "last_clock": null,
       "last_eval_ts": 1795227743.640178,
       "last_period": 4
     },
     "21718150": {
       "checkpoints": [
         "q3_2:00",
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
@@ -134,7 +135,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 202.0,
+      "last_clock": 189.0,
       "last_eval_ts": 1795228174.4607754,
       "last_period": 4
     },
@@ -177,7 +178,7 @@
       "evals": 1,
       "home": "Oklahoma City Thunder",
       "home_nick": "Thunder",
-      "last_clock": 720.0,
+      "last_clock": 680.0,
       "last_eval_ts": 1795229037.406328,
       "last_period": 4,
       "posted": true,
@@ -187,7 +188,7 @@
       "posted_tier": "play"
     },
     "21718153": {
-      "last_clock": 475.0,
+      "last_clock": 467.0,
       "last_period": 1
     }
   },
