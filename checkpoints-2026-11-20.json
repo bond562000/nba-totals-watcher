@@ -386,6 +386,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T21:33:41.055525-05:00",
+      "away": "Toronto Raptors",
+      "away_score": 81,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_8:00",
+      "clock_secs": 511.0,
+      "expected_ot_points": 0.71,
+      "final_total": null,
+      "game_id": "21718150",
+      "hi_80": 202.58,
+      "home": "Detroit Pistons",
+      "home_score": 77,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T02:28:59Z",
+      "line_over": -102,
+      "line_status": "reused",
+      "line_total": 204.5,
+      "line_under": -130,
+      "lo_80": 185.28,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.0586,
+      "p_push": 0.0,
+      "p_under": 0.9414,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 193.93,
+      "proj_regulation": 193.22,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"

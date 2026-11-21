@@ -65,7 +65,7 @@
       "evals": 1,
       "home": "Brooklyn Nets",
       "home_nick": "Nets",
-      "last_clock": 76.0,
+      "last_clock": null,
       "last_eval_ts": 1795228051.1176312,
       "last_period": 3,
       "posted": true,
@@ -98,13 +98,14 @@
         }
       ],
       "evals": 2,
-      "last_clock": 525.0,
+      "last_clock": 493.0,
       "last_eval_ts": 1795227743.640178,
       "last_period": 4
     },
     "21718150": {
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
       "decisions": [
         {
@@ -125,16 +126,16 @@
         }
       ],
       "evals": 2,
-      "last_clock": null,
+      "last_clock": 511.0,
       "last_eval_ts": 1795228174.4607754,
-      "last_period": 3
+      "last_period": 4
     },
     "21718151": {
-      "last_clock": 513.0,
+      "last_clock": 356.0,
       "last_period": 3
     },
     "21718152": {
-      "last_clock": 460.0,
+      "last_clock": 428.0,
       "last_period": 3
     }
   },
