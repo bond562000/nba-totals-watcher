@@ -706,6 +706,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T21:46:03.808669-05:00",
+      "away": "Indiana Pacers",
+      "away_score": 105,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 160.0,
+      "expected_ot_points": 0.02,
+      "final_total": null,
+      "game_id": "21718149",
+      "hi_80": 240.35,
+      "home": "Cleveland Cavaliers",
+      "home_score": 117,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T02:43:31Z",
+      "line_over": -125,
+      "line_status": "reused",
+      "line_total": 234.5,
+      "line_under": -106,
+      "lo_80": 229.82,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.5564,
+      "p_push": 0.0,
+      "p_under": 0.4436,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 235.08,
+      "proj_regulation": 235.06,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
