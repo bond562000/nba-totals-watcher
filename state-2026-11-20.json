@@ -241,7 +241,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 172.0,
+      "last_clock": null,
       "last_eval_ts": 1795235563.0747507,
       "last_period": 4
     },
@@ -264,7 +264,7 @@
       "evals": 1,
       "home": "Denver Nuggets",
       "home_nick": "Nuggets",
-      "last_clock": 135.0,
+      "last_clock": null,
       "last_eval_ts": 1795236905.6772609,
       "last_period": 3,
       "posted": true,
@@ -276,6 +276,7 @@
     "21718155": {
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -297,7 +298,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 520.0,
+      "last_clock": 407.0,
       "last_eval_ts": 1795236600.130486,
       "last_period": 4
     }
