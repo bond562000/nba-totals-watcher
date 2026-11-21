@@ -229,7 +229,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 142.0,
+      "last_clock": null,
       "last_eval_ts": 1795235181.0043876,
       "last_period": 3
     },
@@ -238,7 +238,7 @@
       "last_period": 2
     },
     "21718155": {
-      "last_clock": 608.0,
+      "last_clock": 514.0,
       "last_period": 3
     }
   },
