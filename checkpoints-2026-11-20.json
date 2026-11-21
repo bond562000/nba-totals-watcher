@@ -41,6 +41,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T20:55:28.928664-05:00",
+      "away": "Charlotte Hornets",
+      "away_score": 80,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_8:00",
+      "clock_secs": 504.0,
+      "expected_ot_points": 0.1,
+      "final_total": null,
+      "game_id": "21718147",
+      "hi_80": 221.5,
+      "home": "Atlanta Hawks",
+      "home_score": 95,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T01:40:29Z",
+      "line_over": -118,
+      "line_status": "reused",
+      "line_total": 214.5,
+      "line_under": -112,
+      "lo_80": 203.71,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3926,
+      "p_push": 0.0,
+      "p_under": 0.6074,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 212.61,
+      "proj_regulation": 212.51,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
