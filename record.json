@@ -77,6 +77,19 @@
       "slate": "2026-11-20",
       "source": "watcher",
       "tier": "lean"
+    },
+    {
+      "away": "New Orleans Pelicans",
+      "away_nick": "Pelicans",
+      "game_id": "21718152",
+      "home": "Oklahoma City Thunder",
+      "home_nick": "Thunder",
+      "line": 244.5,
+      "posted_at": "2026-11-20T21:43:57.406657-05:00",
+      "side": "OVER",
+      "slate": "2026-11-20",
+      "source": "watcher",
+      "tier": "play"
     }
   ],
   "confirmed": []
