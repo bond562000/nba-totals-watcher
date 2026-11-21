@@ -50,7 +50,8 @@
       "away": "Orlando Magic",
       "away_nick": "Magic",
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
       "decisions": [
         {
@@ -65,7 +66,7 @@
       "evals": 1,
       "home": "Brooklyn Nets",
       "home_nick": "Nets",
-      "last_clock": 668.0,
+      "last_clock": 536.0,
       "last_eval_ts": 1795228051.1176312,
       "last_period": 4,
       "posted": true,
@@ -77,6 +78,7 @@
     "21718149": {
       "checkpoints": [
         "q3_2:00",
+        "q4_5:00",
         "q4_6:30",
         "q4_8:00"
       ],
@@ -99,7 +101,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 387.0,
+      "last_clock": 332.0,
       "last_eval_ts": 1795227743.640178,
       "last_period": 4
     },
@@ -133,11 +135,14 @@
       "last_period": 4
     },
     "21718151": {
-      "last_clock": 287.0,
+      "checkpoints": [
+        "q3_2:00"
+      ],
+      "last_clock": 171.0,
       "last_period": 3
     },
     "21718152": {
-      "last_clock": 301.0,
+      "last_clock": 240.0,
       "last_period": 3
     }
   },
