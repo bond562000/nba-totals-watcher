@@ -70,7 +70,7 @@
       "evals": 1,
       "home": "Brooklyn Nets",
       "home_nick": "Nets",
-      "last_clock": 189.0,
+      "last_clock": 133.0,
       "last_eval_ts": 1795228051.1176312,
       "last_period": 4,
       "posted": true,
@@ -146,6 +146,7 @@
       "away_nick": "Wizards",
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -169,7 +170,7 @@
       "evals": 2,
       "home": "Chicago Bulls",
       "home_nick": "Bulls",
-      "last_clock": 472.0,
+      "last_clock": 397.0,
       "last_eval_ts": 1795229783.6911685,
       "last_period": 4,
       "posted": true,
@@ -182,7 +183,8 @@
       "away": "New Orleans Pelicans",
       "away_nick": "Pelicans",
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
       "decisions": [
         {
@@ -197,7 +199,7 @@
       "evals": 1,
       "home": "Oklahoma City Thunder",
       "home_nick": "Thunder",
-      "last_clock": 559.0,
+      "last_clock": 545.0,
       "last_eval_ts": 1795229037.406328,
       "last_period": 4,
       "posted": true,
@@ -207,7 +209,7 @@
       "posted_tier": "play"
     },
     "21718153": {
-      "last_clock": 367.0,
+      "last_clock": 333.0,
       "last_period": 1
     }
   },
