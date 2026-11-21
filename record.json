@@ -115,6 +115,19 @@
       "slate": "2026-11-20",
       "source": "watcher",
       "tier": "play"
+    },
+    {
+      "away": "Houston Rockets",
+      "away_nick": "Rockets",
+      "game_id": "21718154",
+      "home": "Denver Nuggets",
+      "home_nick": "Nuggets",
+      "line": 255.5,
+      "posted_at": "2026-11-20T23:55:05.677580-05:00",
+      "side": "OVER",
+      "slate": "2026-11-20",
+      "source": "watcher",
+      "tier": "lean"
     }
   ],
   "confirmed": []
