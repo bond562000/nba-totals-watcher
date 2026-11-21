@@ -1170,6 +1170,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T22:12:53.238367-05:00",
+      "away": "Washington Wizards",
+      "away_score": 96,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 183.0,
+      "expected_ot_points": 0.9,
+      "final_total": null,
+      "game_id": "21718151",
+      "hi_80": 207.79,
+      "home": "Chicago Bulls",
+      "home_score": 92,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T02:55:57Z",
+      "line_over": -130,
+      "line_status": "reused",
+      "line_total": 203.5,
+      "line_under": -102,
+      "lo_80": 196.79,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3893,
+      "p_push": 0.0,
+      "p_under": 0.6107,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 202.29,
+      "proj_regulation": 201.39,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
