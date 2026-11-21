@@ -1,10 +1,139 @@
 {
-  "credits_remaining": null,
+  "credits_by_feature": {
+    "pregame": 2
+  },
+  "credits_remaining": 444,
+  "credits_used_month": 56,
   "early_board_posted": true,
   "games": {},
-  "odds_calls": 0,
-  "pregame": {},
-  "pregame_done": false,
+  "last_lines": {
+    "blazers@knicks": {
+      "away": "Portland Trail Blazers",
+      "commence": "2026-11-22T00:40:00Z",
+      "event_id": "232f705eea406644ff14ad17bcf9aea6",
+      "home": "New York Knicks",
+      "last_update": "2026-11-21T17:11:16Z",
+      "over": -110,
+      "spread": 3.5,
+      "total": 215.5,
+      "under": -110
+    },
+    "bucks@76ers": {
+      "away": "Milwaukee Bucks",
+      "commence": "2026-11-21T18:10:00Z",
+      "event_id": "6cd4587453e4da55317b2c1e3576e75b",
+      "home": "Philadelphia 76ers",
+      "last_update": "2026-11-21T17:11:16Z",
+      "over": -115,
+      "spread": 10.5,
+      "total": 228.5,
+      "under": -105
+    },
+    "celtics@kings": {
+      "away": "Boston Celtics",
+      "commence": "2026-11-22T03:10:00Z",
+      "event_id": "b754a1bf84af81d45d4a3a16398daa44",
+      "home": "Sacramento Kings",
+      "last_update": "2026-11-21T17:11:16Z",
+      "over": -115,
+      "spread": 13.5,
+      "total": 217.5,
+      "under": -105
+    },
+    "clippers@mavericks": {
+      "away": "Los Angeles Clippers",
+      "commence": "2026-11-22T01:10:00Z",
+      "event_id": "293cafe6913a9bd59328c98049266ad0",
+      "home": "Dallas Mavericks",
+      "last_update": "2026-11-21T17:11:16Z",
+      "over": -110,
+      "spread": 5.5,
+      "total": 230.5,
+      "under": -110
+    },
+    "grizzlies@timberwolves": {
+      "away": "Memphis Grizzlies",
+      "commence": "2026-11-22T01:10:00Z",
+      "event_id": "37e3f99d7ee68587400e99e417db0e6a",
+      "home": "Minnesota Timberwolves",
+      "last_update": "2026-11-21T17:11:16Z",
+      "over": -110,
+      "spread": 5.5,
+      "total": 229.5,
+      "under": -110
+    },
+    "pelicans@spurs": {
+      "away": "New Orleans Pelicans",
+      "commence": "2026-11-22T01:10:00Z",
+      "event_id": "1139ffb82856378723c5465df4e13d96",
+      "home": "San Antonio Spurs",
+      "last_update": "2026-11-21T17:11:16Z",
+      "over": -110,
+      "spread": 17.5,
+      "total": 228.5,
+      "under": -110
+    }
+  },
+  "odds_calls": 1,
+  "pregame": {
+    "blazers@knicks": 215.5,
+    "bucks@76ers": 228.5,
+    "celtics@kings": 217.5,
+    "clippers@mavericks": 230.5,
+    "grizzlies@timberwolves": 229.5,
+    "pelicans@spurs": 228.5
+  },
+  "pregame_done": true,
+  "pregame_meta": {
+    "blazers@knicks": {
+      "away": "Portland Trail Blazers",
+      "event_id": "232f705eea406644ff14ad17bcf9aea6",
+      "home": "New York Knicks",
+      "key": "blazers@knicks",
+      "spread": 3.5,
+      "total": 215.5
+    },
+    "bucks@76ers": {
+      "away": "Milwaukee Bucks",
+      "event_id": "6cd4587453e4da55317b2c1e3576e75b",
+      "home": "Philadelphia 76ers",
+      "key": "bucks@76ers",
+      "spread": 10.5,
+      "total": 228.5
+    },
+    "celtics@kings": {
+      "away": "Boston Celtics",
+      "event_id": "b754a1bf84af81d45d4a3a16398daa44",
+      "home": "Sacramento Kings",
+      "key": "celtics@kings",
+      "spread": 13.5,
+      "total": 217.5
+    },
+    "clippers@mavericks": {
+      "away": "Los Angeles Clippers",
+      "event_id": "293cafe6913a9bd59328c98049266ad0",
+      "home": "Dallas Mavericks",
+      "key": "clippers@mavericks",
+      "spread": 5.5,
+      "total": 230.5
+    },
+    "grizzlies@timberwolves": {
+      "away": "Memphis Grizzlies",
+      "event_id": "37e3f99d7ee68587400e99e417db0e6a",
+      "home": "Minnesota Timberwolves",
+      "key": "grizzlies@timberwolves",
+      "spread": 5.5,
+      "total": 229.5
+    },
+    "pelicans@spurs": {
+      "away": "New Orleans Pelicans",
+      "event_id": "1139ffb82856378723c5465df4e13d96",
+      "home": "San Antonio Spurs",
+      "key": "pelicans@spurs",
+      "spread": 17.5,
+      "total": 228.5
+    }
+  },
   "slate": "2026-11-21",
-  "slate_posted": false
+  "slate_posted": true
 }
