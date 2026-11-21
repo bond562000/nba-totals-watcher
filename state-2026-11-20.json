@@ -1,11 +1,11 @@
 {
   "credits_by_feature": {
-    "live": 12,
+    "live": 13,
     "pregame": 2,
     "props": 6
   },
-  "credits_remaining": 448,
-  "credits_used_month": 52,
+  "credits_remaining": 447,
+  "credits_used_month": 53,
   "early_board_posted": true,
   "espn": {
     "backoff_until": 0,
@@ -240,12 +240,15 @@
         }
       ],
       "evals": 2,
-      "last_clock": 339.0,
+      "last_clock": 281.0,
       "last_eval_ts": 1795235563.0747507,
       "last_period": 4
     },
     "21718154": {
-      "last_clock": 224.0,
+      "checkpoints": [
+        "q3_2:00"
+      ],
+      "last_clock": 173.0,
       "last_period": 3
     },
     "21718155": {
@@ -260,11 +263,19 @@
           "model": "possession_estimate",
           "proj": 230.8,
           "verdict": "PASS / NO PLAY"
+        },
+        {
+          "at": "2026-11-20T23:50:00.130780-05:00",
+          "edge": 1.4,
+          "line": 222.5,
+          "model": "possession_estimate",
+          "proj": 223.9,
+          "verdict": "PASS / NO PLAY"
         }
       ],
-      "evals": 1,
+      "evals": 2,
       "last_clock": null,
-      "last_eval_ts": 1795236112.148907,
+      "last_eval_ts": 1795236600.130486,
       "last_period": 3
     }
   },
@@ -275,7 +286,7 @@
       "commence": "2026-11-22T00:40:00Z",
       "event_id": "232f705eea406644ff14ad17bcf9aea6",
       "home": "New York Knicks",
-      "last_update": "2026-11-21T04:41:32Z",
+      "last_update": "2026-11-21T04:49:43Z",
       "over": -105,
       "total": 217.5,
       "under": -115
@@ -285,7 +296,7 @@
       "commence": "2026-11-21T18:10:00Z",
       "event_id": "6cd4587453e4da55317b2c1e3576e75b",
       "home": "Philadelphia 76ers",
-      "last_update": "2026-11-21T04:41:32Z",
+      "last_update": "2026-11-21T04:49:43Z",
       "over": -110,
       "total": 229.5,
       "under": -110
@@ -295,7 +306,7 @@
       "commence": "2026-11-22T03:10:00Z",
       "event_id": "b754a1bf84af81d45d4a3a16398daa44",
       "home": "Sacramento Kings",
-      "last_update": "2026-11-21T04:41:32Z",
+      "last_update": "2026-11-21T04:49:43Z",
       "over": -110,
       "total": 218.5,
       "under": -110
@@ -305,7 +316,7 @@
       "commence": "2026-11-22T01:10:00Z",
       "event_id": "293cafe6913a9bd59328c98049266ad0",
       "home": "Dallas Mavericks",
-      "last_update": "2026-11-21T04:41:32Z",
+      "last_update": "2026-11-21T04:49:43Z",
       "over": -110,
       "total": 229.5,
       "under": -110
@@ -315,7 +326,7 @@
       "commence": "2026-11-22T01:10:00Z",
       "event_id": "37e3f99d7ee68587400e99e417db0e6a",
       "home": "Minnesota Timberwolves",
-      "last_update": "2026-11-21T04:41:32Z",
+      "last_update": "2026-11-21T04:49:43Z",
       "over": -110,
       "total": 227.5,
       "under": -110
@@ -335,10 +346,10 @@
       "commence": "2026-11-21T03:13:00Z",
       "event_id": "55c3096b11f501ffb6d8bccbb2cd319d",
       "home": "Los Angeles Lakers",
-      "last_update": "2026-11-21T04:41:32Z",
-      "over": -102,
-      "total": 230.5,
-      "under": -130
+      "last_update": "2026-11-21T04:49:43Z",
+      "over": 102,
+      "total": 222.5,
+      "under": -136
     },
     "magic@nets": {
       "away": "Orlando Magic",
@@ -365,7 +376,7 @@
       "commence": "2026-11-22T01:10:00Z",
       "event_id": "1139ffb82856378723c5465df4e13d96",
       "home": "San Antonio Spurs",
-      "last_update": "2026-11-21T04:41:32Z",
+      "last_update": "2026-11-21T04:49:43Z",
       "over": -110,
       "total": 226.5,
       "under": -110
@@ -395,20 +406,20 @@
       "commence": "2026-11-21T03:14:00Z",
       "event_id": "086d2fe80483ffcc280994fe2e12d4f4",
       "home": "Denver Nuggets",
-      "last_update": "2026-11-21T04:41:32Z",
-      "over": -118,
-      "total": 248.5,
-      "under": -112
+      "last_update": "2026-11-21T04:49:43Z",
+      "over": -136,
+      "total": 257.5,
+      "under": 102
     },
     "suns@jazz": {
       "away": "Phoenix Suns",
       "commence": "2026-11-21T02:42:00Z",
       "event_id": "ee204ae35d677450476eab6ad6a146a7",
       "home": "Utah Jazz",
-      "last_update": "2026-11-21T04:41:32Z",
-      "over": 102,
-      "total": 215.5,
-      "under": -136
+      "last_update": "2026-11-21T04:49:43Z",
+      "over": -114,
+      "total": 213.5,
+      "under": -114
     },
     "wizards@bulls": {
       "away": "Washington Wizards",
@@ -421,7 +432,7 @@
       "under": -102
     }
   },
-  "odds_calls": 15,
+  "odds_calls": 16,
   "pregame": {
     "hornets@hawks": 219.5,
     "kings@lakers": 229.5,
