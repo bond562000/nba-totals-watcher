@@ -773,13 +773,16 @@ def slate_events(slate, fetch):
     return events
 
 
-def build_for_slate(slate, pregame, board="early", prop_quotes=None, fetch=None):
+def build_for_slate(slate, pregame, board="early", prop_quotes=None, fetch=None, skip_keys=None):
     """Network entry used by --parlays and the noon run. fetch returns (payload, code)."""
     fetch = fetch or (lambda url: espn_box.fetch_json(url)[:2])
     events = slate_events(slate, fetch)
     if events is None:
         return None
     scheduled = [event for event in events if event.get("state") == "scheduled"]
+    if skip_keys:
+        scheduled = [event for event in scheduled
+                     if _game_key(event.get("away"), event.get("home")) not in skip_keys]
     defense = _standings(fetch)
     form = team_form(defense)
     recent = {}

@@ -448,7 +448,7 @@ class WatcherTestCase(unittest.TestCase):
         """End-to-end dry run: scripted scoreboard, mocked Odds API, no Telegram."""
         scheduled = watcher.scout(_raw(
             11, "New York Knicks", "Toronto Raptors", 0, 0, 0, None,
-            "scheduled", KNICKS_TIP))
+            "scheduled", "2026-11-19T02:00:00Z"))  # still ahead of the frozen 8:00 PM ET clock
         live = watcher.scout(_raw(
             11, "New York Knicks", "Toronto Raptors", 110, 104, 4, "6:30",
             "in_progress", KNICKS_TIP, "4th Qtr",
@@ -658,10 +658,142 @@ class WatcherTestCase(unittest.TestCase):
             (watcher.rusty_poll, watcher.reuben_fetch, watcher.now_et, watcher.time.sleep) = origs
         self.assertIn("handing off", text)
         self.assertGreaterEqual((clock["now"].hour, clock["now"].minute), watcher.SLATE_HANDOFF)
+        self.assertLess((clock["now"].hour, clock["now"].minute), (17, 45))
         # Pregame sees no games still scheduled, so it must not call the Odds API.
         state = json.loads(Path(self.tmp, "state-2026-11-18-dryrun.json").read_text())
         self.assertTrue(state["pregame_done"])
         self.assertEqual(state["odds_calls"], 0)
+
+    def test_slate_watches_a_tipped_matinee_and_skips_the_evening_game(self):
+        matinee = watcher.scout(_raw(
+            41, "Milwaukee Bucks", "Philadelphia 76ers", 90, 88, 4, "6:30",
+            "in_progress", "2026-11-21T18:00:00Z", "4th Qtr"))
+        evening = watcher.scout(_raw(
+            42, "Los Angeles Lakers", "Golden State Warriors", 10, 12, 4, "6:30",
+            "in_progress", "2026-11-22T01:00:00Z", "4th Qtr"))
+        self.assertTrue(matinee["in_window"])
+        self.assertTrue(evening["in_window"])
+        clock = {"now": datetime(2026, 11, 21, 12, 10, tzinfo=watcher.ET)}
+        whys = []
+
+        def fake_poll(_key, _sd):
+            return [matinee, evening]
+
+        def fake_fetch(st, _key, why):
+            whys.append(why)
+            st["odds_calls"] = st.get("odds_calls", 0) + 1
+            st["credits_remaining"] = 470
+            st["credits_by_feature"] = {"live": 1}
+            return {
+                watcher.game_key(matinee["away"], matinee["home"]):
+                    {"total": 210.5, "over": -110, "under": -110},
+                watcher.game_key(evening["away"], evening["home"]):
+                    {"total": 220.5, "over": -110, "under": -110},
+            }
+
+        def advance(_s):
+            clock["now"] = clock["now"] + timedelta(minutes=30)
+
+        origs = (watcher.rusty_poll, watcher.reuben_fetch, watcher.now_et, watcher.time.sleep)
+        watcher.rusty_poll = fake_poll
+        watcher.reuben_fetch = fake_fetch
+        watcher.now_et = lambda: clock["now"]
+        watcher.time.sleep = advance
+        watcher.DRY_RUN = True
+        os.environ["NBA_SLOT"] = "slate"
+        os.environ["NBA_DISPATCHED"] = "1"
+        os.environ["BALLDONTLIE_API_KEY"] = "test-bdl"
+        os.environ["ODDS_API_KEY"] = "test-odds"
+        os.environ["TELEGRAM_CHANNEL_ID"] = "@c"
+        try:
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                watcher.run(self._args(dry_run=True))
+            text = buf.getvalue()
+        finally:
+            (watcher.rusty_poll, watcher.reuben_fetch, watcher.now_et, watcher.time.sleep) = origs
+            os.environ.pop("NBA_DISPATCHED", None)
+        self.assertIn("slate not posted -- a game has already tipped", text)
+        self.assertNotIn("slate posted", text)
+        live = [why for why in whys if why.startswith("afternoon live")]
+        self.assertTrue(live)
+        self.assertIn("Bucks", live[0])
+        self.assertNotIn("Lakers", " ".join(whys))
+        self.assertIn("afternoon live credits left 470", text)
+        self.assertIn("TRIGGER q4 Milwaukee Bucks", text)
+        self.assertNotIn("TRIGGER q4 Los Angeles Lakers", text)
+        self.assertLess((clock["now"].hour, clock["now"].minute), (17, 45))
+
+    def test_slate_exits_when_the_matinee_is_final(self):
+        done = watcher.scout(_raw(
+            51, "Milwaukee Bucks", "Philadelphia 76ers", 110, 108, 4, "0:00",
+            "final", "2026-11-21T18:00:00Z", "Final"))
+        later = watcher.scout(_raw(
+            52, "Los Angeles Lakers", "Golden State Warriors", 0, 0, 0, None,
+            "scheduled", "2026-11-22T01:00:00Z"))
+        clock = {"now": datetime(2026, 11, 21, 12, 10, tzinfo=watcher.ET)}
+        polls = {"n": 0}
+
+        def fake_poll(_key, _sd):
+            polls["n"] += 1
+            return [done, later]
+
+        def fake_fetch(st, _key, why):
+            st["odds_calls"] = st.get("odds_calls", 0) + 1
+            st["credits_remaining"] = 480
+            return {}
+
+        origs = (watcher.rusty_poll, watcher.reuben_fetch, watcher.now_et, watcher.time.sleep)
+        watcher.rusty_poll = fake_poll
+        watcher.reuben_fetch = fake_fetch
+        watcher.now_et = lambda: clock["now"]
+        watcher.time.sleep = lambda _s: clock.__setitem__("now", clock["now"] + timedelta(hours=2))
+        watcher.DRY_RUN = True
+        os.environ["NBA_SLOT"] = "slate"
+        os.environ["BALLDONTLIE_API_KEY"] = "test-bdl"
+        os.environ["ODDS_API_KEY"] = "test-odds"
+        os.environ["TELEGRAM_CHANNEL_ID"] = "@c"
+        try:
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                watcher.run(self._args(dry_run=True))
+            text = buf.getvalue()
+        finally:
+            (watcher.rusty_poll, watcher.reuben_fetch, watcher.now_et, watcher.time.sleep) = origs
+        self.assertEqual(polls["n"], 1)
+        self.assertEqual(clock["now"], datetime(2026, 11, 21, 12, 10, tzinfo=watcher.ET))
+        self.assertIn("afternoon games done", text)
+        self.assertIn("credits left 480", text)
+
+    def test_final_board_skips_tipped_games(self):
+        tipped = watcher.scout(_raw(
+            61, "Milwaukee Bucks", "Philadelphia 76ers", 40, 38, 2, "8:00",
+            "in_progress", "2026-11-21T18:00:00Z", "2nd Qtr"))
+        waiting = watcher.scout(_raw(
+            62, "Los Angeles Lakers", "Golden State Warriors", 0, 0, 0, None,
+            "scheduled", "2026-11-22T01:00:00Z"))
+        now = datetime(2026, 11, 21, 15, 30, tzinfo=watcher.ET)
+        keys = watcher.tipped_game_keys([tipped, waiting], now)
+        self.assertEqual(keys, {watcher.game_key(tipped["away"], tipped["home"])})
+        os.environ["NBA_DISPATCHED"] = "1"
+        os.environ.pop("NBA_SKIP_PARLAYS", None)
+        called = {}
+
+        def fake_post(board, st, sd, tg, ch, key, skip_keys=None):
+            called["board"] = board
+            called["skip"] = set(skip_keys or [])
+
+        origs = (watcher.post_parlay_board, watcher.now_et)
+        watcher.post_parlay_board = fake_post
+        watcher.now_et = lambda: now
+        try:
+            watcher.maybe_final_board_from_slate(
+                {"final_board_posted": False}, date(2026, 11, 21), "", "", "", [tipped, waiting])
+        finally:
+            (watcher.post_parlay_board, watcher.now_et) = origs
+            os.environ.pop("NBA_DISPATCHED", None)
+        self.assertEqual(called["board"], "final")
+        self.assertEqual(called["skip"], keys)
 
     def test_workflow_crons_hit_one_slot_in_one_season(self):
         """Each UTC cron is a real slot in either EST or EDT, and not both seasons

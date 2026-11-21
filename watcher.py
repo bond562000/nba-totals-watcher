@@ -76,11 +76,13 @@ MIN_CREDITS = 25
 FINAL_STATES = {"final", "postponed", "canceled", "abandoned"}
 
 # Scheduled jobs hand the runner off before GitHub's 6-hour kill.
-# Slate starts ~12:05 PM ET and stops at 5:55 PM. Evening starts ~5:45 PM
-# (queued until slate exits) and stops at 11:30 PM. The late job covers
-# the rest until 3:00 AM, including West Coast finals around 1:30 AM.
-SLATE_HANDOFF = (17, 55)     # 5:55 PM ET
+# The slate run posts at noon and, when a game tips before 5:30 PM, stays up
+# to watch that afternoon game. It leaves by 5:30 so the 5:45 evening
+# dispatch is not stuck behind it. Evening stops at 11:30 PM. The late job
+# covers the rest until 3:00 AM, including West Coast finals around 1:30 AM.
+SLATE_HANDOFF = (17, 30)     # 5:30 PM ET
 EVENING_HANDOFF = (23, 30)   # 11:30 PM ET
+AFTERNOON_CUTOFF = SLATE_HANDOFF
 
 # Clock windows are wide enough for a late cron and narrow enough that the
 # other DST offset (one hour off, at the same minute) falls outside them.
@@ -835,7 +837,7 @@ def save_parlays(document):
     _write_json(parlays_path(), document)
 
 
-def post_parlay_board(board, st, sd, tg_token, channel, odds_key):
+def post_parlay_board(board, st, sd, tg_token, channel, odds_key, skip_keys=None):
     """Post one board and exit. Early spends 0 odds credits. Final may buy props."""
     flag = "early_board_posted" if board == "early" else "final_board_posted"
     if st.get(flag):
@@ -846,14 +848,18 @@ def post_parlay_board(board, st, sd, tg_token, channel, odds_key):
     quotes = {}
     if board == "final":
         reuben_pregame(st, odds_key, None)
-        chosen, how = parlays.pick_prop_games(list((st.get("pregame_meta") or {}).values()))
+        meta = list((st.get("pregame_meta") or {}).values())
+        if skip_keys:
+            meta = [row for row in meta if row.get("key") not in skip_keys]
+        chosen, how = parlays.pick_prop_games(meta)
         names = ", ".join(
             f"{row.get('away')} @ {row.get('home')} (spread {row.get('spread')})" for row in chosen)
         log(f"[Reuben Tishkoff] prop games by {how}: {names or 'none'}")
         quotes = reuben_props(st, odds_key, chosen) or {}
     try:
         built = parlays.build_for_slate(
-            sd, st.get("pregame") or {}, board=board, prop_quotes=quotes or None)
+            sd, st.get("pregame") or {}, board=board, prop_quotes=quotes or None,
+            skip_keys=skip_keys)
     except Exception as exc:
         log(f"[Livingston Dell] parlay build failed: {type(exc).__name__}")
         return
@@ -885,13 +891,20 @@ def post_parlay_board(board, st, sd, tg_token, channel, odds_key):
     log(f"[Livingston Dell] posted {board} board ({len(built)} parlays){' (dry run)' if DRY_RUN else ''}")
 
 
-def maybe_final_board_from_slate(st, sd, tg_token, channel, odds_key):
-    """Day-game slate holds the runner, so it posts the 3:30 board itself."""
+def maybe_final_board_from_slate(st, sd, tg_token, channel, odds_key, games=None):
+    """The afternoon run holds the lock at 3:30, so it posts the final board itself.
+
+    Already-tipped games are left out. A later final_board dispatch sees
+    final_board_posted and does not send the card again.
+    """
     if st.get("final_board_posted") or os.environ.get("NBA_SKIP_PARLAYS") == "1":
         return
     if not slot_hour_ok("parlay-final", now_et()):
         return
-    post_parlay_board("final", st, sd, tg_token, channel, odds_key)
+    skip = tipped_game_keys(games, now_et())
+    if skip:
+        log(f"[Danny Ocean] final board skipping {len(skip)} tipped game(s)")
+    post_parlay_board("final", st, sd, tg_token, channel, odds_key, skip_keys=skip)
 
 
 _PARLAY_BOXES = {}
@@ -1074,6 +1087,9 @@ def dell_post_slate(st, games, sd, tg_token, channel):
         return
     if st.get("slate_posted"):
         log_once("slate-already", "[Livingston Dell] slate already posted -- not posting again")
+        return
+    if games_have_tipped(games, now_et()):
+        log_once("slate-after-tip", "[Livingston Dell] slate not posted -- a game has already tipped")
         return
     text = dell_slate_text(games, st.get("pregame", {}), sd, record)
     if dell_post(text, tg_token, channel):
@@ -1451,13 +1467,45 @@ def tip_et(iso):
 
 def games_have_tipped(games, now):
     """True once any game has reached its tip or left the scheduled state."""
-    for game in games or []:
-        if game.get("state") not in (None, "", "scheduled"):
-            return True
-        tip = tip_dt(game)
-        if tip is not None and tip <= now:
-            return True
-    return False
+    return any(game_has_tipped(game, now) for game in games or [])
+
+
+def game_has_tipped(game, now):
+    if game.get("state") not in (None, "", "scheduled"):
+        return True
+    tip = tip_dt(game)
+    return tip is not None and tip <= now
+
+
+def afternoon_cutoff(now):
+    return now.replace(hour=AFTERNOON_CUTOFF[0], minute=AFTERNOON_CUTOFF[1], second=0, microsecond=0)
+
+
+def is_afternoon_game(game, now):
+    """Tip before 5:30 PM ET. Evening and late own everything else."""
+    tip = tip_dt(game)
+    if tip is None:
+        return False
+    return tip < afternoon_cutoff(now)
+
+
+def afternoon_games(games, now):
+    return [game for game in games or [] if is_afternoon_game(game, now)]
+
+
+def tipped_game_keys(games, now):
+    return {game_key(game.get("away") or "", game.get("home") or "")
+            for game in games or [] if game_has_tipped(game, now)}
+
+
+def slate_afternoon_done(games, now):
+    """The noon run leaves once the matinees are final, and always by 5:30 PM."""
+    if (now.hour, now.minute) >= AFTERNOON_CUTOFF:
+        return True
+    matinees = afternoon_games(games, now)
+    if not matinees:
+        return True
+    return all(game.get("state") in FINAL_STATES for game in matinees)
 
 
 def dispatched_pre_tip_blocked(slot, games, now):
@@ -1534,11 +1582,14 @@ def run_parlay_slot(board):
     if os.environ.get("NBA_DISPATCHED") == "1" and board == "final":
         bdl_key = os.environ.get("BALLDONTLIE_API_KEY", "").strip()
         games = rusty_poll(bdl_key, sd) if bdl_key else None
-        if games and dispatched_pre_tip_blocked("parlay-final", games, now_et()):
-            log("[Danny Ocean] final board refused -- a game has already tipped")
-            return
+        skip = tipped_game_keys(games, now_et()) if games else set()
+        if skip:
+            log(f"[Danny Ocean] final board skipping {len(skip)} tipped game(s); "
+                "untipped games still go on the card")
+    else:
+        skip = set()
     st = load_state(sd)
-    post_parlay_board(board, st, sd, tg_token, channel, odds_key)
+    post_parlay_board(board, st, sd, tg_token, channel, odds_key, skip_keys=skip)
 
 
 def run(args):
@@ -1601,10 +1652,6 @@ def run(args):
             if looping:
                 write_done(sd)
             break
-        if dispatched_pre_tip_blocked(slot, games, now):
-            log("[Danny Ocean] slate refused -- a game has already tipped")
-            save_state(st)
-            break
         if args.slate_preview:
             print(dell_slate_text(games, st.get("pregame", {}), sd))
             break
@@ -1627,9 +1674,11 @@ def run(args):
         reuben_pregame(st, odds_key, games)           # one Odds API call per slate, totals + spreads
         dell_post_slate(st, games, sd, tg_token, channel)  # reuses that snapshot, no extra credits
         if slot == "slate":
-            maybe_final_board_from_slate(st, sd, tg_token, channel, odds_key)
-        maybe_attach_box_scores(games, bdl_key, st, sd)
-        live = [g for g in games if g["state"] == "in_progress"]
+            maybe_final_board_from_slate(st, sd, tg_token, channel, odds_key, games)
+        # The noon run watches matinees only. Evening and late own the rest.
+        watched = afternoon_games(games, now) if slot == "slate" else games
+        maybe_attach_box_scores(watched, bdl_key, st, sd)
+        live = [g for g in watched if g["state"] == "in_progress"]
         for g in live:
             window = alert_window(g)
             if window and g["id"] not in st["games"]:
@@ -1639,7 +1688,12 @@ def run(args):
         due = [g for g in live if alert_window(g) and due_for_eval(st["games"].get(g["id"], {}), time.time())]
         lines = None
         if due:
-            lines = reuben_fetch(st, odds_key, "live: " + ", ".join(f"{g['away']} @ {g['home']}" for g in due))
+            why = ("afternoon " if slot == "slate" else "") + "live: " + ", ".join(
+                f"{g['away']} @ {g['home']}" for g in due)
+            lines = reuben_fetch(st, odds_key, why)
+            if slot == "slate" and lines is not None:
+                log(f"[Reuben Tishkoff] afternoon live credits left {st.get('credits_remaining')} "
+                    f"(calls {st['odds_calls']}, by feature {st.get('credits_by_feature')})")
             if lines is None:
                 for g in due:  # quota skip / API failure: don't burn the game's eval slot
                     log(f"[Frank Catton] PASS / NO PLAY | {g['away']} @ {g['home']} | odds unavailable (quota/API)")
@@ -1647,22 +1701,26 @@ def run(args):
                 for g in due:
                     evaluate(g, lines.get(game_key(g["away"], g["home"])), st, tg_token, channel)
         # Checkpoints reuse last_lines / this poll's fetch. They do not add an Odds API call.
-        for g in games:
+        for g in watched:
             if g["state"] in ("in_progress", "final") or g.get("at_halftime") or g.get("at_end_q3"):
                 record_checkpoints(g, st, sd, lines)
         for g in live:
             maybe_buyout(g, st, tg_token, channel)
-        grade_slate(games, sd, st)
-        refresh_picks_record(st, games)
-        grade_open_parlays(games)
+        grade_slate(watched, sd, st)
+        refresh_picks_record(st, watched)
+        grade_open_parlays(watched)
         polls += 1
         if all(g["state"] in FINAL_STATES for g in games):
             log(f"[Danny Ocean] all {len(games)} games final -- done for the night "
                 f"(odds calls {st['odds_calls']}, credits left {st.get('credits_remaining')})")
             write_done(sd)
             break
-        if slot == "slate" and not slate_should_keep_polling(games, now):
-            log("[Danny Ocean] no afternoon games left to follow -- exiting until the evening run")
+        if slot == "slate" and slate_afternoon_done(games, now):
+            tail = f"(odds calls {st['odds_calls']}, credits left {st.get('credits_remaining')})"
+            if not afternoon_games(games, now) and (now.hour, now.minute) < AFTERNOON_CUTOFF:
+                log("[Danny Ocean] no afternoon games left to follow -- exiting until the evening run " + tail)
+            else:
+                log("[Danny Ocean] afternoon games done -- exiting before the evening run " + tail)
             save_state(st)
             break
         limit = max_polls()
