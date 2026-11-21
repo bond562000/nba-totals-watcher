@@ -626,6 +626,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T21:41:53.711823-05:00",
+      "away": "New Orleans Pelicans",
+      "away_score": 94,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q3_2:00",
+      "clock_secs": 177.0,
+      "expected_ot_points": 0.22,
+      "final_total": null,
+      "game_id": "21718152",
+      "hi_80": 262.71,
+      "home": "Oklahoma City Thunder",
+      "home_score": 80,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T02:28:59Z",
+      "line_over": 112,
+      "line_status": "reused",
+      "line_total": 240.5,
+      "line_under": -148,
+      "lo_80": 238.12,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.8493,
+      "p_push": 0.0,
+      "p_under": 0.1507,
+      "period": 3,
+      "prob_label": "UNCALIBRATED",
+      "proj": 250.42,
+      "proj_regulation": 250.2,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
