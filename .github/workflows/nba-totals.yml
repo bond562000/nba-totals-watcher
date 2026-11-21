@@ -35,8 +35,8 @@ on:
     - cron: '50 19 * * *'   # 3:50 PM EDT
     - cron: '30 20 * * *'   # 3:30 PM EST
     - cron: '50 20 * * *'   # 3:50 PM EST
-    # Evening — 5:45 PM and 6:20 PM ET. Queues behind the slate job, which
-    # exits at 5:55 PM, then polls until 11:30 PM (under the 6-hour cap).
+    # Evening — 5:45 PM and 6:20 PM ET. The slate run has left by 5:30 PM,
+    # then this job polls until 11:30 PM (under the 6-hour cap).
     - cron: '45 21 * * *'   # 5:45 PM EDT
     - cron: '20 22 * * *'   # 6:20 PM EDT
     - cron: '45 22 * * *'   # 5:45 PM EST

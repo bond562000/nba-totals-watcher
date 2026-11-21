@@ -46,12 +46,12 @@ Each slot is registered twice, an hour apart, because noon ET is 16:05 UTC on ED
 | Slot | Starts (ET) | Backup (ET) | Stops | Job |
 | --- | --- | --- | --- | --- |
 | Early board | 11:08 AM | 11:28 AM | One pass, 4 minute cap | ESPN parlay card. 0 Odds API credits. |
-| Slate | 12:05 PM | 12:30 PM | 5:55 PM, or sooner when every remaining tip is after that | Posts the slate, without parlays. Keeps polling while a game is live or tips before 5:55 PM (weekend afternoons). |
+| Slate | 12:05 PM | 12:30 PM | 5:30 PM, or sooner when every matinee is final | Posts the slate before the first tip. If a game tips before 5:30 PM, this run watches that game live and leaves the evening games alone. |
 | Final board | 3:30 PM | 3:50 PM | One pass, 4 minute cap | Rebuilds the parlays and buys FanDuel props for two games. |
 | Evening | 5:45 PM | 6:20 PM | 11:30 PM | Waits if a board job is still in the group, then polls about every 60s while games are live (180s when idle). |
 | Late | 11:20 PM | 11:45 PM | 3:00 AM, or when every game is final | Same polling. Covers the end of the night after the evening job hands off, including West Coast games that finish around 1:30 AM. |
 
-The evening cron is 5:45 PM so it is already waiting when the slate job stops at 5:55 PM. A slate job that started at noon cannot still be running at 6:30 PM (the platform stops jobs at 6 hours). The handoff is a few minutes of Actions startup, and state is already on the `state` branch.
+The slate run leaves by 5:30 PM ET, before the 5:45 PM evening dispatch, so the two are not stuck in the same concurrency group. A slate job that started at noon cannot still be running at 6:30 PM (the platform stops jobs at 6 hours). State is already on the `state` branch.
 
 Accepted clock, so a late cron still runs and the other DST offset does not:
 
@@ -61,7 +61,7 @@ Accepted clock, so a late cron still runs and the other DST offset does not:
 - Evening: 5:40–6:40 PM.
 - Late: 11:00–11:59 PM, or 12:00–12:15 AM.
 
-**Run workflow** with **slot** left on `auto` is the manual path. **board** `early` or `final` ignores the clock, posts once, and exits. **follow** keeps a manual live run polling. A named **slot** ignores **board** and **follow** and matches that cron, including the 5:55 PM slate handoff and the 11:30 PM evening handoff. The crons stay in place as a backup. They no-op when they arrive hours late. A named dispatch accepts about 45 minutes after its start and still refuses a slate or final board once any game has tipped. A second dispatch does not post an early board, slate, or final board that state already marks as posted.
+**Run workflow** with **slot** left on `auto` is the manual path. **board** `early` or `final` ignores the clock, posts once, and exits. **follow** keeps a manual live run polling. A named **slot** ignores **board** and **follow** and matches that cron, including the 5:30 PM slate handoff and the 11:30 PM evening handoff. The crons stay in place as a backup. They no-op when they arrive hours late. A named dispatch accepts about 45 minutes after its start. The slate card is not posted after the first tip; if a game tips before 5:30 PM the same run watches it live and ignores evening games. The final board skips games that have already tipped and still posts for the rest. While that afternoon run holds the lock, it posts the final board itself around 3:30. A second dispatch does not post an early board, slate, or final board that state already marks as posted.
 
 GitHub's dispatch API takes strings. `ref` is `main`.
 
