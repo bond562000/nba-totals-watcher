@@ -1303,6 +1303,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T23:37:47.882473-05:00",
+      "away": "Phoenix Suns",
+      "away_score": 94,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_8:00",
+      "clock_secs": 536.0,
+      "expected_ot_points": 0.33,
+      "final_total": null,
+      "game_id": "21718153",
+      "hi_80": 228.71,
+      "home": "Utah Jazz",
+      "home_score": 84,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T04:32:28Z",
+      "line_over": -102,
+      "line_status": "reused",
+      "line_total": 220.5,
+      "line_under": -130,
+      "lo_80": 210.1,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.44,
+      "p_push": 0.0,
+      "p_under": 0.56,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 219.4,
+      "proj_regulation": 219.08,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
