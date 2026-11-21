@@ -171,7 +171,7 @@
       "evals": 2,
       "home": "Chicago Bulls",
       "home_nick": "Bulls",
-      "last_clock": 246.0,
+      "last_clock": 238.0,
       "last_eval_ts": 1795229783.6911685,
       "last_period": 4,
       "posted": true,
@@ -203,7 +203,7 @@
       "evals": 1,
       "home": "Oklahoma City Thunder",
       "home_nick": "Thunder",
-      "last_clock": 337.0,
+      "last_clock": 282.0,
       "last_eval_ts": 1795229037.406328,
       "last_period": 4,
       "posted": true,
@@ -213,11 +213,11 @@
       "posted_tier": "play"
     },
     "21718153": {
-      "last_clock": 83.0,
+      "last_clock": null,
       "last_period": 1
     }
   },
-  "grade_sig": "q3_2:00 n=3 MAE=8.5 cover=67% hit=67% pushes=0; q4_2:00 n=3 MAE=6.5 cover=33% hit=100% pushes=0; q4_5:00 n=3 MAE=5.7 cover=67% hit=67% pushes=0; q4_6:30 n=3 MAE=5.8 cover=67% hit=67% pushes=0; q4_8:00 n=3 MAE=6.3 cover=100% hit=67% pushes=0",
+  "grade_sig": "q3_2:00 n=4 MAE=8.2 cover=75% hit=50% pushes=0; q4_2:00 n=4 MAE=7.8 cover=25% hit=75% pushes=0; q4_5:00 n=4 MAE=7.1 cover=50% hit=50% pushes=0; q4_6:30 n=4 MAE=6.9 cover=50% hit=50% pushes=0; q4_8:00 n=4 MAE=8.0 cover=75% hit=50% pushes=0",
   "last_lines": {
     "blazers@knicks": {
       "away": "Portland Trail Blazers",
