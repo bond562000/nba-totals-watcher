@@ -1639,6 +1639,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-21T00:03:16.635102-05:00",
+      "away": "Sacramento Kings",
+      "away_score": 93,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 304.0,
+      "expected_ot_points": 0.72,
+      "final_total": null,
+      "game_id": "21718155",
+      "hi_80": 221.61,
+      "home": "Los Angeles Lakers",
+      "home_score": 98,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T04:54:44Z",
+      "line_over": -112,
+      "line_status": "reused",
+      "line_total": 218.5,
+      "line_under": -118,
+      "lo_80": 207.71,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.2393,
+      "p_push": 0.0,
+      "p_under": 0.7607,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 214.66,
+      "proj_regulation": 213.94,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
