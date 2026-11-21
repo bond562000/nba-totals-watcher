@@ -1,11 +1,11 @@
 {
   "credits_by_feature": {
-    "live": 10,
+    "live": 11,
     "pregame": 2,
     "props": 6
   },
-  "credits_remaining": 450,
-  "credits_used_month": 50,
+  "credits_remaining": 449,
+  "credits_used_month": 51,
   "early_board_posted": true,
   "espn": {
     "backoff_until": 0,
@@ -226,11 +226,19 @@
           "model": "possession_estimate",
           "proj": 224.8,
           "verdict": "PASS / NO PLAY"
+        },
+        {
+          "at": "2026-11-20T23:32:43.075120-05:00",
+          "edge": 0.5,
+          "line": 220.5,
+          "model": "pace_fallback",
+          "proj": 221.0,
+          "verdict": "PASS / NO PLAY"
         }
       ],
-      "evals": 1,
+      "evals": 2,
       "last_clock": null,
-      "last_eval_ts": 1795235181.0043876,
+      "last_eval_ts": 1795235563.0747507,
       "last_period": 3
     },
     "21718154": {
@@ -238,7 +246,7 @@
       "last_period": 2
     },
     "21718155": {
-      "last_clock": 514.0,
+      "last_clock": 407.0,
       "last_period": 3
     }
   },
@@ -249,7 +257,7 @@
       "commence": "2026-11-22T00:40:00Z",
       "event_id": "232f705eea406644ff14ad17bcf9aea6",
       "home": "New York Knicks",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -105,
       "total": 217.5,
       "under": -115
@@ -259,7 +267,7 @@
       "commence": "2026-11-21T18:10:00Z",
       "event_id": "6cd4587453e4da55317b2c1e3576e75b",
       "home": "Philadelphia 76ers",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -110,
       "total": 229.5,
       "under": -110
@@ -269,7 +277,7 @@
       "commence": "2026-11-22T03:10:00Z",
       "event_id": "b754a1bf84af81d45d4a3a16398daa44",
       "home": "Sacramento Kings",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -110,
       "total": 218.5,
       "under": -110
@@ -279,7 +287,7 @@
       "commence": "2026-11-22T01:10:00Z",
       "event_id": "293cafe6913a9bd59328c98049266ad0",
       "home": "Dallas Mavericks",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -110,
       "total": 229.5,
       "under": -110
@@ -289,7 +297,7 @@
       "commence": "2026-11-22T01:10:00Z",
       "event_id": "37e3f99d7ee68587400e99e417db0e6a",
       "home": "Minnesota Timberwolves",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -110,
       "total": 227.5,
       "under": -110
@@ -309,10 +317,10 @@
       "commence": "2026-11-21T03:13:00Z",
       "event_id": "55c3096b11f501ffb6d8bccbb2cd319d",
       "home": "Los Angeles Lakers",
-      "last_update": "2026-11-21T04:26:08Z",
-      "over": 100,
-      "total": 232.5,
-      "under": -132
+      "last_update": "2026-11-21T04:32:28Z",
+      "over": 102,
+      "total": 229.5,
+      "under": -136
     },
     "magic@nets": {
       "away": "Orlando Magic",
@@ -339,7 +347,7 @@
       "commence": "2026-11-22T01:10:00Z",
       "event_id": "1139ffb82856378723c5465df4e13d96",
       "home": "San Antonio Spurs",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -110,
       "total": 226.5,
       "under": -110
@@ -369,19 +377,19 @@
       "commence": "2026-11-21T03:14:00Z",
       "event_id": "086d2fe80483ffcc280994fe2e12d4f4",
       "home": "Denver Nuggets",
-      "last_update": "2026-11-21T04:26:08Z",
-      "over": -120,
+      "last_update": "2026-11-21T04:32:28Z",
+      "over": -128,
       "total": 238.5,
-      "under": -110
+      "under": -104
     },
     "suns@jazz": {
       "away": "Phoenix Suns",
       "commence": "2026-11-21T02:42:00Z",
       "event_id": "ee204ae35d677450476eab6ad6a146a7",
       "home": "Utah Jazz",
-      "last_update": "2026-11-21T04:26:08Z",
+      "last_update": "2026-11-21T04:32:28Z",
       "over": -102,
-      "total": 223.5,
+      "total": 220.5,
       "under": -130
     },
     "wizards@bulls": {
@@ -395,7 +403,7 @@
       "under": -102
     }
   },
-  "odds_calls": 13,
+  "odds_calls": 14,
   "pregame": {
     "hornets@hawks": 219.5,
     "kings@lakers": 229.5,
