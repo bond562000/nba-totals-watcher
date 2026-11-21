@@ -64,6 +64,19 @@
       "slate": "2026-11-20",
       "source": "watcher",
       "tier": "play"
+    },
+    {
+      "away": "Orlando Magic",
+      "away_nick": "Magic",
+      "game_id": "21718148",
+      "home": "Brooklyn Nets",
+      "home_nick": "Nets",
+      "line": 229.5,
+      "posted_at": "2026-11-20T21:27:31.117978-05:00",
+      "side": "OVER",
+      "slate": "2026-11-20",
+      "source": "watcher",
+      "tier": "lean"
     }
   ],
   "confirmed": []
