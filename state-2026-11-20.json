@@ -217,6 +217,7 @@
     "21718153": {
       "checkpoints": [
         "q3_2:00",
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
@@ -240,7 +241,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 281.0,
+      "last_clock": 172.0,
       "last_eval_ts": 1795235563.0747507,
       "last_period": 4
     },
@@ -248,12 +249,13 @@
       "checkpoints": [
         "q3_2:00"
       ],
-      "last_clock": 173.0,
+      "last_clock": 135.0,
       "last_period": 3
     },
     "21718155": {
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
       "decisions": [
         {
@@ -274,9 +276,9 @@
         }
       ],
       "evals": 2,
-      "last_clock": null,
+      "last_clock": 520.0,
       "last_eval_ts": 1795236600.130486,
-      "last_period": 3
+      "last_period": 4
     }
   },
   "grade_sig": "q3_2:00 n=6 MAE=7.9 cover=83% hit=67% pushes=0; q4_2:00 n=6 MAE=8.4 cover=17% hit=83% pushes=0; q4_5:00 n=6 MAE=7.5 cover=33% hit=67% pushes=0; q4_6:30 n=6 MAE=6.6 cover=67% hit=67% pushes=0; q4_8:00 n=6 MAE=7.1 cover=83% hit=50% pushes=0",
