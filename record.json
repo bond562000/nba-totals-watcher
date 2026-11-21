@@ -47,6 +47,19 @@
       "side": "OVER",
       "slate": "2026-11-17",
       "source": "seed"
+    },
+    {
+      "away": "Charlotte Hornets",
+      "away_nick": "Hornets",
+      "game_id": "21718147",
+      "home": "Atlanta Hawks",
+      "home_nick": "Hawks",
+      "line": 214.5,
+      "posted_at": "2026-11-20T20:40:59.904964-05:00",
+      "side": "OVER",
+      "slate": "2026-11-20",
+      "source": "watcher",
+      "tier": "play"
     }
   ],
   "confirmed": []
