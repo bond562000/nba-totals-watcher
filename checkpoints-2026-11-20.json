@@ -907,6 +907,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-20T21:55:21.338892-05:00",
+      "away": "Orlando Magic",
+      "away_score": 106,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 189.0,
+      "expected_ot_points": 1.22,
+      "final_total": null,
+      "game_id": "21718148",
+      "hi_80": 231.49,
+      "home": "Brooklyn Nets",
+      "home_score": 104,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-21T02:43:31Z",
+      "line_over": -106,
+      "line_status": "reused",
+      "line_total": 230.5,
+      "line_under": -125,
+      "lo_80": 220.41,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.1462,
+      "p_push": 0.0,
+      "p_under": 0.8538,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 225.95,
+      "proj_regulation": 224.73,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-20"
