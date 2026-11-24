@@ -1,9 +1,11 @@
 {
   "credits_by_feature": {
-    "pregame": 2
+    "pregame": 2,
+    "props": 6
   },
-  "credits_remaining": 442,
-  "credits_used_month": 58,
+  "credits_remaining": 436,
+  "credits_used_month": 64,
+  "final_board_posted": true,
   "games": {},
   "last_lines": {
     "cavaliers@knicks": {
@@ -84,7 +86,7 @@
       "under": -110
     }
   },
-  "odds_calls": 1,
+  "odds_calls": 3,
   "pregame": {
     "cavaliers@knicks": 220.5,
     "celtics@wizards": 217.5,
@@ -153,6 +155,817 @@
       "total": 223.5
     }
   },
+  "prop_events_done": [
+    "07421d1675d6bc51bb5fa91f84a09eb3",
+    "42f48a4769eab3d1472d76aac0fd0fa7"
+  ],
+  "prop_quotes": {
+    "07421d1675d6bc51bb5fa91f84a09eb3": {
+      "ajay mitchell": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -162
+          }
+        ]
+      },
+      "ayo dosunmu": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -158
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 116
+          }
+        ]
+      },
+      "isaiah hartenstein": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 102
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": 104
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 11.5,
+            "price": 106
+          }
+        ]
+      },
+      "jaden mcdaniels": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -180
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -106
+          }
+        ]
+      },
+      "jared mccain": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -128
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -104
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -106
+          }
+        ]
+      },
+      "jonathan kuminga": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -106
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": 102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -128
+          }
+        ]
+      },
+      "lamelo ball": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": 112
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -138
+          }
+        ]
+      },
+      "rudy gobert": {
+        "points": [
+          {
+            "point": 8.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 10.5,
+            "price": -108
+          }
+        ]
+      },
+      "shai gilgeous-alexander": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 31.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -106
+          }
+        ]
+      }
+    },
+    "42f48a4769eab3d1472d76aac0fd0fa7": {
+      "anthony black": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -120
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -122
+          }
+        ]
+      },
+      "ausar thompson": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 106
+          }
+        ],
+        "points": [
+          {
+            "point": 10.5,
+            "price": -122
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": -146
+          }
+        ]
+      },
+      "cade cunningham": {
+        "assists": [
+          {
+            "point": 7.5,
+            "price": -142
+          }
+        ],
+        "points": [
+          {
+            "point": 24.5,
+            "price": -113
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 122
+          }
+        ]
+      },
+      "daniss jenkins": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -104
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -160
+          }
+        ]
+      },
+      "desmond bane": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -138
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -125
+          }
+        ]
+      },
+      "franz wagner": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -128
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -113
+          }
+        ]
+      },
+      "isaiah joe": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": 102
+          }
+        ]
+      },
+      "jalen suggs": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -140
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 122
+          }
+        ]
+      },
+      "john collins": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -104
+          }
+        ]
+      },
+      "kevin huerter": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -122
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": -111
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 112
+          }
+        ]
+      },
+      "paul reed": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -130
+          }
+        ]
+      },
+      "tristan da silva": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -115
+          }
+        ]
+      },
+      "wendell carter": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 8.5,
+            "price": 118
+          }
+        ]
+      }
+    },
+    "pistons@magic": {
+      "anthony black": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -120
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -122
+          }
+        ]
+      },
+      "ausar thompson": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 106
+          }
+        ],
+        "points": [
+          {
+            "point": 10.5,
+            "price": -122
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": -146
+          }
+        ]
+      },
+      "cade cunningham": {
+        "assists": [
+          {
+            "point": 7.5,
+            "price": -142
+          }
+        ],
+        "points": [
+          {
+            "point": 24.5,
+            "price": -113
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 122
+          }
+        ]
+      },
+      "daniss jenkins": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -104
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -160
+          }
+        ]
+      },
+      "desmond bane": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -138
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -125
+          }
+        ]
+      },
+      "franz wagner": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -128
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -113
+          }
+        ]
+      },
+      "isaiah joe": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": 102
+          }
+        ]
+      },
+      "jalen suggs": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -140
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 122
+          }
+        ]
+      },
+      "john collins": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -104
+          }
+        ]
+      },
+      "kevin huerter": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -122
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": -111
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 112
+          }
+        ]
+      },
+      "paul reed": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -130
+          }
+        ]
+      },
+      "tristan da silva": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -115
+          }
+        ]
+      },
+      "wendell carter": {
+        "points": [
+          {
+            "point": 10.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 8.5,
+            "price": 118
+          }
+        ]
+      }
+    },
+    "timberwolves@thunder": {
+      "ajay mitchell": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -162
+          }
+        ]
+      },
+      "ayo dosunmu": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -158
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 116
+          }
+        ]
+      },
+      "isaiah hartenstein": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 102
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": 104
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 11.5,
+            "price": 106
+          }
+        ]
+      },
+      "jaden mcdaniels": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -180
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -106
+          }
+        ]
+      },
+      "jared mccain": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -128
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -104
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -106
+          }
+        ]
+      },
+      "jonathan kuminga": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -106
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": 102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -128
+          }
+        ]
+      },
+      "lamelo ball": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": 112
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -138
+          }
+        ]
+      },
+      "rudy gobert": {
+        "points": [
+          {
+            "point": 8.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 10.5,
+            "price": -108
+          }
+        ]
+      },
+      "shai gilgeous-alexander": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 31.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -106
+          }
+        ]
+      }
+    }
+  },
+  "props_done": true,
   "slate": "2026-11-24",
   "slate_posted": true
 }
