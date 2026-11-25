@@ -11,7 +11,12 @@
     "fails": 0
   },
   "final_board_posted": true,
-  "games": {},
+  "games": {
+    "21718184": {
+      "last_clock": 169.0,
+      "last_period": 1
+    }
+  },
   "last_lines": {
     "bulls@hornets": {
       "away": "Chicago Bulls",
