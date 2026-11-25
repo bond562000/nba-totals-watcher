@@ -49,6 +49,7 @@
       "away_nick": "Celtics",
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -64,7 +65,7 @@
       "evals": 1,
       "home": "Washington Wizards",
       "home_nick": "Wizards",
-      "last_clock": 535.0,
+      "last_clock": 421.0,
       "last_eval_ts": 1795575164.5937672,
       "last_period": 4,
       "posted": true,
