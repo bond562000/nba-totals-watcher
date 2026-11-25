@@ -77,8 +77,8 @@
       "posted_tier": "play"
     },
     "21718183": {
-      "last_clock": 61.0,
-      "last_period": 1
+      "last_clock": 543.0,
+      "last_period": 3
     }
   },
   "grade_sig": "q3_2:00 n=2 MAE=5.4 cover=100% hit=100% pushes=0; q4_2:00 n=2 MAE=2.8 cover=50% hit=100% pushes=0; q4_5:00 n=2 MAE=0.8 cover=100% hit=100% pushes=0; q4_6:30 n=2 MAE=1.4 cover=100% hit=100% pushes=0; q4_8:00 n=2 MAE=1.3 cover=100% hit=100% pushes=0",
