@@ -132,6 +132,19 @@
       "slate": "2026-11-20",
       "source": "watcher",
       "tier": "lean"
+    },
+    {
+      "away": "Boston Celtics",
+      "away_nick": "Celtics",
+      "game_id": "21718182",
+      "home": "Washington Wizards",
+      "home_nick": "Wizards",
+      "line": 245.5,
+      "posted_at": "2026-11-24T21:52:44.593992-05:00",
+      "side": "OVER",
+      "slate": "2026-11-24",
+      "source": "watcher",
+      "tier": "play"
     }
   ],
   "confirmed": []
