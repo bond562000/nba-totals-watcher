@@ -83,6 +83,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-24T21:03:23.378082-05:00",
+      "away": "Detroit Pistons",
+      "away_score": 88,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 419.0,
+      "expected_ot_points": 0.03,
+      "final_total": null,
+      "game_id": "21718181",
+      "hi_80": 195.6,
+      "home": "Orlando Magic",
+      "home_score": 71,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-25T01:52:00Z",
+      "line_over": 102,
+      "line_status": "reused",
+      "line_total": 184.5,
+      "line_under": -136,
+      "lo_80": 179.38,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.6817,
+      "p_push": 0.0,
+      "p_under": 0.3183,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 187.49,
+      "proj_regulation": 187.46,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-24"
