@@ -6,11 +6,17 @@
   "credits_remaining": 436,
   "credits_used_month": 64,
   "espn": {
-    "backoff_until": 0,
-    "fails": 0
+    "backoff_until": 1795567333.9365544,
+    "fails": 1,
+    "last_code": 0
   },
   "final_board_posted": true,
-  "games": {},
+  "games": {
+    "21718181": {
+      "last_clock": 623.0,
+      "last_period": 2
+    }
+  },
   "last_lines": {
     "cavaliers@knicks": {
       "away": "Cleveland Cavaliers",
