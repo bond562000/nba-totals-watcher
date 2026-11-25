@@ -49,6 +49,7 @@
       "away_nick": "Celtics",
       "checkpoints": [
         "q3_2:00",
+        "q4_5:00",
         "q4_6:30",
         "q4_8:00"
       ],
@@ -65,7 +66,7 @@
       "evals": 1,
       "home": "Washington Wizards",
       "home_nick": "Wizards",
-      "last_clock": 421.0,
+      "last_clock": 286.0,
       "last_eval_ts": 1795575164.5937672,
       "last_period": 4,
       "posted": true,
@@ -73,6 +74,10 @@
       "posted_price": -122,
       "posted_side": "OVER",
       "posted_tier": "play"
+    },
+    "21718183": {
+      "last_clock": 442.0,
+      "last_period": 1
     }
   },
   "grade_sig": "q3_2:00 n=1 MAE=6.9 cover=100% hit=100% pushes=0; q4_2:00 n=1 MAE=5.4 cover=0% hit=100% pushes=0; q4_5:00 n=1 MAE=1.6 cover=100% hit=100% pushes=0; q4_6:30 n=1 MAE=2.5 cover=100% hit=100% pushes=0; q4_8:00 n=1 MAE=1.8 cover=100% hit=100% pushes=0",

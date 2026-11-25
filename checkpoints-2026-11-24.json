@@ -356,6 +356,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-24T22:20:57.744439-05:00",
+      "away": "Boston Celtics",
+      "away_score": 117,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 286.0,
+      "expected_ot_points": 0.14,
+      "final_total": null,
+      "game_id": "21718182",
+      "hi_80": 253.92,
+      "home": "Washington Wizards",
+      "home_score": 106,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-25T02:52:37Z",
+      "line_over": -122,
+      "line_status": "reused",
+      "line_total": 245.5,
+      "line_under": -110,
+      "lo_80": 240.04,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.6076,
+      "p_push": 0.0,
+      "p_under": 0.3924,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 246.98,
+      "proj_regulation": 246.84,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-24"
