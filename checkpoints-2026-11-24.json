@@ -443,6 +443,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-24T23:45:50.768353-05:00",
+      "away": "Dallas Mavericks",
+      "away_score": 80,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q3_2:00",
+      "clock_secs": 161.0,
+      "expected_ot_points": 0.36,
+      "final_total": null,
+      "game_id": "21718183",
+      "hi_80": 230.49,
+      "home": "Denver Nuggets",
+      "home_score": 70,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-25T02:52:37Z",
+      "line_over": -114,
+      "line_status": "reused",
+      "line_total": 234.5,
+      "line_under": -106,
+      "lo_80": 206.15,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.0443,
+      "p_push": 0.0,
+      "p_under": 0.9557,
+      "period": 3,
+      "prob_label": "UNCALIBRATED",
+      "proj": 218.32,
+      "proj_regulation": 217.96,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-24"
