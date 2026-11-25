@@ -6,6 +6,10 @@
   "credits_remaining": 423,
   "credits_used_month": 77,
   "early_board_posted": true,
+  "espn": {
+    "backoff_until": 0,
+    "fails": 0
+  },
   "final_board_posted": true,
   "games": {},
   "last_lines": {
