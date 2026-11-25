@@ -40,7 +40,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 130.0,
+      "last_clock": null,
       "last_eval_ts": 1795571537.289859,
       "last_period": 4
     },
@@ -49,6 +49,7 @@
       "last_period": 2
     }
   },
+  "grade_sig": "q3_2:00 n=1 MAE=6.9 cover=100% hit=100% pushes=0; q4_2:00 n=1 MAE=5.4 cover=0% hit=100% pushes=0; q4_5:00 n=1 MAE=1.6 cover=100% hit=100% pushes=0; q4_6:30 n=1 MAE=2.5 cover=100% hit=100% pushes=0; q4_8:00 n=1 MAE=1.8 cover=100% hit=100% pushes=0",
   "last_lines": {
     "cavaliers@knicks": {
       "away": "Cleveland Cavaliers",
