@@ -1,9 +1,10 @@
 {
   "credits_by_feature": {
-    "pregame": 2
+    "pregame": 2,
+    "props": 6
   },
-  "credits_remaining": 429,
-  "credits_used_month": 71,
+  "credits_remaining": 423,
+  "credits_used_month": 77,
   "early_board_posted": true,
   "games": {},
   "last_lines": {
@@ -107,7 +108,7 @@
       "under": -106
     }
   },
-  "odds_calls": 1,
+  "odds_calls": 3,
   "pregame": {
     "bulls@hornets": 221.5,
     "cavaliers@knicks": 218.5,
@@ -194,6 +195,805 @@
       "total": 222.5
     }
   },
+  "prop_events_done": [
+    "4f6d199bb67cf3a517a3880fd2f00b26",
+    "9e203cbbc6d37b7b0d9c08cb89fe0b28"
+  ],
+  "prop_quotes": {
+    "4f6d199bb67cf3a517a3880fd2f00b26": {
+      "anfernee simons": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -111
+          }
+        ]
+      },
+      "giannis antetokounmpo": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": -146
+          }
+        ],
+        "points": [
+          {
+            "point": 29.5,
+            "price": -104
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 12.5,
+            "price": 102
+          }
+        ]
+      },
+      "jabari walker": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -111
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -111
+          }
+        ]
+      },
+      "jaylen brown": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -108
+          }
+        ],
+        "points": [
+          {
+            "point": 22.5,
+            "price": -115
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": 102
+          }
+        ]
+      },
+      "lebron james": {
+        "assists": [
+          {
+            "point": 7.5,
+            "price": 108
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -115
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -113
+          }
+        ]
+      },
+      "tyrese maxey": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": 114
+          }
+        ],
+        "points": [
+          {
+            "point": 25.5,
+            "price": -115
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -111
+          }
+        ]
+      },
+      "vj edgecombe": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -166
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -146
+          }
+        ]
+      }
+    },
+    "9e203cbbc6d37b7b0d9c08cb89fe0b28": {
+      "brayden burries": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 126
+          }
+        ],
+        "points": [
+          {
+            "point": 12.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -128
+          }
+        ]
+      },
+      "danny wolf": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 116
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -125
+          }
+        ]
+      },
+      "dayron sharpe": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -174
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": -154
+          }
+        ]
+      },
+      "egor demin": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -130
+          }
+        ],
+        "points": [
+          {
+            "point": 10.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -144
+          }
+        ]
+      },
+      "jaime jaquez": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -154
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 132
+          }
+        ]
+      },
+      "julius randle": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -144
+          }
+        ],
+        "points": [
+          {
+            "point": 21.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": 106
+          }
+        ]
+      },
+      "kelel ware": {
+        "points": [
+          {
+            "point": 8.5,
+            "price": -114
+          }
+        ]
+      },
+      "kyle kuzma": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -118
+          }
+        ],
+        "points": [
+          {
+            "point": 13.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -132
+          }
+        ]
+      },
+      "michael porter": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -200
+          }
+        ],
+        "points": [
+          {
+            "point": 21.5,
+            "price": -128
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -132
+          }
+        ]
+      },
+      "mikel brown": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -114
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -110
+          }
+        ]
+      },
+      "myles turner": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -192
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -104
+          }
+        ]
+      },
+      "nate ament": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -128
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -172
+          }
+        ]
+      },
+      "noah clowney": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -108
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 108
+          }
+        ]
+      },
+      "ryan rollins": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 120
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": -122
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -132
+          }
+        ]
+      },
+      "tyler herro": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -162
+          }
+        ],
+        "points": [
+          {
+            "point": 22.5,
+            "price": -122
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 110
+          }
+        ]
+      }
+    },
+    "heat@76ers": {
+      "anfernee simons": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -111
+          }
+        ]
+      },
+      "giannis antetokounmpo": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": -146
+          }
+        ],
+        "points": [
+          {
+            "point": 29.5,
+            "price": -104
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 12.5,
+            "price": 102
+          }
+        ]
+      },
+      "jabari walker": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -111
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -111
+          }
+        ]
+      },
+      "jaylen brown": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -108
+          }
+        ],
+        "points": [
+          {
+            "point": 22.5,
+            "price": -115
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": 102
+          }
+        ]
+      },
+      "lebron james": {
+        "assists": [
+          {
+            "point": 7.5,
+            "price": 108
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -115
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -113
+          }
+        ]
+      },
+      "tyrese maxey": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": 114
+          }
+        ],
+        "points": [
+          {
+            "point": 25.5,
+            "price": -115
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -111
+          }
+        ]
+      },
+      "vj edgecombe": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -166
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -146
+          }
+        ]
+      }
+    },
+    "nets@bucks": {
+      "brayden burries": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 126
+          }
+        ],
+        "points": [
+          {
+            "point": 12.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -128
+          }
+        ]
+      },
+      "danny wolf": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 116
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -125
+          }
+        ]
+      },
+      "dayron sharpe": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -174
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": -154
+          }
+        ]
+      },
+      "egor demin": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -130
+          }
+        ],
+        "points": [
+          {
+            "point": 10.5,
+            "price": 100
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -144
+          }
+        ]
+      },
+      "jaime jaquez": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -154
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 132
+          }
+        ]
+      },
+      "julius randle": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -144
+          }
+        ],
+        "points": [
+          {
+            "point": 21.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": 106
+          }
+        ]
+      },
+      "kelel ware": {
+        "points": [
+          {
+            "point": 8.5,
+            "price": -114
+          }
+        ]
+      },
+      "kyle kuzma": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -118
+          }
+        ],
+        "points": [
+          {
+            "point": 13.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -132
+          }
+        ]
+      },
+      "michael porter": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -200
+          }
+        ],
+        "points": [
+          {
+            "point": 21.5,
+            "price": -128
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -132
+          }
+        ]
+      },
+      "mikel brown": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -114
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -110
+          }
+        ]
+      },
+      "myles turner": {
+        "assists": [
+          {
+            "point": 1.5,
+            "price": -192
+          }
+        ],
+        "points": [
+          {
+            "point": 9.5,
+            "price": -104
+          }
+        ]
+      },
+      "nate ament": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -128
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 2.5,
+            "price": -172
+          }
+        ]
+      },
+      "noah clowney": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -108
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 108
+          }
+        ]
+      },
+      "ryan rollins": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 120
+          }
+        ],
+        "points": [
+          {
+            "point": 11.5,
+            "price": -122
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -132
+          }
+        ]
+      },
+      "tyler herro": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": -162
+          }
+        ],
+        "points": [
+          {
+            "point": 22.5,
+            "price": -122
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 110
+          }
+        ]
+      }
+    }
+  },
+  "props_done": true,
   "slate": "2026-11-25",
   "slate_posted": true
 }
