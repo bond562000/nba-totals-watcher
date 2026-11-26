@@ -140,6 +140,7 @@
     "21718188": {
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -161,7 +162,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 502.0,
+      "last_clock": 406.0,
       "last_eval_ts": 1795661866.5280514,
       "last_period": 4
     },
@@ -188,7 +189,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 638.0,
+      "last_clock": 562.0,
       "last_eval_ts": 1795661437.5667984,
       "last_period": 4
     },
@@ -197,7 +198,7 @@
       "last_period": 2
     }
   },
-  "grade_sig": "q3_2:00 n=2 MAE=21.4 cover=0% hit=100% pushes=0; q4_2:00 n=2 MAE=3.6 cover=100% hit=100% pushes=0; q4_5:00 n=2 MAE=9.4 cover=0% hit=100% pushes=0; q4_6:30 n=2 MAE=10.3 cover=0% hit=100% pushes=0; q4_8:00 n=2 MAE=15.7 cover=0% hit=0% pushes=0",
+  "grade_sig": "q3_2:00 n=3 MAE=17.3 cover=33% hit=67% pushes=0; q4_2:00 n=3 MAE=2.5 cover=100% hit=100% pushes=0; q4_5:00 n=3 MAE=7.1 cover=33% hit=67% pushes=0; q4_6:30 n=3 MAE=7.6 cover=33% hit=100% pushes=0; q4_8:00 n=3 MAE=10.8 cover=33% hit=33% pushes=0",
   "last_lines": {
     "bulls@hornets": {
       "away": "Chicago Bulls",
