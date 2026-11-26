@@ -1127,6 +1127,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T22:09:04.671994-05:00",
+      "away": "Brooklyn Nets",
+      "away_score": 88,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 311.0,
+      "expected_ot_points": 0.6,
+      "final_total": null,
+      "game_id": "21718189",
+      "hi_80": 199.45,
+      "home": "Milwaukee Bucks",
+      "home_score": 82,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-26T02:57:37Z",
+      "line_over": -102,
+      "line_status": "reused",
+      "line_total": 201.5,
+      "line_under": -130,
+      "lo_80": 185.41,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.0488,
+      "p_push": 0.0,
+      "p_under": 0.9512,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 192.43,
+      "proj_regulation": 191.83,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"
