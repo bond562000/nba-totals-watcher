@@ -133,13 +133,14 @@
         }
       ],
       "evals": 2,
-      "last_clock": 181.0,
+      "last_clock": 149.0,
       "last_eval_ts": 1795660209.1182837,
       "last_period": 4
     },
     "21718188": {
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
       "decisions": [
         {
@@ -152,7 +153,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 599.0,
+      "last_clock": 523.0,
       "last_eval_ts": 1795661130.5459013,
       "last_period": 4
     },
