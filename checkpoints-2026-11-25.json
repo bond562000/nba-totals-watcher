@@ -793,6 +793,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T21:45:30.547607-05:00",
+      "away": "Minnesota Timberwolves",
+      "away_score": 99,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 313.0,
+      "expected_ot_points": 0.99,
+      "final_total": null,
+      "game_id": "21718187",
+      "hi_80": 228.27,
+      "home": "Oklahoma City Thunder",
+      "home_score": 97,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-26T02:45:13Z",
+      "line_over": -102,
+      "line_status": "fresh",
+      "line_total": 221.5,
+      "line_under": -130,
+      "lo_80": 213.86,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.469,
+      "p_push": 0.0,
+      "p_under": 0.531,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 221.06,
+      "proj_regulation": 220.08,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"
