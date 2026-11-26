@@ -833,6 +833,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T21:50:37.568496-05:00",
+      "away": "Cleveland Cavaliers",
+      "away_score": 99,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 160.0,
+      "expected_ot_points": 0.01,
+      "final_total": null,
+      "game_id": "21718186",
+      "hi_80": 228.39,
+      "home": "New York Knicks",
+      "home_score": 112,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-26T02:50:16Z",
+      "line_over": -132,
+      "line_status": "fresh",
+      "line_total": 224.5,
+      "line_under": 100,
+      "lo_80": 218.32,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3856,
+      "p_push": 0.0,
+      "p_under": 0.6144,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 223.36,
+      "proj_regulation": 223.35,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"
