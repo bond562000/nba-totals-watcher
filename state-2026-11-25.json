@@ -233,11 +233,11 @@
       "posted_tier": "play"
     },
     "21718191": {
-      "last_clock": null,
-      "last_period": 2
+      "last_clock": 549.0,
+      "last_period": 3
     },
     "21718192": {
-      "last_clock": 273.0,
+      "last_clock": null,
       "last_period": 2
     }
   },
