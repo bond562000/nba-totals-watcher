@@ -204,6 +204,7 @@
       "away_nick": "Suns",
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -219,7 +220,7 @@
       "evals": 1,
       "home": "Houston Rockets",
       "home_nick": "Rockets",
-      "last_clock": 528.0,
+      "last_clock": 393.0,
       "last_eval_ts": 1795663715.9930918,
       "last_period": 4,
       "posted": true,
@@ -229,11 +230,11 @@
       "posted_tier": "play"
     },
     "21718191": {
-      "last_clock": 720.0,
+      "last_clock": 572.0,
       "last_period": 2
     },
     "21718192": {
-      "last_clock": 82.0,
+      "last_clock": null,
       "last_period": 1
     }
   },

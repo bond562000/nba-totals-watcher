@@ -1346,6 +1346,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T22:45:54.286283-05:00",
+      "away": "Phoenix Suns",
+      "away_score": 93,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 393.0,
+      "expected_ot_points": 0.6,
+      "final_total": null,
+      "game_id": "21718190",
+      "hi_80": 230.92,
+      "home": "Houston Rockets",
+      "home_score": 99,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-26T03:28:15Z",
+      "line_over": -125,
+      "line_status": "reused",
+      "line_total": 228.5,
+      "line_under": -106,
+      "lo_80": 215.03,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.1863,
+      "p_push": 0.0,
+      "p_under": 0.8137,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 222.98,
+      "proj_regulation": 222.37,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"
