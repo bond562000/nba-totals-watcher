@@ -223,7 +223,7 @@
       "evals": 1,
       "home": "Houston Rockets",
       "home_nick": "Rockets",
-      "last_clock": 162.0,
+      "last_clock": null,
       "last_eval_ts": 1795663715.9930918,
       "last_period": 4,
       "posted": true,
@@ -233,15 +233,15 @@
       "posted_tier": "play"
     },
     "21718191": {
-      "last_clock": 319.0,
+      "last_clock": null,
       "last_period": 2
     },
     "21718192": {
-      "last_clock": 569.0,
+      "last_clock": 273.0,
       "last_period": 2
     }
   },
-  "grade_sig": "q3_2:00 n=6 MAE=11.5 cover=50% hit=67% pushes=0; q4_2:00 n=6 MAE=4.5 cover=83% hit=83% pushes=0; q4_5:00 n=6 MAE=6.5 cover=33% hit=67% pushes=0; q4_6:30 n=6 MAE=6.3 cover=50% hit=83% pushes=0; q4_8:00 n=6 MAE=8.3 cover=67% hit=50% pushes=0",
+  "grade_sig": "q3_2:00 n=7 MAE=11.6 cover=43% hit=71% pushes=0; q4_2:00 n=7 MAE=4.0 cover=86% hit=86% pushes=0; q4_5:00 n=7 MAE=6.2 cover=43% hit=71% pushes=0; q4_6:30 n=7 MAE=5.8 cover=57% hit=86% pushes=0; q4_8:00 n=7 MAE=7.9 cover=71% hit=57% pushes=0",
   "last_lines": {
     "bulls@hornets": {
       "away": "Chicago Bulls",
