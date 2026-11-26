@@ -1,11 +1,11 @@
 {
   "credits_by_feature": {
-    "live": 7,
+    "live": 8,
     "pregame": 2,
     "props": 6
   },
-  "credits_remaining": 416,
-  "credits_used_month": 84,
+  "credits_remaining": 415,
+  "credits_used_month": 85,
   "early_board_posted": true,
   "espn": {
     "backoff_until": 0,
@@ -98,9 +98,9 @@
         }
       ],
       "evals": 2,
-      "last_clock": null,
+      "last_clock": 668.0,
       "last_eval_ts": 1795660083.238323,
-      "last_period": 3
+      "last_period": 4
     },
     "21718187": {
       "checkpoints": [
@@ -114,23 +114,31 @@
           "model": "possession_estimate",
           "proj": 220.0,
           "verdict": "PASS / NO PLAY"
+        },
+        {
+          "at": "2026-11-25T21:30:09.118502-05:00",
+          "edge": -0.1,
+          "line": 227.5,
+          "model": "pace_fallback",
+          "proj": 227.4,
+          "verdict": "PASS / NO PLAY"
         }
       ],
-      "evals": 1,
-      "last_clock": null,
-      "last_eval_ts": 1795659838.65249,
-      "last_period": 3
+      "evals": 2,
+      "last_clock": 720.0,
+      "last_eval_ts": 1795660209.1182837,
+      "last_period": 4
     },
     "21718188": {
       "last_clock": 521.0,
       "last_period": 3
     },
     "21718189": {
-      "last_clock": 516.0,
+      "last_clock": 463.0,
       "last_period": 3
     },
     "21718190": {
-      "last_clock": 460.0,
+      "last_clock": 431.0,
       "last_period": 2
     }
   },
@@ -151,17 +159,17 @@
       "commence": "2026-11-26T00:42:00Z",
       "event_id": "f08629281f1510f47d91cc408f86a2a8",
       "home": "New York Knicks",
-      "last_update": "2026-11-26T02:27:54Z",
-      "over": -120,
-      "total": 222.5,
-      "under": -110
+      "last_update": "2026-11-26T02:29:56Z",
+      "over": -125,
+      "total": 220.5,
+      "under": -106
     },
     "clippers@grizzlies": {
       "away": "Los Angeles Clippers",
       "commence": "2026-11-26T01:10:40Z",
       "event_id": "698d6d78acf30f4ff4e4aaf6670249ee",
       "home": "Memphis Grizzlies",
-      "last_update": "2026-11-26T02:27:54Z",
+      "last_update": "2026-11-26T02:29:56Z",
       "over": -125,
       "total": 204.5,
       "under": -106
@@ -181,7 +189,7 @@
       "commence": "2026-11-26T03:10:00Z",
       "event_id": "e6df92326adb480e427bb7c10f445c60",
       "home": "Golden State Warriors",
-      "last_update": "2026-11-26T02:27:54Z",
+      "last_update": "2026-11-26T02:29:56Z",
       "over": -112,
       "total": 215.5,
       "under": -108
@@ -191,19 +199,19 @@
       "commence": "2026-11-26T01:10:33Z",
       "event_id": "9e203cbbc6d37b7b0d9c08cb89fe0b28",
       "home": "Milwaukee Bucks",
-      "last_update": "2026-11-26T02:27:54Z",
-      "over": -114,
-      "total": 206.5,
-      "under": -114
+      "last_update": "2026-11-26T02:29:56Z",
+      "over": -108,
+      "total": 208.5,
+      "under": -122
     },
     "spurs@blazers": {
       "away": "San Antonio Spurs",
       "commence": "2026-11-26T03:10:00Z",
       "event_id": "9aa9f220709533d70d11f85fae886771",
       "home": "Portland Trail Blazers",
-      "last_update": "2026-11-26T02:27:54Z",
+      "last_update": "2026-11-26T02:29:56Z",
       "over": -105,
-      "total": 226.5,
+      "total": 225.5,
       "under": -115
     },
     "suns@rockets": {
@@ -211,23 +219,23 @@
       "commence": "2026-11-26T01:41:00Z",
       "event_id": "60fd73164f7b0d1848f998d922155d87",
       "home": "Houston Rockets",
-      "last_update": "2026-11-26T02:27:54Z",
-      "over": -112,
-      "total": 235.5,
-      "under": -118
+      "last_update": "2026-11-26T02:29:56Z",
+      "over": -125,
+      "total": 233.5,
+      "under": -106
     },
     "timberwolves@thunder": {
       "away": "Minnesota Timberwolves",
       "commence": "2026-11-26T00:43:00Z",
       "event_id": "07421d1675d6bc51bb5fa91f84a09eb3",
       "home": "Oklahoma City Thunder",
-      "last_update": "2026-11-26T02:27:54Z",
+      "last_update": "2026-11-26T02:29:56Z",
       "over": -112,
       "total": 227.5,
       "under": -118
     }
   },
-  "odds_calls": 10,
+  "odds_calls": 11,
   "pregame": {
     "bulls@hornets": 221.5,
     "cavaliers@knicks": 218.5,
