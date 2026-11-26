@@ -1172,6 +1172,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T22:13:11.232984-05:00",
+      "away": "LA Clippers",
+      "away_score": 88,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 180.0,
+      "expected_ot_points": 0.0,
+      "final_total": null,
+      "game_id": "21718188",
+      "hi_80": 214.73,
+      "home": "Memphis Grizzlies",
+      "home_score": 108,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-26T02:57:37Z",
+      "line_over": -125,
+      "line_status": "reused",
+      "line_total": 210.5,
+      "line_under": -106,
+      "lo_80": 204.01,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3937,
+      "p_push": 0.0,
+      "p_under": 0.6063,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 209.37,
+      "proj_regulation": 209.37,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"
