@@ -289,6 +289,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T20:56:15.995354-05:00",
+      "away": "Chicago Bulls",
+      "away_score": 85,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 432.0,
+      "expected_ot_points": 0.88,
+      "final_total": null,
+      "game_id": "21718185",
+      "hi_80": 208.55,
+      "home": "Charlotte Hornets",
+      "home_score": 84,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-26T01:48:59Z",
+      "line_over": -144,
+      "line_status": "reused",
+      "line_total": 197.5,
+      "line_under": 108,
+      "lo_80": 192.5,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.6856,
+      "p_push": 0.0,
+      "p_under": 0.3144,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 200.53,
+      "proj_regulation": 199.65,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"

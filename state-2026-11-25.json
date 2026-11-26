@@ -47,6 +47,7 @@
     "21718185": {
       "checkpoints": [
         "q3_2:00",
+        "q4_6:30",
         "q4_8:00"
       ],
       "decisions": [
@@ -68,7 +69,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 521.0,
+      "last_clock": 432.0,
       "last_eval_ts": 1795657742.1430151,
       "last_period": 4
     },
@@ -81,15 +82,15 @@
       "last_period": 2
     },
     "21718188": {
-      "last_clock": 338.0,
+      "last_clock": 312.0,
       "last_period": 2
     },
     "21718189": {
-      "last_clock": 387.0,
+      "last_clock": 289.0,
       "last_period": 2
     },
     "21718190": {
-      "last_clock": 371.0,
+      "last_clock": 353.0,
       "last_period": 1
     }
   },
