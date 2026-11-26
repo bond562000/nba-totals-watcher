@@ -149,6 +149,19 @@
       "slate": "2026-11-24",
       "source": "watcher",
       "tier": "play"
+    },
+    {
+      "away": "Phoenix Suns",
+      "away_nick": "Suns",
+      "game_id": "21718190",
+      "home": "Houston Rockets",
+      "home_nick": "Rockets",
+      "line": 228.5,
+      "posted_at": "2026-11-25T22:28:35.993293-05:00",
+      "side": "OVER",
+      "slate": "2026-11-25",
+      "source": "watcher",
+      "tier": "play"
     }
   ],
   "confirmed": []
