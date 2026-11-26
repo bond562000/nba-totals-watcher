@@ -1,0 +1,88 @@
+{
+  "baseline": {
+    "interval": "UNCALIBRATED \u2014 full-game PPP dispersion, not checkpoint forecast errors",
+    "poss_per_team": 100.84,
+    "ppp": 1.1339,
+    "sample_games": 1232,
+    "season": "2023-24 regular season (ESPN team box scores via sportsdataverse)"
+  },
+  "by_checkpoint": {
+    "q3_2:00": {
+      "confirmed_losses": 0,
+      "confirmed_n": 0,
+      "confirmed_pushes": 0,
+      "confirmed_wins": 0,
+      "interval_coverage": 0.0,
+      "interval_label": "UNCALIBRATED",
+      "mae": 18.610000000000014,
+      "n": 1,
+      "ou_hit_rate": 1.0,
+      "ou_losses": 0,
+      "ou_pushes": 0,
+      "ou_wins": 1,
+      "sample_note": "Coverage and hit rate describe logged games only. They do not calibrate the probability model."
+    },
+    "q4_2:00": {
+      "confirmed_losses": 0,
+      "confirmed_n": 0,
+      "confirmed_pushes": 0,
+      "confirmed_wins": 0,
+      "interval_coverage": 1.0,
+      "interval_label": "UNCALIBRATED",
+      "mae": 2.490000000000009,
+      "n": 1,
+      "ou_hit_rate": 1.0,
+      "ou_losses": 0,
+      "ou_pushes": 0,
+      "ou_wins": 1,
+      "sample_note": "Coverage and hit rate describe logged games only. They do not calibrate the probability model."
+    },
+    "q4_5:00": {
+      "confirmed_losses": 0,
+      "confirmed_n": 0,
+      "confirmed_pushes": 0,
+      "confirmed_wins": 0,
+      "interval_coverage": 0.0,
+      "interval_label": "UNCALIBRATED",
+      "mae": 8.599999999999994,
+      "n": 1,
+      "ou_hit_rate": 1.0,
+      "ou_losses": 0,
+      "ou_pushes": 0,
+      "ou_wins": 1,
+      "sample_note": "Coverage and hit rate describe logged games only. They do not calibrate the probability model."
+    },
+    "q4_6:30": {
+      "confirmed_losses": 0,
+      "confirmed_n": 0,
+      "confirmed_pushes": 0,
+      "confirmed_wins": 0,
+      "interval_coverage": 0.0,
+      "interval_label": "UNCALIBRATED",
+      "mae": 9.22999999999999,
+      "n": 1,
+      "ou_hit_rate": 1.0,
+      "ou_losses": 0,
+      "ou_pushes": 0,
+      "ou_wins": 1,
+      "sample_note": "Coverage and hit rate describe logged games only. They do not calibrate the probability model."
+    },
+    "q4_8:00": {
+      "confirmed_losses": 0,
+      "confirmed_n": 0,
+      "confirmed_pushes": 0,
+      "confirmed_wins": 0,
+      "interval_coverage": 0.0,
+      "interval_label": "UNCALIBRATED",
+      "mae": 14.449999999999989,
+      "n": 1,
+      "ou_hit_rate": 0.0,
+      "ou_losses": 1,
+      "ou_pushes": 0,
+      "ou_wins": 0,
+      "sample_note": "Coverage and hit rate describe logged games only. They do not calibrate the probability model."
+    }
+  },
+  "calibration": "UNCALIBRATED",
+  "slate": "2026-11-25"
+}
