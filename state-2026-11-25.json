@@ -1,11 +1,11 @@
 {
   "credits_by_feature": {
-    "live": 11,
+    "live": 12,
     "pregame": 2,
     "props": 6
   },
-  "credits_remaining": 412,
-  "credits_used_month": 88,
+  "credits_remaining": 411,
+  "credits_used_month": 89,
   "early_board_posted": true,
   "espn": {
     "backoff_until": 0,
@@ -150,11 +150,19 @@
           "model": "pace_fallback",
           "proj": 204.8,
           "verdict": "PASS / NO PLAY"
+        },
+        {
+          "at": "2026-11-25T21:57:46.528263-05:00",
+          "edge": -1.7,
+          "line": 210.5,
+          "model": "possession_estimate",
+          "proj": 208.8,
+          "verdict": "PASS / NO PLAY"
         }
       ],
-      "evals": 1,
-      "last_clock": 523.0,
-      "last_eval_ts": 1795661130.5459013,
+      "evals": 2,
+      "last_clock": 502.0,
+      "last_eval_ts": 1795661866.5280514,
       "last_period": 4
     },
     "21718189": {
@@ -216,10 +224,10 @@
       "commence": "2026-11-26T01:10:40Z",
       "event_id": "698d6d78acf30f4ff4e4aaf6670249ee",
       "home": "Memphis Grizzlies",
-      "last_update": "2026-11-26T02:50:16Z",
-      "over": -128,
-      "total": 207.5,
-      "under": -104
+      "last_update": "2026-11-26T02:57:37Z",
+      "over": -125,
+      "total": 210.5,
+      "under": -106
     },
     "heat@76ers": {
       "away": "Miami Heat",
@@ -236,7 +244,7 @@
       "commence": "2026-11-26T03:15:00Z",
       "event_id": "e6df92326adb480e427bb7c10f445c60",
       "home": "Golden State Warriors",
-      "last_update": "2026-11-26T02:50:16Z",
+      "last_update": "2026-11-26T02:57:37Z",
       "over": -112,
       "total": 215.5,
       "under": -108
@@ -246,17 +254,17 @@
       "commence": "2026-11-26T01:10:33Z",
       "event_id": "9e203cbbc6d37b7b0d9c08cb89fe0b28",
       "home": "Milwaukee Bucks",
-      "last_update": "2026-11-26T02:50:16Z",
-      "over": -106,
-      "total": 203.5,
-      "under": -125
+      "last_update": "2026-11-26T02:57:37Z",
+      "over": -102,
+      "total": 201.5,
+      "under": -130
     },
     "spurs@blazers": {
       "away": "San Antonio Spurs",
-      "commence": "2026-11-26T03:10:00Z",
+      "commence": "2026-11-26T03:15:00Z",
       "event_id": "9aa9f220709533d70d11f85fae886771",
       "home": "Portland Trail Blazers",
-      "last_update": "2026-11-26T02:50:16Z",
+      "last_update": "2026-11-26T02:57:37Z",
       "over": -105,
       "total": 225.5,
       "under": -115
@@ -266,23 +274,23 @@
       "commence": "2026-11-26T01:41:00Z",
       "event_id": "60fd73164f7b0d1848f998d922155d87",
       "home": "Houston Rockets",
-      "last_update": "2026-11-26T02:50:16Z",
-      "over": 110,
+      "last_update": "2026-11-26T02:57:37Z",
+      "over": 114,
       "total": 233.5,
-      "under": -146
+      "under": -152
     },
     "timberwolves@thunder": {
       "away": "Minnesota Timberwolves",
       "commence": "2026-11-26T00:43:00Z",
       "event_id": "07421d1675d6bc51bb5fa91f84a09eb3",
       "home": "Oklahoma City Thunder",
-      "last_update": "2026-11-26T02:50:16Z",
-      "over": -114,
-      "total": 226.5,
-      "under": -114
+      "last_update": "2026-11-26T02:57:37Z",
+      "over": -104,
+      "total": 223.5,
+      "under": -128
     }
   },
-  "odds_calls": 14,
+  "odds_calls": 15,
   "pregame": {
     "bulls@hornets": 221.5,
     "cavaliers@knicks": 218.5,
