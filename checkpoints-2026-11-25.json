@@ -81,6 +81,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-25T19:11:30.657413-05:00",
+      "away": "Miami Heat",
+      "away_score": 89,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 420.0,
+      "expected_ot_points": 0.13,
+      "final_total": null,
+      "game_id": "21718184",
+      "hi_80": 232.5,
+      "home": "Philadelphia 76ers",
+      "home_score": 102,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-25T23:58:03Z",
+      "line_over": -118,
+      "line_status": "reused",
+      "line_total": 228.5,
+      "line_under": -112,
+      "lo_80": 215.96,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.2541,
+      "p_push": 0.0,
+      "p_under": 0.7459,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 224.23,
+      "proj_regulation": 224.1,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-25"
