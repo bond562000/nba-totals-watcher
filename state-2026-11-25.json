@@ -15,7 +15,8 @@
   "games": {
     "21718184": {
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
       "decisions": [
         {
@@ -36,9 +37,9 @@
         }
       ],
       "evals": 2,
-      "last_clock": null,
+      "last_clock": 540.0,
       "last_eval_ts": 1795651104.411153,
-      "last_period": 3
+      "last_period": 4
     }
   },
   "last_lines": {
