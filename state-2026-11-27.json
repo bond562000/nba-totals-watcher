@@ -1,9 +1,10 @@
 {
   "credits_by_feature": {
-    "pregame": 2
+    "pregame": 2,
+    "props": 6
   },
-  "credits_remaining": 400,
-  "credits_used_month": 100,
+  "credits_remaining": 394,
+  "credits_used_month": 106,
   "early_board_posted": true,
   "games": {},
   "last_lines": {
@@ -129,7 +130,7 @@
       "under": -114
     }
   },
-  "odds_calls": 1,
+  "odds_calls": 3,
   "pregame": {
     "76ers@pacers": 230.5,
     "bucks@pistons": 219.5,
@@ -234,6 +235,849 @@
       "total": 219.5
     }
   },
+  "prop_events_done": [
+    "5b64071f3e3bf67b0fdea8d1ac81d0ec",
+    "fecbaa4e1973217826262c63d8f52dea"
+  ],
+  "prop_quotes": {
+    "5b64071f3e3bf67b0fdea8d1ac81d0ec": {
+      "aaron nesmith": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": -128
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -112
+          }
+        ]
+      },
+      "andrew nembhard": {
+        "assists": [
+          {
+            "point": 7.5,
+            "price": -125
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -125
+          }
+        ]
+      },
+      "anfernee simons": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -102
+          }
+        ]
+      },
+      "dean wade": {
+        "points": [
+          {
+            "point": 4.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 114
+          }
+        ]
+      },
+      "ivica zubac": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 9.5,
+            "price": -112
+          }
+        ]
+      },
+      "joel embiid": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 118
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": -146
+          }
+        ]
+      },
+      "kentavious caldwell-pope": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -106
+          }
+        ]
+      },
+      "lebron james": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -144
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -136
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -102
+          }
+        ]
+      },
+      "obi toppin": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -102
+          }
+        ]
+      },
+      "pascal siakam": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 140
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -102
+          }
+        ]
+      },
+      "tyrese maxey": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": 106
+          }
+        ],
+        "points": [
+          {
+            "point": 24.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 108
+          }
+        ]
+      },
+      "vj edgecombe": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -158
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -110
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -152
+          }
+        ]
+      }
+    },
+    "76ers@pacers": {
+      "aaron nesmith": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": -128
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -112
+          }
+        ]
+      },
+      "andrew nembhard": {
+        "assists": [
+          {
+            "point": 7.5,
+            "price": -125
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -125
+          }
+        ]
+      },
+      "anfernee simons": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -102
+          }
+        ]
+      },
+      "dean wade": {
+        "points": [
+          {
+            "point": 4.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 114
+          }
+        ]
+      },
+      "ivica zubac": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 9.5,
+            "price": -112
+          }
+        ]
+      },
+      "joel embiid": {
+        "assists": [
+          {
+            "point": 4.5,
+            "price": 118
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 7.5,
+            "price": -146
+          }
+        ]
+      },
+      "kentavious caldwell-pope": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -106
+          }
+        ]
+      },
+      "lebron james": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -144
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -136
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -102
+          }
+        ]
+      },
+      "obi toppin": {
+        "points": [
+          {
+            "point": 12.5,
+            "price": -102
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -102
+          }
+        ]
+      },
+      "pascal siakam": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": 140
+          }
+        ],
+        "points": [
+          {
+            "point": 23.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 6.5,
+            "price": -102
+          }
+        ]
+      },
+      "tyrese maxey": {
+        "assists": [
+          {
+            "point": 5.5,
+            "price": 106
+          }
+        ],
+        "points": [
+          {
+            "point": 24.5,
+            "price": -120
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": 108
+          }
+        ]
+      },
+      "vj edgecombe": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -158
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -110
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -152
+          }
+        ]
+      }
+    },
+    "fecbaa4e1973217826262c63d8f52dea": {
+      "brandon ingram": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -152
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -138
+          }
+        ]
+      },
+      "brook lopez": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 100
+          }
+        ]
+      },
+      "darius garland": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -148
+          }
+        ],
+        "points": [
+          {
+            "point": 20.5,
+            "price": -104
+          }
+        ]
+      },
+      "derik queen": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -162
+          }
+        ]
+      },
+      "derrick jones": {
+        "points": [
+          {
+            "point": 8.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -104
+          }
+        ]
+      },
+      "herb jones": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -102
+          }
+        ]
+      },
+      "jeremiah fears": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": 122
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 124
+          }
+        ]
+      },
+      "jordan poole": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": -128
+          }
+        ]
+      },
+      "kris dunn": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -174
+          }
+        ],
+        "points": [
+          {
+            "point": 4.5,
+            "price": -125
+          }
+        ]
+      },
+      "max strus": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 130
+          }
+        ],
+        "points": [
+          {
+            "point": 8.5,
+            "price": 104
+          }
+        ]
+      },
+      "rui hachimura": {
+        "points": [
+          {
+            "point": 14.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 124
+          }
+        ]
+      },
+      "saddiq bey": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -132
+          }
+        ]
+      },
+      "trey murphy": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -146
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -104
+          }
+        ]
+      },
+      "yves missi": {
+        "points": [
+          {
+            "point": 6.5,
+            "price": -108
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 8.5,
+            "price": 114
+          }
+        ]
+      },
+      "zion williamson": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -122
+          }
+        ],
+        "points": [
+          {
+            "point": 22.5,
+            "price": -110
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 106
+          }
+        ]
+      }
+    },
+    "pelicans@clippers": {
+      "brandon ingram": {
+        "assists": [
+          {
+            "point": 3.5,
+            "price": -152
+          }
+        ],
+        "points": [
+          {
+            "point": 18.5,
+            "price": -114
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -138
+          }
+        ]
+      },
+      "brook lopez": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -130
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": 100
+          }
+        ]
+      },
+      "darius garland": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": -148
+          }
+        ],
+        "points": [
+          {
+            "point": 20.5,
+            "price": -104
+          }
+        ]
+      },
+      "derik queen": {
+        "points": [
+          {
+            "point": 9.5,
+            "price": -125
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": -162
+          }
+        ]
+      },
+      "derrick jones": {
+        "points": [
+          {
+            "point": 8.5,
+            "price": -106
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 3.5,
+            "price": -104
+          }
+        ]
+      },
+      "herb jones": {
+        "points": [
+          {
+            "point": 7.5,
+            "price": -102
+          }
+        ]
+      },
+      "jeremiah fears": {
+        "assists": [
+          {
+            "point": 6.5,
+            "price": 122
+          }
+        ],
+        "points": [
+          {
+            "point": 17.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 124
+          }
+        ]
+      },
+      "jordan poole": {
+        "points": [
+          {
+            "point": 11.5,
+            "price": -128
+          }
+        ]
+      },
+      "kris dunn": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -174
+          }
+        ],
+        "points": [
+          {
+            "point": 4.5,
+            "price": -125
+          }
+        ]
+      },
+      "max strus": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": 130
+          }
+        ],
+        "points": [
+          {
+            "point": 8.5,
+            "price": 104
+          }
+        ]
+      },
+      "rui hachimura": {
+        "points": [
+          {
+            "point": 14.5,
+            "price": -112
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 124
+          }
+        ]
+      },
+      "saddiq bey": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -102
+          }
+        ],
+        "points": [
+          {
+            "point": 14.5,
+            "price": -132
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -132
+          }
+        ]
+      },
+      "trey murphy": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -146
+          }
+        ],
+        "points": [
+          {
+            "point": 15.5,
+            "price": -118
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 4.5,
+            "price": -104
+          }
+        ]
+      },
+      "yves missi": {
+        "points": [
+          {
+            "point": 6.5,
+            "price": -108
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 8.5,
+            "price": 114
+          }
+        ]
+      },
+      "zion williamson": {
+        "assists": [
+          {
+            "point": 2.5,
+            "price": -122
+          }
+        ],
+        "points": [
+          {
+            "point": 22.5,
+            "price": -110
+          }
+        ],
+        "rebounds": [
+          {
+            "point": 5.5,
+            "price": 106
+          }
+        ]
+      }
+    }
+  },
+  "props_done": true,
   "slate": "2026-11-27",
   "slate_posted": true
 }
