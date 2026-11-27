@@ -1,10 +1,239 @@
 {
-  "credits_remaining": null,
+  "credits_by_feature": {
+    "pregame": 2
+  },
+  "credits_remaining": 400,
+  "credits_used_month": 100,
   "early_board_posted": true,
   "games": {},
-  "odds_calls": 0,
-  "pregame": {},
-  "pregame_done": false,
+  "last_lines": {
+    "76ers@pacers": {
+      "away": "Philadelphia 76ers",
+      "commence": "2026-11-28T00:40:00Z",
+      "event_id": "5b64071f3e3bf67b0fdea8d1ac81d0ec",
+      "home": "Indiana Pacers",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -106,
+      "spread": 2.5,
+      "total": 230.5,
+      "under": -114
+    },
+    "bucks@pistons": {
+      "away": "Milwaukee Bucks",
+      "commence": "2026-11-28T00:40:00Z",
+      "event_id": "326e8215b0369df0d4d65e5c0afe9ff5",
+      "home": "Detroit Pistons",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -104,
+      "spread": 10.5,
+      "total": 219.5,
+      "under": -118
+    },
+    "grizzlies@timberwolves": {
+      "away": "Memphis Grizzlies",
+      "commence": "2026-11-28T01:40:00Z",
+      "event_id": "f0bc60d1516d217dba58c1f4fa653a59",
+      "home": "Minnesota Timberwolves",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -108,
+      "spread": 4.5,
+      "total": 223.5,
+      "under": -112
+    },
+    "hawks@celtics": {
+      "away": "Atlanta Hawks",
+      "commence": "2026-11-28T01:10:00Z",
+      "event_id": "c5dc35b4116988de2c1425df17456478",
+      "home": "Boston Celtics",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -110,
+      "spread": 9.5,
+      "total": 223.5,
+      "under": -110
+    },
+    "heat@knicks": {
+      "away": "Miami Heat",
+      "commence": "2026-11-28T00:10:00Z",
+      "event_id": "3c522e32c3035d7dc3e1734903b84654",
+      "home": "New York Knicks",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -115,
+      "spread": 2.5,
+      "total": 221.5,
+      "under": -105
+    },
+    "lakers@spurs": {
+      "away": "Los Angeles Lakers",
+      "commence": "2026-11-28T02:40:00Z",
+      "event_id": "13d9ca3bcb664829c603755d31401002",
+      "home": "San Antonio Spurs",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -110,
+      "spread": 6.5,
+      "total": 225.5,
+      "under": -110
+    },
+    "mavericks@suns": {
+      "away": "Dallas Mavericks",
+      "commence": "2026-11-28T02:10:00Z",
+      "event_id": "46b1c571cf786a86e800d61fd1d79004",
+      "home": "Phoenix Suns",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -105,
+      "spread": 2.5,
+      "total": 227.5,
+      "under": -115
+    },
+    "nets@raptors": {
+      "away": "Brooklyn Nets",
+      "commence": "2026-11-28T00:40:00Z",
+      "event_id": "709de4f76f95aebf383d180ac3c6f679",
+      "home": "Toronto Raptors",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -114,
+      "spread": 9.5,
+      "total": 218.5,
+      "under": -106
+    },
+    "nuggets@jazz": {
+      "away": "Denver Nuggets",
+      "commence": "2026-11-28T02:40:00Z",
+      "event_id": "428050645d1dc8b16d84287e21de55fa",
+      "home": "Utah Jazz",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -118,
+      "spread": 10.5,
+      "total": 228.5,
+      "under": -104
+    },
+    "pelicans@clippers": {
+      "away": "New Orleans Pelicans",
+      "commence": "2026-11-28T02:40:00Z",
+      "event_id": "fecbaa4e1973217826262c63d8f52dea",
+      "home": "Los Angeles Clippers",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -110,
+      "spread": 2.5,
+      "total": 231.5,
+      "under": -110
+    },
+    "warriors@blazers": {
+      "away": "Golden State Warriors",
+      "commence": "2026-11-28T02:40:00Z",
+      "event_id": "592a440c590415d43f5ffbfd922cd41e",
+      "home": "Portland Trail Blazers",
+      "last_update": "2026-11-27T17:08:49Z",
+      "over": -106,
+      "spread": 9.5,
+      "total": 219.5,
+      "under": -114
+    }
+  },
+  "odds_calls": 1,
+  "pregame": {
+    "76ers@pacers": 230.5,
+    "bucks@pistons": 219.5,
+    "grizzlies@timberwolves": 223.5,
+    "hawks@celtics": 223.5,
+    "heat@knicks": 221.5,
+    "lakers@spurs": 225.5,
+    "mavericks@suns": 227.5,
+    "nets@raptors": 218.5,
+    "nuggets@jazz": 228.5,
+    "pelicans@clippers": 231.5,
+    "warriors@blazers": 219.5
+  },
+  "pregame_done": true,
+  "pregame_meta": {
+    "76ers@pacers": {
+      "away": "Philadelphia 76ers",
+      "event_id": "5b64071f3e3bf67b0fdea8d1ac81d0ec",
+      "home": "Indiana Pacers",
+      "key": "76ers@pacers",
+      "spread": 2.5,
+      "total": 230.5
+    },
+    "bucks@pistons": {
+      "away": "Milwaukee Bucks",
+      "event_id": "326e8215b0369df0d4d65e5c0afe9ff5",
+      "home": "Detroit Pistons",
+      "key": "bucks@pistons",
+      "spread": 10.5,
+      "total": 219.5
+    },
+    "grizzlies@timberwolves": {
+      "away": "Memphis Grizzlies",
+      "event_id": "f0bc60d1516d217dba58c1f4fa653a59",
+      "home": "Minnesota Timberwolves",
+      "key": "grizzlies@timberwolves",
+      "spread": 4.5,
+      "total": 223.5
+    },
+    "hawks@celtics": {
+      "away": "Atlanta Hawks",
+      "event_id": "c5dc35b4116988de2c1425df17456478",
+      "home": "Boston Celtics",
+      "key": "hawks@celtics",
+      "spread": 9.5,
+      "total": 223.5
+    },
+    "heat@knicks": {
+      "away": "Miami Heat",
+      "event_id": "3c522e32c3035d7dc3e1734903b84654",
+      "home": "New York Knicks",
+      "key": "heat@knicks",
+      "spread": 2.5,
+      "total": 221.5
+    },
+    "lakers@spurs": {
+      "away": "Los Angeles Lakers",
+      "event_id": "13d9ca3bcb664829c603755d31401002",
+      "home": "San Antonio Spurs",
+      "key": "lakers@spurs",
+      "spread": 6.5,
+      "total": 225.5
+    },
+    "mavericks@suns": {
+      "away": "Dallas Mavericks",
+      "event_id": "46b1c571cf786a86e800d61fd1d79004",
+      "home": "Phoenix Suns",
+      "key": "mavericks@suns",
+      "spread": 2.5,
+      "total": 227.5
+    },
+    "nets@raptors": {
+      "away": "Brooklyn Nets",
+      "event_id": "709de4f76f95aebf383d180ac3c6f679",
+      "home": "Toronto Raptors",
+      "key": "nets@raptors",
+      "spread": 9.5,
+      "total": 218.5
+    },
+    "nuggets@jazz": {
+      "away": "Denver Nuggets",
+      "event_id": "428050645d1dc8b16d84287e21de55fa",
+      "home": "Utah Jazz",
+      "key": "nuggets@jazz",
+      "spread": 10.5,
+      "total": 228.5
+    },
+    "pelicans@clippers": {
+      "away": "New Orleans Pelicans",
+      "event_id": "fecbaa4e1973217826262c63d8f52dea",
+      "home": "Los Angeles Clippers",
+      "key": "pelicans@clippers",
+      "spread": 2.5,
+      "total": 231.5
+    },
+    "warriors@blazers": {
+      "away": "Golden State Warriors",
+      "event_id": "592a440c590415d43f5ffbfd922cd41e",
+      "home": "Portland Trail Blazers",
+      "key": "warriors@blazers",
+      "spread": 9.5,
+      "total": 219.5
+    }
+  },
   "slate": "2026-11-27",
-  "slate_posted": false
+  "slate_posted": true
 }
