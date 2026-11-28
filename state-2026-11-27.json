@@ -111,7 +111,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 338.0,
+      "last_clock": 304.0,
       "last_eval_ts": 1795833622.7871878,
       "last_period": 4
     },
@@ -136,7 +136,7 @@
       "evals": 1,
       "home": "Toronto Raptors",
       "home_nick": "Raptors",
-      "last_clock": 411.0,
+      "last_clock": 377.0,
       "last_eval_ts": 1795832562.5537667,
       "last_period": 4,
       "posted": true,
@@ -160,35 +160,36 @@
         }
       ],
       "evals": 1,
-      "last_clock": null,
+      "last_clock": 696.0,
       "last_eval_ts": 1795833747.7484503,
-      "last_period": 3
+      "last_period": 4
     },
     "21718198": {
       "last_clock": null,
       "last_period": 2
     },
     "21718199": {
-      "last_clock": 617.0,
+      "last_clock": 544.0,
       "last_period": 2
     },
     "21718200": {
-      "last_clock": 585.0,
+      "last_clock": 498.0,
       "last_period": 1
     },
     "21718201": {
-      "last_clock": 567.0,
+      "last_clock": 478.0,
       "last_period": 1
     },
     "21718202": {
-      "last_clock": 538.0,
+      "last_clock": 492.0,
       "last_period": 1
     },
     "21718203": {
-      "last_clock": 568.0,
+      "last_clock": 504.0,
       "last_period": 1
     }
   },
+  "grade_sig": "q3_2:00 n=1 MAE=6.7 cover=100% hit=100% pushes=0; q4_2:00 n=1 MAE=5.1 cover=100% hit=0% pushes=0; q4_5:00 n=1 MAE=0.4 cover=100% hit=100% pushes=0; q4_6:30 n=1 MAE=0.6 cover=100% hit=100% pushes=0; q4_8:00 n=1 MAE=3.3 cover=100% hit=100% pushes=0",
   "last_lines": {
     "76ers@pacers": {
       "away": "Philadelphia 76ers",
