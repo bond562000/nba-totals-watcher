@@ -8,8 +8,8 @@
   "credits_used_month": 121,
   "early_board_posted": true,
   "espn": {
-    "backoff_until": 1795841122.945195,
-    "fails": 1,
+    "backoff_until": 0,
+    "fails": 0,
     "last_code": 0
   },
   "final_board_posted": true,
@@ -250,7 +250,7 @@
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 339.0,
+      "last_clock": 301.0,
       "last_period": 4
     },
     "21718201": {
@@ -280,7 +280,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 146.0,
+      "last_clock": 120.0,
       "last_eval_ts": 1795839464.48477,
       "last_period": 4
     },
@@ -312,7 +312,7 @@
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 409.0,
+      "last_clock": 361.0,
       "last_period": 4
     }
   },
