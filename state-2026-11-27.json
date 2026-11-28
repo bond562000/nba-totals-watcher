@@ -76,7 +76,7 @@
       "evals": 2,
       "home": "Detroit Pistons",
       "home_nick": "Pistons",
-      "last_clock": 93.0,
+      "last_clock": 62.0,
       "last_eval_ts": 1795832813.4355786,
       "last_period": 4,
       "posted": true,
@@ -112,13 +112,14 @@
         }
       ],
       "evals": 2,
-      "last_clock": 159.0,
+      "last_clock": 121.0,
       "last_eval_ts": 1795833622.7871878,
       "last_period": 4
     },
     "21718196": {
       "away": "Brooklyn Nets",
       "away_nick": "Nets",
+      "buyout_posted": true,
       "checkpoints": [
         "q3_2:00",
         "q4_5:00",
@@ -138,7 +139,7 @@
       "evals": 1,
       "home": "Toronto Raptors",
       "home_nick": "Raptors",
-      "last_clock": 278.0,
+      "last_clock": 196.0,
       "last_eval_ts": 1795832562.5537667,
       "last_period": 4,
       "posted": true,
@@ -176,27 +177,27 @@
       "last_period": 4
     },
     "21718198": {
-      "last_clock": 604.0,
+      "last_clock": 519.0,
       "last_period": 3
     },
     "21718199": {
-      "last_clock": 398.0,
+      "last_clock": 342.0,
       "last_period": 2
     },
     "21718200": {
-      "last_clock": 452.0,
+      "last_clock": 274.0,
       "last_period": 1
     },
     "21718201": {
-      "last_clock": 380.0,
+      "last_clock": 262.0,
       "last_period": 1
     },
     "21718202": {
-      "last_clock": 346.0,
+      "last_clock": 258.0,
       "last_period": 1
     },
     "21718203": {
-      "last_clock": 411.0,
+      "last_clock": 330.0,
       "last_period": 1
     }
   },
