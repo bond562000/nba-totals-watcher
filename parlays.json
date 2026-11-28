@@ -5824,7 +5824,7 @@
           "probability": 0.5751318860000004,
           "probability_label": "UNCALIBRATED",
           "projection": 223.8,
-          "result": null,
+          "result": "loss",
           "side": "OVER"
         },
         {
