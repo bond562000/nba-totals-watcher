@@ -1847,6 +1847,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T23:36:35.380791-05:00",
+      "away": "Golden State Warriors",
+      "away_score": 85,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_8:00",
+      "clock_secs": 540.0,
+      "expected_ot_points": 0.18,
+      "final_total": null,
+      "game_id": "21718203",
+      "hi_80": 234.92,
+      "home": "Portland Trail Blazers",
+      "home_score": 98,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T04:17:31Z",
+      "line_over": -102,
+      "line_status": "reused",
+      "line_total": 227.5,
+      "line_under": -130,
+      "lo_80": 215.84,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3878,
+      "p_push": 0.0,
+      "p_under": 0.6122,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 225.38,
+      "proj_regulation": 225.2,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
