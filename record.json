@@ -166,6 +166,19 @@
       "slate": "2026-11-25",
       "source": "watcher",
       "tier": "play"
+    },
+    {
+      "away": "Brooklyn Nets",
+      "away_nick": "Nets",
+      "game_id": "21718196",
+      "home": "Toronto Raptors",
+      "home_nick": "Raptors",
+      "line": 230.5,
+      "posted_at": "2026-11-27T21:22:42.554006-05:00",
+      "side": "OVER",
+      "slate": "2026-11-27",
+      "source": "watcher",
+      "tier": "play"
     }
   ],
   "confirmed": []
