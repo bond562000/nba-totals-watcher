@@ -152,6 +152,7 @@
     "21718197": {
       "checkpoints": [
         "q3_2:00",
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
@@ -175,7 +176,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 235.0,
+      "last_clock": 180.0,
       "last_eval_ts": 1795834128.2907414,
       "last_period": 4
     },
@@ -191,16 +192,16 @@
       "last_period": 2
     },
     "21718200": {
-      "last_clock": null,
-      "last_period": 1
+      "last_clock": 720.0,
+      "last_period": 2
     },
     "21718201": {
-      "last_clock": 638.0,
+      "last_clock": 604.0,
       "last_period": 2
     },
     "21718202": {
-      "last_clock": null,
-      "last_period": 1
+      "last_clock": 701.0,
+      "last_period": 2
     },
     "21718203": {
       "last_clock": null,

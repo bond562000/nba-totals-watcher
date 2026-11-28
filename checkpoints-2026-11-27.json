@@ -1040,6 +1040,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T22:10:44.463816-05:00",
+      "away": "Atlanta Hawks",
+      "away_score": 81,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 180.0,
+      "expected_ot_points": 1.09,
+      "final_total": null,
+      "game_id": "21718197",
+      "hi_80": 176.99,
+      "home": "Boston Celtics",
+      "home_score": 78,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T02:48:44Z",
+      "line_over": -132,
+      "line_status": "reused",
+      "line_total": 193.5,
+      "line_under": 100,
+      "lo_80": 166.35,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.0,
+      "p_push": 0.0,
+      "p_under": 1.0,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 171.67,
+      "proj_regulation": 170.58,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
