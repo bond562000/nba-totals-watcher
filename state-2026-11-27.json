@@ -316,11 +316,11 @@
         "q4_6:30",
         "q4_8:00"
       ],
-      "last_clock": 117.0,
+      "last_clock": null,
       "last_period": 4
     }
   },
-  "grade_sig": "q3_2:00 n=9 MAE=7.4 cover=78% hit=67% pushes=0; q4_2:00 n=9 MAE=3.7 cover=67% hit=56% pushes=0; q4_5:00 n=9 MAE=3.9 cover=78% hit=67% pushes=0; q4_6:30 n=9 MAE=5.1 cover=67% hit=78% pushes=0; q4_8:00 n=9 MAE=5.1 cover=89% hit=89% pushes=0",
+  "grade_sig": "q3_2:00 n=10 MAE=9.1 cover=70% hit=60% pushes=0; q4_2:00 n=10 MAE=3.5 cover=70% hit=60% pushes=0; q4_5:00 n=10 MAE=3.9 cover=80% hit=70% pushes=0; q4_6:30 n=10 MAE=5.5 cover=60% hit=80% pushes=0; q4_8:00 n=10 MAE=6.1 cover=80% hit=90% pushes=0",
   "last_lines": {
     "76ers@pacers": {
       "away": "Philadelphia 76ers",
