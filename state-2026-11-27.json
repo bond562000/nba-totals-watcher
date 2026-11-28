@@ -244,9 +244,10 @@
     },
     "21718200": {
       "checkpoints": [
-        "q3_2:00"
+        "q3_2:00",
+        "q4_8:00"
       ],
-      "last_clock": 636.0,
+      "last_clock": 535.0,
       "last_period": 4
     },
     "21718201": {
@@ -274,7 +275,7 @@
         }
       ],
       "evals": 2,
-      "last_clock": 434.0,
+      "last_clock": 409.0,
       "last_eval_ts": 1795839464.48477,
       "last_period": 4
     },
@@ -294,7 +295,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 534.0,
+      "last_clock": 525.0,
       "last_eval_ts": 1795839403.138623,
       "last_period": 4
     },
@@ -302,11 +303,11 @@
       "checkpoints": [
         "q3_2:00"
       ],
-      "last_clock": 720.0,
+      "last_clock": 653.0,
       "last_period": 4
     }
   },
-  "grade_sig": "q3_2:00 n=6 MAE=8.8 cover=67% hit=67% pushes=0; q4_2:00 n=6 MAE=3.4 cover=83% hit=50% pushes=0; q4_5:00 n=6 MAE=4.4 cover=67% hit=50% pushes=0; q4_6:30 n=6 MAE=6.6 cover=50% hit=67% pushes=0; q4_8:00 n=6 MAE=6.5 cover=83% hit=83% pushes=0",
+  "grade_sig": "q3_2:00 n=7 MAE=8.8 cover=71% hit=57% pushes=0; q4_2:00 n=7 MAE=3.7 cover=71% hit=57% pushes=0; q4_5:00 n=7 MAE=4.2 cover=71% hit=57% pushes=0; q4_6:30 n=7 MAE=6.0 cover=57% hit=71% pushes=0; q4_8:00 n=7 MAE=6.0 cover=86% hit=86% pushes=0",
   "last_lines": {
     "76ers@pacers": {
       "away": "Philadelphia 76ers",
