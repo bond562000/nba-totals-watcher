@@ -1806,6 +1806,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T23:34:32.692967-05:00",
+      "away": "New Orleans Pelicans",
+      "away_score": 90,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 428.0,
+      "expected_ot_points": 0.68,
+      "final_total": null,
+      "game_id": "21718202",
+      "hi_80": 215.78,
+      "home": "LA Clippers",
+      "home_score": 85,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T04:17:31Z",
+      "line_over": -110,
+      "line_status": "reused",
+      "line_total": 214.5,
+      "line_under": -120,
+      "lo_80": 198.99,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.1387,
+      "p_push": 0.0,
+      "p_under": 0.8613,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 207.39,
+      "proj_regulation": 206.71,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
