@@ -1318,6 +1318,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T23:03:23.807412-05:00",
+      "away": "Dallas Mavericks",
+      "away_score": 85,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_8:00",
+      "clock_secs": 536.0,
+      "expected_ot_points": 0.18,
+      "final_total": null,
+      "game_id": "21718199",
+      "hi_80": 234.45,
+      "home": "Phoenix Suns",
+      "home_score": 98,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T03:56:06Z",
+      "line_over": -118,
+      "line_status": "reused",
+      "line_total": 226.5,
+      "line_under": -114,
+      "lo_80": 215.79,
+      "missing_inputs": [
+        "current_lineup",
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.4248,
+      "p_push": 0.0,
+      "p_under": 0.5752,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 225.12,
+      "proj_regulation": 224.94,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
