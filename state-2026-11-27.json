@@ -1,11 +1,11 @@
 {
   "credits_by_feature": {
-    "live": 10,
+    "live": 11,
     "pregame": 2,
     "props": 6
   },
-  "credits_remaining": 384,
-  "credits_used_month": 116,
+  "credits_remaining": 383,
+  "credits_used_month": 117,
   "early_board_posted": true,
   "espn": {
     "backoff_until": 0,
@@ -215,7 +215,19 @@
       "checkpoints": [
         "q3_2:00"
       ],
+      "decisions": [
+        {
+          "at": "2026-11-27T22:50:00.058664-05:00",
+          "edge": 2.1,
+          "line": 224.5,
+          "model": "possession_estimate",
+          "proj": 226.6,
+          "verdict": "PASS / NO PLAY"
+        }
+      ],
+      "evals": 1,
       "last_clock": 153.0,
+      "last_eval_ts": 1795837800.0584044,
       "last_period": 3
     },
     "21718200": {
@@ -223,7 +235,7 @@
       "last_period": 2
     },
     "21718201": {
-      "last_clock": 703.0,
+      "last_clock": 675.0,
       "last_period": 3
     },
     "21718202": {
@@ -292,17 +304,17 @@
       "commence": "2026-11-28T02:44:00Z",
       "event_id": "13d9ca3bcb664829c603755d31401002",
       "home": "San Antonio Spurs",
-      "last_update": "2026-11-28T03:18:38Z",
-      "over": -118,
-      "total": 209.5,
-      "under": -112
+      "last_update": "2026-11-28T03:49:42Z",
+      "over": 100,
+      "total": 203.5,
+      "under": -132
     },
     "magic@wizards": {
       "away": "Orlando Magic",
       "commence": "2026-11-28T22:10:00Z",
       "event_id": "2f2c60fafdc3fd106d71517a9de4f2b1",
       "home": "Washington Wizards",
-      "last_update": "2026-11-28T03:18:38Z",
+      "last_update": "2026-11-28T03:49:42Z",
       "over": -118,
       "total": 217.5,
       "under": -104
@@ -312,17 +324,17 @@
       "commence": "2026-11-28T02:11:00Z",
       "event_id": "46b1c571cf786a86e800d61fd1d79004",
       "home": "Phoenix Suns",
-      "last_update": "2026-11-28T03:18:38Z",
-      "over": -112,
-      "total": 225.5,
-      "under": -118
+      "last_update": "2026-11-28T03:49:42Z",
+      "over": -114,
+      "total": 224.5,
+      "under": -114
     },
     "nets@hornets": {
       "away": "Brooklyn Nets",
       "commence": "2026-11-28T23:10:00Z",
       "event_id": "a05c295062d5e2b8e9fa633c2797880e",
       "home": "Charlotte Hornets",
-      "last_update": "2026-11-28T03:18:38Z",
+      "last_update": "2026-11-28T03:49:42Z",
       "over": -110,
       "total": 213.5,
       "under": -110
@@ -342,17 +354,17 @@
       "commence": "2026-11-28T02:41:00Z",
       "event_id": "428050645d1dc8b16d84287e21de55fa",
       "home": "Utah Jazz",
-      "last_update": "2026-11-28T03:18:38Z",
-      "over": -136,
-      "total": 224.5,
-      "under": 102
+      "last_update": "2026-11-28T03:49:42Z",
+      "over": 102,
+      "total": 225.5,
+      "under": -136
     },
     "pacers@bulls": {
       "away": "Indiana Pacers",
       "commence": "2026-11-29T01:10:00Z",
       "event_id": "1ef1f5b9c8c88c584772f64a0d9a9435",
       "home": "Chicago Bulls",
-      "last_update": "2026-11-28T03:18:38Z",
+      "last_update": "2026-11-28T03:49:42Z",
       "over": -110,
       "total": 236.5,
       "under": -110
@@ -362,17 +374,17 @@
       "commence": "2026-11-28T02:41:00Z",
       "event_id": "fecbaa4e1973217826262c63d8f52dea",
       "home": "Los Angeles Clippers",
-      "last_update": "2026-11-28T03:18:38Z",
-      "over": 102,
-      "total": 222.5,
-      "under": -136
+      "last_update": "2026-11-28T03:49:42Z",
+      "over": -114,
+      "total": 216.5,
+      "under": -114
     },
     "thunder@bucks": {
       "away": "Oklahoma City Thunder",
       "commence": "2026-11-29T01:10:00Z",
       "event_id": "638cefeed67cdd691e1686e024981563",
       "home": "Milwaukee Bucks",
-      "last_update": "2026-11-28T03:18:38Z",
+      "last_update": "2026-11-28T03:49:42Z",
       "over": -105,
       "total": 228.5,
       "under": -115
@@ -382,13 +394,13 @@
       "commence": "2026-11-28T02:42:00Z",
       "event_id": "592a440c590415d43f5ffbfd922cd41e",
       "home": "Portland Trail Blazers",
-      "last_update": "2026-11-28T03:18:38Z",
-      "over": -144,
-      "total": 212.5,
-      "under": 108
+      "last_update": "2026-11-28T03:49:42Z",
+      "over": -120,
+      "total": 221.5,
+      "under": -110
     }
   },
-  "odds_calls": 13,
+  "odds_calls": 14,
   "pregame": {
     "76ers@pacers": 230.5,
     "bucks@pistons": 219.5,
