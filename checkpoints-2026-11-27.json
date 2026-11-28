@@ -2019,6 +2019,47 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T23:42:48.723479-05:00",
+      "away": "Denver Nuggets",
+      "away_score": 108,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_2:00",
+      "clock_secs": 170.0,
+      "expected_ot_points": 1.38,
+      "final_total": null,
+      "game_id": "21718201",
+      "hi_80": 235.17,
+      "home": "Utah Jazz",
+      "home_score": 107,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T04:17:31Z",
+      "line_over": -102,
+      "line_status": "reused",
+      "line_total": 229.5,
+      "line_under": -130,
+      "lo_80": 224.57,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.5356,
+      "p_push": 0.0,
+      "p_under": 0.4644,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 229.87,
+      "proj_regulation": 228.49,
+      "quality_issues": [
+        "line_stale",
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
