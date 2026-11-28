@@ -578,6 +578,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T21:44:33.171504-05:00",
+      "away": "Philadelphia 76ers",
+      "away_score": 104,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 392.0,
+      "expected_ot_points": 0.0,
+      "final_total": null,
+      "game_id": "21718195",
+      "hi_80": 215.23,
+      "home": "Indiana Pacers",
+      "home_score": 74,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T02:42:21Z",
+      "line_over": -138,
+      "line_status": "reused",
+      "line_total": 203.5,
+      "line_under": 104,
+      "lo_80": 198.98,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "OVER",
+      "p_over": 0.7154,
+      "p_push": 0.0,
+      "p_under": 0.2846,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 207.11,
+      "proj_regulation": 207.11,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
