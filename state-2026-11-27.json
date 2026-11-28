@@ -206,32 +206,32 @@
         }
       ],
       "evals": 2,
-      "last_clock": 339.0,
+      "last_clock": 287.0,
       "last_eval_ts": 1795835941.2671943,
       "last_period": 4
     },
     "21718199": {
-      "last_clock": 657.0,
+      "last_clock": 604.0,
       "last_period": 3
     },
     "21718200": {
-      "last_clock": 364.0,
+      "last_clock": 250.0,
       "last_period": 2
     },
     "21718201": {
-      "last_clock": 148.0,
+      "last_clock": null,
       "last_period": 2
     },
     "21718202": {
-      "last_clock": 293.0,
+      "last_clock": 155.0,
       "last_period": 2
     },
     "21718203": {
-      "last_clock": 390.0,
+      "last_clock": 254.0,
       "last_period": 2
     }
   },
-  "grade_sig": "q3_2:00 n=4 MAE=6.9 cover=75% hit=75% pushes=0; q4_2:00 n=4 MAE=3.3 cover=100% hit=25% pushes=0; q4_5:00 n=4 MAE=3.0 cover=75% hit=50% pushes=0; q4_6:30 n=4 MAE=4.7 cover=75% hit=75% pushes=0; q4_8:00 n=4 MAE=4.0 cover=100% hit=75% pushes=0",
+  "grade_sig": "q3_2:00 n=5 MAE=9.4 cover=60% hit=80% pushes=0; q4_2:00 n=5 MAE=2.9 cover=100% hit=40% pushes=0; q4_5:00 n=5 MAE=3.4 cover=80% hit=60% pushes=0; q4_6:30 n=5 MAE=6.2 cover=60% hit=80% pushes=0; q4_8:00 n=5 MAE=6.5 cover=80% hit=80% pushes=0",
   "last_lines": {
     "76ers@pacers": {
       "away": "Philadelphia 76ers",
