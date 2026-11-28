@@ -11,7 +11,35 @@
     "fails": 0
   },
   "final_board_posted": true,
-  "games": {},
+  "games": {
+    "21718193": {
+      "checkpoints": [
+        "q3_2:00"
+      ],
+      "last_clock": 167.0,
+      "last_period": 3
+    },
+    "21718194": {
+      "last_clock": null,
+      "last_period": 2
+    },
+    "21718195": {
+      "last_clock": null,
+      "last_period": 2
+    },
+    "21718196": {
+      "last_clock": null,
+      "last_period": 2
+    },
+    "21718197": {
+      "last_clock": 418.0,
+      "last_period": 2
+    },
+    "21718198": {
+      "last_clock": 396.0,
+      "last_period": 1
+    }
+  },
   "last_lines": {
     "76ers@pacers": {
       "away": "Philadelphia 76ers",
