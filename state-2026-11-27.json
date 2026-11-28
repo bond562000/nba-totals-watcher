@@ -50,6 +50,7 @@
       "buyout_posted": true,
       "checkpoints": [
         "q3_2:00",
+        "q4_2:00",
         "q4_5:00",
         "q4_6:30",
         "q4_8:00"
@@ -75,7 +76,7 @@
       "evals": 2,
       "home": "Detroit Pistons",
       "home_nick": "Pistons",
-      "last_clock": 206.0,
+      "last_clock": 172.0,
       "last_eval_ts": 1795832813.4355786,
       "last_period": 4,
       "posted": true,
@@ -172,11 +173,11 @@
       "last_period": 2
     },
     "21718200": {
-      "last_clock": 661.0,
+      "last_clock": 585.0,
       "last_period": 1
     },
     "21718201": {
-      "last_clock": 600.0,
+      "last_clock": 567.0,
       "last_period": 1
     },
     "21718202": {
@@ -184,7 +185,7 @@
       "last_period": 1
     },
     "21718203": {
-      "last_clock": 619.0,
+      "last_clock": 568.0,
       "last_period": 1
     }
   },
