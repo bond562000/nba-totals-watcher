@@ -1177,6 +1177,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T22:28:20.214168-05:00",
+      "away": "Memphis Grizzlies",
+      "away_score": 99,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_5:00",
+      "clock_secs": 339.0,
+      "expected_ot_points": 0.24,
+      "final_total": null,
+      "game_id": "21718198",
+      "hi_80": 220.78,
+      "home": "Minnesota Timberwolves",
+      "home_score": 89,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T03:18:38Z",
+      "line_over": 112,
+      "line_status": "reused",
+      "line_total": 215.5,
+      "line_under": -148,
+      "lo_80": 206.33,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.3649,
+      "p_push": 0.0,
+      "p_under": 0.6351,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 213.55,
+      "proj_regulation": 213.31,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
