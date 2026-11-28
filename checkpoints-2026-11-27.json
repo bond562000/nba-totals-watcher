@@ -378,6 +378,46 @@
       ],
       "settlement": "full_game_including_ot",
       "timing": "on_time"
+    },
+    {
+      "at": "2026-11-27T21:33:07.376928-05:00",
+      "away": "Milwaukee Bucks",
+      "away_score": 82,
+      "calibration": "UNCALIBRATED",
+      "checkpoint": "q4_6:30",
+      "clock_secs": 421.0,
+      "expected_ot_points": 0.13,
+      "final_total": null,
+      "game_id": "21718194",
+      "hi_80": 216.2,
+      "home": "Detroit Pistons",
+      "home_score": 95,
+      "interval_label": "UNCALIBRATED",
+      "line_last_update": "2026-11-28T02:26:47Z",
+      "line_over": -120,
+      "line_status": "reused",
+      "line_total": 215.5,
+      "line_under": -110,
+      "lo_80": 199.83,
+      "missing_inputs": [
+        "possession_arrow",
+        "timeouts_remaining",
+        "season_team_ratings"
+      ],
+      "model": "possession_estimate",
+      "model_side": "UNDER",
+      "p_over": 0.1206,
+      "p_push": 0.0,
+      "p_under": 0.8794,
+      "period": 4,
+      "prob_label": "UNCALIBRATED",
+      "proj": 208.02,
+      "proj_regulation": 207.88,
+      "quality_issues": [
+        "lineup_not_live"
+      ],
+      "settlement": "full_game_including_ot",
+      "timing": "on_time"
     }
   ],
   "slate": "2026-11-27"
