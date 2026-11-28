@@ -74,7 +74,7 @@
       "evals": 2,
       "home": "Detroit Pistons",
       "home_nick": "Pistons",
-      "last_clock": 407.0,
+      "last_clock": 351.0,
       "last_eval_ts": 1795832813.4355786,
       "last_period": 4,
       "posted": true,
@@ -99,7 +99,7 @@
         }
       ],
       "evals": 1,
-      "last_clock": 532.0,
+      "last_clock": 499.0,
       "last_eval_ts": 1795832813.9273977,
       "last_period": 4
     },
@@ -122,7 +122,7 @@
       "evals": 1,
       "home": "Toronto Raptors",
       "home_nick": "Raptors",
-      "last_clock": 634.0,
+      "last_clock": 551.0,
       "last_eval_ts": 1795832562.5537667,
       "last_period": 4,
       "posted": true,
@@ -132,7 +132,10 @@
       "posted_tier": "play"
     },
     "21718197": {
-      "last_clock": 297.0,
+      "checkpoints": [
+        "q3_2:00"
+      ],
+      "last_clock": 163.0,
       "last_period": 3
     },
     "21718198": {
@@ -140,7 +143,7 @@
       "last_period": 2
     },
     "21718199": {
-      "last_clock": 62.0,
+      "last_clock": null,
       "last_period": 1
     }
   },
